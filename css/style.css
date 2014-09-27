@@ -180,13 +180,13 @@ article > .container > :last-child
 section:last-child,
 article:last-child
 {
-    margin-bottom: 0;
+    margin-bottom: 50;
 }
 
 .row > section,
 .row > article
 {
-    margin-bottom: 0;
+    margin-bottom: 50;
 }
 
 /* Image */
@@ -227,6 +227,12 @@ article:last-child
 {
     width: 64px;
     height: 64px;
+}
+
+.image.newfit
+{
+    display: block;
+    width: 100%;
 }
 
 .image.fit
