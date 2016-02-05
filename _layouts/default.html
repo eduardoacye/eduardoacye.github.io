@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>{{ page.title }}}</title>
+        <meta charset="utf-8" />
+        <!-- Link to main stylesheet -->
+        <link rel="stylesheet" type="text/css" href="/css/main.css">
+    </head>
+    <body>
+        <nav>
+            <ul>
+                <li><a href="/" >Inicio</a></li>
+                <li><a href="/about" >Acerca de</a></li>
+                <li><a href="/blog" >Blog</a></li>
+                <li><a href="/progs" >Programas</a></li>
+            </ul>
+        </nav>
+        <div class="container" >
+            {{ content }}
+        </div>
+        <footer>
+            <ul>
+                <li><a href="mailto:eduardo.acye@gmail.com" >email</a></li>
+                <li><a href="https://github.com/eduardoacye" >github</a></li>
+                <li><a href="https://gitlab.com/u/eduardoacye" >gitlab</a></li>
+            </ul>
+        </footer>
+    </body>
+</html>
