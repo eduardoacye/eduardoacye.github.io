@@ -1,2 +1,3 @@
 name: Guarida arcana
 markdown: kramdown
+permalink: /blog/:year/:month/:day/:title
