@@ -12,6 +12,6 @@
 * Current logs
 
 ** Javascript
- - [[file:conway/gol.html][Conway's Game of Life]]
+ - [[file:conway/gol.html][Conway's Game of Life]] ([[file:conway/gol.pdf][pdf]])
    -  [[file:conway/src/index.html][Demo]]
    
