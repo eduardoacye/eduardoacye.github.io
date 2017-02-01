@@ -1,0 +1,17 @@
+#+TITLE:Programming Log
+#+AUTHOR:Eduardo Acuña Yeomans
+#+EMAIL:eduardo.acye@gmail.com
+#+OPTIONS: toc:nil
+#+INFOJS_OPT: view:t toc:nil ltoc:nil mouse:underline buttons:0 path:http://thomasf.github.io/solarized-css/org-info.min.js
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="http://thomasf.github.io/solarized-css/solarized-light.min.css" />
+#+HTML_HEAD: <style>table.center {margin-left:auto; margin-right:auto;}</style>
+#+HTML_HEAD: <link href="https://fonts.googleapis.com/css?family=Alegreya" rel="stylesheet">
+#+HTML_HEAD: <style> body { font-family: 'Alegreya', serif; } </style>
+#+HTML_HEAD: <style> h1, h2, h3 { font-family: 'Alegreya', serif; } </style>
+
+* Current logs
+
+** Javascript
+ - [[file:conway/gol.html][Conway's Game of Life]]
+   -  [[file:conway/src/index.html][Demo]]
+   

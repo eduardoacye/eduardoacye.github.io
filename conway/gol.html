@@ -1,0 +1,1592 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2017-01-31 Tue 23:20 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Conway's Game of Life</title>
+<meta name="generator" content="Org mode" />
+<meta name="author" content="Eduardo Acuña Yeomans" />
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  .title  { text-align: center;
+             margin-bottom: .2em; }
+  .subtitle { text-align: center;
+              font-size: medium;
+              font-weight: bold;
+              margin-top:0; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 3px #eee;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: visible;
+    padding-top: 1.2em;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    background-color: white;
+    top: -10px;
+    right: 10px;
+    padding: 3px;
+    border: 1px solid black;
+  }
+  pre.src:hover:before { display: inline;}
+  /* Languages per Org manual */
+  pre.src-asymptote:before { content: 'Asymptote'; }
+  pre.src-awk:before { content: 'Awk'; }
+  pre.src-C:before { content: 'C'; }
+  /* pre.src-C++ doesn't work in CSS */
+  pre.src-clojure:before { content: 'Clojure'; }
+  pre.src-css:before { content: 'CSS'; }
+  pre.src-D:before { content: 'D'; }
+  pre.src-ditaa:before { content: 'ditaa'; }
+  pre.src-dot:before { content: 'Graphviz'; }
+  pre.src-calc:before { content: 'Emacs Calc'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-fortran:before { content: 'Fortran'; }
+  pre.src-gnuplot:before { content: 'gnuplot'; }
+  pre.src-haskell:before { content: 'Haskell'; }
+  pre.src-java:before { content: 'Java'; }
+  pre.src-js:before { content: 'Javascript'; }
+  pre.src-latex:before { content: 'LaTeX'; }
+  pre.src-ledger:before { content: 'Ledger'; }
+  pre.src-lisp:before { content: 'Lisp'; }
+  pre.src-lilypond:before { content: 'Lilypond'; }
+  pre.src-lua:before { content: 'Lua'; }
+  pre.src-matlab:before { content: 'MATLAB'; }
+  pre.src-mscgen:before { content: 'Mscgen'; }
+  pre.src-ocaml:before { content: 'Objective Caml'; }
+  pre.src-octave:before { content: 'Octave'; }
+  pre.src-org:before { content: 'Org mode'; }
+  pre.src-oz:before { content: 'OZ'; }
+  pre.src-plantuml:before { content: 'Plantuml'; }
+  pre.src-processing:before { content: 'Processing.js'; }
+  pre.src-python:before { content: 'Python'; }
+  pre.src-R:before { content: 'R'; }
+  pre.src-ruby:before { content: 'Ruby'; }
+  pre.src-sass:before { content: 'Sass'; }
+  pre.src-scheme:before { content: 'Scheme'; }
+  pre.src-screen:before { content: 'Gnu Screen'; }
+  pre.src-sed:before { content: 'Sed'; }
+  pre.src-sh:before { content: 'shell'; }
+  pre.src-sql:before { content: 'SQL'; }
+  pre.src-sqlite:before { content: 'SQLite'; }
+  /* additional languages in org.el's org-babel-load-languages alist */
+  pre.src-forth:before { content: 'Forth'; }
+  pre.src-io:before { content: 'IO'; }
+  pre.src-J:before { content: 'J'; }
+  pre.src-makefile:before { content: 'Makefile'; }
+  pre.src-maxima:before { content: 'Maxima'; }
+  pre.src-perl:before { content: 'Perl'; }
+  pre.src-picolisp:before { content: 'Pico Lisp'; }
+  pre.src-scala:before { content: 'Scala'; }
+  pre.src-shell:before { content: 'Shell Script'; }
+  pre.src-ebnf2ps:before { content: 'ebfn2ps'; }
+  /* additional language identifiers per "defun org-babel-execute"
+       in ob-*.el */
+  pre.src-cpp:before  { content: 'C++'; }
+  pre.src-abc:before  { content: 'ABC'; }
+  pre.src-coq:before  { content: 'Coq'; }
+  pre.src-groovy:before  { content: 'Groovy'; }
+  /* additional language identifiers from org-babel-shell-names in
+     ob-shell.el: ob-shell is the only babel language using a lambda to put
+     the execution function name together. */
+  pre.src-bash:before  { content: 'bash'; }
+  pre.src-csh:before  { content: 'csh'; }
+  pre.src-ash:before  { content: 'ash'; }
+  pre.src-dash:before  { content: 'dash'; }
+  pre.src-ksh:before  { content: 'ksh'; }
+  pre.src-mksh:before  { content: 'mksh'; }
+  pre.src-posh:before  { content: 'posh'; }
+  /* Additional Emacs modes also supported by the LaTeX listings package */
+  pre.src-ada:before { content: 'Ada'; }
+  pre.src-asm:before { content: 'Assembler'; }
+  pre.src-caml:before { content: 'Caml'; }
+  pre.src-delphi:before { content: 'Delphi'; }
+  pre.src-html:before { content: 'HTML'; }
+  pre.src-idl:before { content: 'IDL'; }
+  pre.src-mercury:before { content: 'Mercury'; }
+  pre.src-metapost:before { content: 'MetaPost'; }
+  pre.src-modula-2:before { content: 'Modula-2'; }
+  pre.src-pascal:before { content: 'Pascal'; }
+  pre.src-ps:before { content: 'PostScript'; }
+  pre.src-prolog:before { content: 'Prolog'; }
+  pre.src-simula:before { content: 'Simula'; }
+  pre.src-tcl:before { content: 'tcl'; }
+  pre.src-tex:before { content: 'TeX'; }
+  pre.src-plain-tex:before { content: 'Plain TeX'; }
+  pre.src-verilog:before { content: 'Verilog'; }
+  pre.src-vhdl:before { content: 'VHDL'; }
+  pre.src-xml:before { content: 'XML'; }
+  pre.src-nxml:before { content: 'XML'; }
+  /* add a generic configuration mode; LaTeX export needs an additional
+     (add-to-list 'org-latex-listings-langs '(conf " ")) in .emacs */
+  pre.src-conf:before { content: 'Configuration File'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara { display: inline; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  .org-svg { width: 90%; }
+  /*]]>*/-->
+</style>
+<link rel="stylesheet" type="text/css" href="http://thomasf.github.io/solarized-css/solarized-light.min.css" />
+<style>table.center {margin-left:auto; margin-right:auto;}</style>
+<link href="https://fonts.googleapis.com/css?family=Alegreya" rel="stylesheet">
+<style> body { font-family: 'Alegreya', serif; } </style>
+<style> h1, h2, h3 { font-family: 'Alegreya', serif; } </style>
+
+<script type="text/javascript" src="http://thomasf.github.io/solarized-css/org-info.min.js">
+/**
+ *
+ * @source: http://thomasf.github.io/solarized-css/org-info.min.js
+ *
+ * @licstart  The following is the entire license notice for the
+ *  JavaScript code in http://thomasf.github.io/solarized-css/org-info.min.js.
+ *
+ * Copyright (C) 2012-2013 Free Software Foundation, Inc.
+ *
+ *
+ * The JavaScript code in this tag is free software: you can
+ * redistribute it and/or modify it under the terms of the GNU
+ * General Public License (GNU GPL) as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option)
+ * any later version.  The code is distributed WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+ *
+ * As additional permission under GNU GPL version 3 section 7, you
+ * may distribute non-source (e.g., minimized or compacted) forms of
+ * that code without the copy of the GNU GPL normally required by
+ * section 4, provided you include this license notice and a URL
+ * through which recipients can access the Corresponding Source.
+ *
+ * @licend  The above is the entire license notice
+ * for the JavaScript code in http://thomasf.github.io/solarized-css/org-info.min.js.
+ *
+ */
+</script>
+
+<script type="text/javascript">
+
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2013 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+
+<!--/*--><![CDATA[/*><!--*/
+org_html_manager.set("TOC_DEPTH", "3");
+org_html_manager.set("LINK_HOME", "");
+org_html_manager.set("LINK_UP", "");
+org_html_manager.set("LOCAL_TOC", "1");
+org_html_manager.set("VIEW_BUTTONS", "0");
+org_html_manager.set("MOUSE_HINT", "underline");
+org_html_manager.set("FIXED_TOC", "0");
+org_html_manager.set("TOC", "1");
+org_html_manager.set("VIEW", "1");
+org_html_manager.setup();  // activate after the parameters are set
+/*]]>*///-->
+</script>
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2013 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        displayAlign: "center",
+        displayIndent: "0em",
+
+        "HTML-CSS": { scale: 100,
+                        linebreaks: { automatic: "false" },
+                        webFont: "TeX"
+                       },
+        SVG: {scale: 100,
+              linebreaks: { automatic: "false" },
+              font: "TeX"},
+        NativeMML: {scale: 100},
+        TeX: { equationNumbers: {autoNumber: "AMS"},
+               MultLineWidth: "85%",
+               TagSide: "right",
+               TagIndent: ".8em"
+             }
+});
+</script>
+<script type="text/javascript"
+        src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML"></script>
+</head>
+<body>
+<div id="content">
+<h1 class="title">Conway's Game of Life</h1>
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#orgfffbece">1. Introduction</a></li>
+<li><a href="#org547a1bb">2. The grid abstraction</a>
+<ul>
+<li><a href="#org342f98b">2.1. Creating a grid</a>
+<ul>
+<li><a href="#org85dca03"><code>&lt;src/grid.js&gt;</code></a></li>
+</ul>
+</li>
+<li><a href="#org49d390f">2.2. Obtaining the rows and columns of a row</a>
+<ul>
+<li><a href="#org5ae40da"><code>&lt;src/grid.js&gt;</code></a></li>
+<li><a href="#orgf2d66bd"><code>&lt;src/grid.js&gt;</code></a></li>
+</ul>
+</li>
+<li><a href="#orge93308d">2.3. Get a particular value of a grid</a>
+<ul>
+<li><a href="#org24cfd72"><code>&lt;src/grid.js&gt;</code></a></li>
+<li><a href="#org54c5ab3"><code>&lt;src/grid.js&gt;</code></a></li>
+</ul>
+</li>
+<li><a href="#orga4bafa3">2.4. Changing a grid value</a>
+<ul>
+<li><a href="#orgd5f1352"><code>&lt;src/grid.js&gt;</code></a></li>
+</ul>
+</li>
+<li><a href="#orgd188c83">2.5. Interface</a>
+<ul>
+<li><a href="#org8bbd8d1"><code>&lt;src/grid.js&gt;</code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#orgf855fd3">3. Life rules</a>
+<ul>
+<li><a href="#org9026ad5">3.1. Mapping life to grids</a>
+<ul>
+<li><a href="#orgd650dd7"><code>&lt;src/life.js&gt;</code></a></li>
+<li><a href="#org0401008"><code>&lt;src/life.js&gt;</code></a></li>
+<li><a href="#orgc328d0c"><code>&lt;src/life.js&gt;</code></a></li>
+</ul>
+</li>
+<li><a href="#org8497fc0">3.2. Evolving life</a>
+<ul>
+<li><a href="#org80344d9"><code>&lt;src/life.js&gt;</code></a></li>
+<li><a href="#orgd21bb82"><code>&lt;src/life.js&gt;</code></a></li>
+</ul>
+</li>
+<li><a href="#orgec6db87">3.3. Interface</a>
+<ul>
+<li><a href="#org7c98655"><code>&lt;src/life.js&gt;</code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#org5fd5c01">4. React JS Components</a>
+<ul>
+<li>
+<ul>
+<li><a href="#org182fdd3"><code>&lt;src/reactlife.jsx&gt;</code></a></li>
+</ul>
+</li>
+<li><a href="#org936cdb0">4.1. Evolving life periodically</a>
+<ul>
+<li><a href="#orgc02fdaa"><code>&lt;&lt;gol-timer-setup&gt;&gt;</code></a></li>
+<li><a href="#orgd3d83d6"><code>&lt;&lt;gol-simulation&gt;&gt;</code></a></li>
+</ul>
+</li>
+<li><a href="#orgda4835b">4.2. Controlling the grid</a>
+<ul>
+<li><a href="#orgba708e7"><code>&lt;&lt;gol-grid-click&gt;&gt;</code></a></li>
+<li><a href="#orge4fcfc9"><code>&lt;&lt;gol-play-pause-click&gt;&gt;</code></a></li>
+<li><a href="#orgafed4d0"><code>&lt;&lt;gol-clear-click&gt;&gt;</code></a></li>
+<li><a href="#org0bc1e54"><code>&lt;&lt;gol-randomize-click&gt;&gt;</code></a></li>
+</ul>
+</li>
+<li><a href="#org0fa6692">4.3. GOL initialization</a>
+<ul>
+<li><a href="#org155c3c0"><code>&lt;&lt;gol-constructor&gt;&gt;</code></a></li>
+<li><a href="#orgaf90a1e"><code>&lt;&lt;gol-view&gt;&gt;</code></a></li>
+</ul>
+</li>
+<li><a href="#orgb791b4b">4.4. Playing and pausing the game</a>
+<ul>
+<li><a href="#org94d890d"><code>&lt;src/reactlife.jsx&gt;</code></a></li>
+<li><a href="#orgf73102c"><code>&lt;&lt;control-pause&gt;&gt;</code></a></li>
+<li><a href="#org2340e9d"><code>&lt;&lt;control-play&gt;&gt;</code></a></li>
+</ul>
+</li>
+<li><a href="#orgd7097b6">4.5. Clearing and randomizing the game</a>
+<ul>
+<li><a href="#org5b20029"><code>&lt;src/reactlife.jsx&gt;</code></a></li>
+<li><a href="#orgb920981"><code>&lt;src/reactlife.jsx&gt;</code></a></li>
+<li><a href="#orga156390"><code>&lt;&lt;control-clear&gt;&gt;</code></a></li>
+<li><a href="#org0a66537"><code>&lt;&lt;control-randomize&gt;&gt;</code></a></li>
+</ul>
+</li>
+<li><a href="#orgf39b69f">4.6. Grid visualization</a>
+<ul>
+<li><a href="#orgb0dc041"><code>&lt;src/reactlife.jsx&gt;</code></a></li>
+<li><a href="#org873ed6f"><code>&lt;&lt;table-cell&gt;&gt;</code></a></li>
+<li><a href="#org86902a8"><code>&lt;&lt;table-row&gt;&gt;</code></a></li>
+<li><a href="#org8ba1f2d"><code>&lt;&lt;table-main&gt;&gt;</code></a></li>
+</ul>
+</li>
+<li><a href="#orgd7b7c42">4.7. Rendering into the DOM</a>
+<ul>
+<li><a href="#org77216fe"><code>&lt;src/reactlife.jsx&gt;</code></a></li>
+<li><a href="#orgec17350"><code>&lt;&lt;conways-game&gt;&gt;</code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#org6f7e230">5. The HTML document</a>
+<ul>
+<li>
+<ul>
+<li><a href="#orgcae0b29"><code>&lt;src/index.html&gt;</code></a></li>
+<li><a href="#org83c1ccd"><code>&lt;src/style.css&gt;</code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+\(\DeclareMathOperator{\modulo}{modulo}\)
+
+<div id="outline-container-orgfffbece" class="outline-2">
+<h2 id="orgfffbece"><span class="section-number-2">1</span> Introduction</h2>
+<div class="outline-text-2" id="text-1">
+<p>
+This document describes my first attempt at implementing the classic zero-player game <i>Conway's Game of Life</i> in Javascript using the React JS library.
+</p>
+
+<p>
+The Game of Life (GOL for short) consists of a two-dimensional grid of <i>cells</i> representing living things. Each cell can be either alive or dead and each turn some cells die, some born and others stay the same. The game requires an initial condition as input, that is: which cells are alive and which are dead; from there, a particular set of rules are applied iteratively to each cell and the configuration evolves over time, rendering beautiful apparent randomness and chaos.
+</p>
+
+<p>
+The GOL rules for each cell involve counting the number of living cells in the <i>neighborhood</i> of a particular cell. In the following picture the neighborhood of the blue cell consists of the cells painted in red.
+</p>
+
+
+<div id="org3fd0ca9" class="figure">
+<p><img src="./img/neighbors.png" alt="neighbors.png" width="200px" />
+</p>
+</div>
+
+<p>
+The transitions for every cell in the grid from one step of the game to the next are as follows:
+</p>
+<ul class="org-ul">
+<li>Any live cell with fewer than two live neighbours dies;</li>
+<li>Any live cell with two or three live neighbours lives on to the next generation;</li>
+<li>Any live cell with more than three live neighbours dies;</li>
+<li>Any dead cell with exactly three live neighbours becomes a live cell.</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org547a1bb" class="outline-2">
+<h2 id="org547a1bb"><span class="section-number-2">2</span> The grid abstraction</h2>
+<div class="outline-text-2" id="text-2">
+<p>
+The two-dimensional grid in GOL is infinite by definition, but this implementation in particular will be a finite grid with connected frontiers. The implementation provides means to:
+</p>
+<ol class="org-ol">
+<li>Create a new grid with values assigned by location.</li>
+<li>Obtain the number of rows and columns of a grid.</li>
+<li>Obtain the value of a particular location of a grid.</li>
+<li>Assign a value to a particular location of a grid.</li>
+</ol>
+</div>
+
+<div id="outline-container-org342f98b" class="outline-3">
+<h3 id="org342f98b"><span class="section-number-3">2.1</span> Creating a grid</h3>
+<div class="outline-text-3" id="text-2-1">
+<p>
+The function <code>make</code> handles the creation of a new grid. Grids are implemented as arrays of rows, where each row is also an array of values.
+</p>
+
+<p>
+The arguments of <code>make</code> are the number of rows and columns, and a function that takes two arguments (the position in the grid) and returns a value.
+</p>
+</div>
+
+<div id="outline-container-org85dca03" class="outline-4">
+<h4 id="org85dca03"><code>&lt;src/grid.js&gt;</code></h4>
+<div class="outline-text-4" id="text-org85dca03">
+<div class="org-src-container">
+<pre class="src src-js"><span style="color: #859900; font-weight: bold;">function</span> <span style="color: #268bd2;">make</span><span style="color: #2aa198;">(</span><span style="color: #268bd2;">nrows</span>, <span style="color: #268bd2;">ncols</span>, <span style="color: #268bd2;">makeValue</span><span style="color: #2aa198;">)</span> <span style="color: #2aa198;">{</span>
+  <span style="color: #859900; font-weight: bold;">let</span> <span style="color: #268bd2;">g</span> = Array<span style="color: #b58900;">(</span>nrows<span style="color: #b58900;">)</span>;
+  <span style="color: #859900; font-weight: bold;">for</span> <span style="color: #b58900;">(</span><span style="color: #859900; font-weight: bold;">let</span> <span style="color: #268bd2;">i</span> = 0; i &lt; nrows; i++<span style="color: #b58900;">)</span> <span style="color: #b58900;">{</span>
+    g<span style="color: #268bd2;">[</span>i<span style="color: #268bd2;">]</span> = Array<span style="color: #268bd2;">(</span>ncols<span style="color: #268bd2;">)</span>;
+    <span style="color: #859900; font-weight: bold;">for</span> <span style="color: #268bd2;">(</span><span style="color: #859900; font-weight: bold;">let</span> <span style="color: #268bd2;">j</span> = 0; j &lt; ncols; j++<span style="color: #268bd2;">)</span> <span style="color: #268bd2;">{</span>
+      g<span style="color: #6c71c4;">[</span>i<span style="color: #6c71c4;">][</span>j<span style="color: #6c71c4;">]</span> = makeValue<span style="color: #6c71c4;">(</span>i, j<span style="color: #6c71c4;">)</span>;
+    <span style="color: #268bd2;">}</span>
+  <span style="color: #b58900;">}</span>
+  <span style="color: #859900; font-weight: bold;">return</span> g;
+<span style="color: #2aa198;">}</span>
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org49d390f" class="outline-3">
+<h3 id="org49d390f"><span class="section-number-3">2.2</span> Obtaining the rows and columns of a row</h3>
+<div class="outline-text-3" id="text-2-2">
+<p>
+The <code>countRows</code> and <code>countCols</code> functions compute the number of rows and columns respectively for a given grid.
+</p>
+
+<p>
+Given that the grid is represented as an Array of rows we can obtain it's length with the <code>length</code> property. Easy peasy lemon squeezy:
+</p>
+</div>
+
+<div id="outline-container-org5ae40da" class="outline-4">
+<h4 id="org5ae40da"><code>&lt;src/grid.js&gt;</code></h4>
+<div class="outline-text-4" id="text-org5ae40da">
+<div class="org-src-container">
+<pre class="src src-js"><span style="color: #859900; font-weight: bold;">function</span> <span style="color: #268bd2;">countRows</span><span style="color: #2aa198;">(</span><span style="color: #268bd2;">grid</span><span style="color: #2aa198;">)</span> <span style="color: #2aa198;">{</span>
+  <span style="color: #859900; font-weight: bold;">return</span> grid.length;
+<span style="color: #2aa198;">}</span>
+</pre>
+</div>
+
+<p>
+The number of columns is almost as easy, we just need to obtain the length of any of it's rows:
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgf2d66bd" class="outline-4">
+<h4 id="orgf2d66bd"><code>&lt;src/grid.js&gt;</code></h4>
+<div class="outline-text-4" id="text-orgf2d66bd">
+<div class="org-src-container">
+<pre class="src src-js"><span style="color: #859900; font-weight: bold;">function</span> <span style="color: #268bd2;">countCols</span><span style="color: #2aa198;">(</span><span style="color: #268bd2;">grid</span><span style="color: #2aa198;">)</span> <span style="color: #2aa198;">{</span>
+  <span style="color: #859900; font-weight: bold;">return</span> grid<span style="color: #b58900;">[</span>0<span style="color: #b58900;">]</span>.length;
+<span style="color: #2aa198;">}</span>
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orge93308d" class="outline-3">
+<h3 id="orge93308d"><span class="section-number-3">2.3</span> Get a particular value of a grid</h3>
+<div class="outline-text-3" id="text-2-3">
+<p>
+Locations in a grid are determined by a row and column index, however given that we want to have a grid with connected frontiers we must use some modular arithmetic to handle locations outside the limits of the array.
+</p>
+
+<p>
+Javascript's <code>%</code> operator computes the <i>remainder</i>, to compute \(\modulo(a,b)\) we need to take into account the following:
+</p>
+<ul class="org-ul">
+<li>\(a \geq 0 \implies \modulo(a,b) = a \% b\)</li>
+<li>\(a < 0 \implies a \% b = r \in (-b,0],\ (b+r)\%b = \modulo(a,b) = (b + (a \% b)) \% b\)</li>
+<li>\(a \geq 0 \implies (b + (a \% b)) \% b = (b + \modulo(a,b)) \% b = \modulo(a,b)\)</li>
+</ul>
+
+<p>
+The <code>modulo</code> implementation is defined as:
+</p>
+</div>
+
+<div id="outline-container-org24cfd72" class="outline-4">
+<h4 id="org24cfd72"><code>&lt;src/grid.js&gt;</code></h4>
+<div class="outline-text-4" id="text-org24cfd72">
+<div class="org-src-container">
+<pre class="src src-js"><span style="color: #859900; font-weight: bold;">function</span> <span style="color: #268bd2;">modulo</span><span style="color: #2aa198;">(</span><span style="color: #268bd2;">a</span>, <span style="color: #268bd2;">b</span><span style="color: #2aa198;">)</span> <span style="color: #2aa198;">{</span>
+  <span style="color: #859900; font-weight: bold;">return</span> <span style="color: #b58900;">(</span><span style="color: #268bd2;">(</span>a % b<span style="color: #268bd2;">)</span> + b<span style="color: #b58900;">)</span> % b;
+<span style="color: #2aa198;">}</span>
+</pre>
+</div>
+
+
+<p>
+Now we can simply define the function <code>ref</code> in terms of array indexing and <code>modulo</code> to obtain the value of a given location in a grid.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org54c5ab3" class="outline-4">
+<h4 id="org54c5ab3"><code>&lt;src/grid.js&gt;</code></h4>
+<div class="outline-text-4" id="text-org54c5ab3">
+<div class="org-src-container">
+<pre class="src src-js"><span style="color: #859900; font-weight: bold;">function</span> <span style="color: #268bd2;">ref</span><span style="color: #2aa198;">(</span><span style="color: #268bd2;">grid</span>, <span style="color: #268bd2;">i</span>, <span style="color: #268bd2;">j</span><span style="color: #2aa198;">)</span> <span style="color: #2aa198;">{</span>
+  <span style="color: #859900; font-weight: bold;">return</span> grid<span style="color: #b58900;">[</span>modulo<span style="color: #268bd2;">(</span>i, countRows<span style="color: #6c71c4;">(</span>grid<span style="color: #6c71c4;">)</span><span style="color: #268bd2;">)</span><span style="color: #b58900;">][</span>modulo<span style="color: #268bd2;">(</span>j, countCols<span style="color: #6c71c4;">(</span>grid<span style="color: #6c71c4;">)</span><span style="color: #268bd2;">)</span><span style="color: #b58900;">]</span>;
+<span style="color: #2aa198;">}</span>
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orga4bafa3" class="outline-3">
+<h3 id="orga4bafa3"><span class="section-number-3">2.4</span> Changing a grid value</h3>
+<div class="outline-text-3" id="text-2-4">
+<p>
+Simmilar to the <code>ref</code> function, we implement <code>set</code> to accept an aditional value argument to be placed in the specified location of a grid.
+</p>
+</div>
+
+<div id="outline-container-orgd5f1352" class="outline-4">
+<h4 id="orgd5f1352"><code>&lt;src/grid.js&gt;</code></h4>
+<div class="outline-text-4" id="text-orgd5f1352">
+<div class="org-src-container">
+<pre class="src src-js"><span style="color: #859900; font-weight: bold;">function</span> <span style="color: #268bd2;">set</span><span style="color: #2aa198;">(</span><span style="color: #268bd2;">grid</span>, <span style="color: #268bd2;">i</span>, <span style="color: #268bd2;">j</span>, <span style="color: #268bd2;">value</span><span style="color: #2aa198;">)</span> <span style="color: #2aa198;">{</span>
+  grid<span style="color: #b58900;">[</span>modulo<span style="color: #268bd2;">(</span>i, countRows<span style="color: #6c71c4;">(</span>grid<span style="color: #6c71c4;">)</span><span style="color: #268bd2;">)</span><span style="color: #b58900;">][</span>modulo<span style="color: #268bd2;">(</span>j, countCols<span style="color: #6c71c4;">(</span>grid<span style="color: #6c71c4;">)</span><span style="color: #268bd2;">)</span><span style="color: #b58900;">]</span> = value;
+<span style="color: #2aa198;">}</span>
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgd188c83" class="outline-3">
+<h3 id="orgd188c83"><span class="section-number-3">2.5</span> Interface</h3>
+<div class="outline-text-3" id="text-2-5">
+<p>
+The file <code>src/grid.js</code> contains the code from this section, the object <code>grid</code> is the interface used in other files:
+</p>
+</div>
+
+<div id="outline-container-org8bbd8d1" class="outline-4">
+<h4 id="org8bbd8d1"><code>&lt;src/grid.js&gt;</code></h4>
+<div class="outline-text-4" id="text-org8bbd8d1">
+<div class="org-src-container">
+<pre class="src src-js"><span style="color: #859900; font-weight: bold;">var</span> <span style="color: #268bd2;">grid</span> = <span style="color: #2aa198;">{}</span>;
+grid.make = make;
+grid.countRows = countRows;
+grid.countCols = countCols;
+grid.ref = ref;
+grid.set = set;
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgf855fd3" class="outline-2">
+<h2 id="orgf855fd3"><span class="section-number-2">3</span> Life rules</h2>
+<div class="outline-text-2" id="text-3">
+<p>
+Now we implement a layer of abstraction on top of grids that implements the GOL rules. This task concearns the following problems:
+</p>
+<ul class="org-ul">
+<li>How to encode GOL concepts with grids.</li>
+<li>How to handle GOL transitions.</li>
+</ul>
+
+<p>
+The following sections tackle these points.
+</p>
+</div>
+
+<div id="outline-container-org9026ad5" class="outline-3">
+<h3 id="org9026ad5"><span class="section-number-3">3.1</span> Mapping life to grids</h3>
+<div class="outline-text-3" id="text-3-1">
+<p>
+A GOL grid is going to be a grid whose locations hold cells, represented by the values <code>alive</code> or <code>dead</code>. The rules of GOL take into consideration the number of live neighbors of a particular cell, therefore it's convenient to represent the cell's values as <code>1</code> and <code>0</code>, so we can add the alive neighbors more easily.
+</p>
+</div>
+
+<div id="outline-container-orgd650dd7" class="outline-4">
+<h4 id="orgd650dd7"><code>&lt;src/life.js&gt;</code></h4>
+<div class="outline-text-4" id="text-orgd650dd7">
+<div class="org-src-container">
+<pre class="src src-js"><span style="color: #859900; font-weight: bold;">const</span> <span style="color: #268bd2;">alive</span> = 1;
+<span style="color: #859900; font-weight: bold;">const</span> <span style="color: #268bd2;">dead</span> = 0;
+</pre>
+</div>
+
+<p>
+To provide a constructor, getter and setter for GOL grids, we leverage the <code>grid.make</code>, <code>grid.ref</code> and <code>grid.set</code> implementations. The only thing we must be careful is to use the cell values <code>alive</code> or <code>dead</code> when using the following functions:
+</p>
+</div>
+</div>
+
+<div id="outline-container-org0401008" class="outline-4">
+<h4 id="org0401008"><code>&lt;src/life.js&gt;</code></h4>
+<div class="outline-text-4" id="text-org0401008">
+<div class="org-src-container">
+<pre class="src src-js"><span style="color: #859900; font-weight: bold;">function</span> <span style="color: #268bd2;">make</span><span style="color: #2aa198;">(</span><span style="color: #268bd2;">nrows</span>, <span style="color: #268bd2;">ncols</span>, <span style="color: #268bd2;">makeCell</span><span style="color: #2aa198;">)</span> <span style="color: #2aa198;">{</span>
+  <span style="color: #859900; font-weight: bold;">return</span> grid.make<span style="color: #b58900;">(</span>nrows, ncols, makeCell<span style="color: #b58900;">)</span>;
+<span style="color: #2aa198;">}</span>
+
+<span style="color: #859900; font-weight: bold;">var</span> <span style="color: #268bd2;">countRows</span> = grid.countRows;
+<span style="color: #859900; font-weight: bold;">var</span> <span style="color: #268bd2;">countCols</span> = grid.countCols;
+
+<span style="color: #859900; font-weight: bold;">function</span> <span style="color: #268bd2;">ref</span><span style="color: #2aa198;">(</span><span style="color: #268bd2;">life</span>, <span style="color: #268bd2;">i</span>, <span style="color: #268bd2;">j</span><span style="color: #2aa198;">)</span> <span style="color: #2aa198;">{</span>
+  <span style="color: #859900; font-weight: bold;">return</span> grid.ref<span style="color: #b58900;">(</span>life, i, j<span style="color: #b58900;">)</span>;
+<span style="color: #2aa198;">}</span>
+
+<span style="color: #859900; font-weight: bold;">function</span> <span style="color: #268bd2;">set</span><span style="color: #2aa198;">(</span><span style="color: #268bd2;">life</span>, <span style="color: #268bd2;">i</span>, <span style="color: #268bd2;">j</span>, <span style="color: #268bd2;">cell</span><span style="color: #2aa198;">)</span> <span style="color: #2aa198;">{</span>
+  grid.set<span style="color: #b58900;">(</span>life, i, j, cell<span style="color: #b58900;">)</span>;
+<span style="color: #2aa198;">}</span>
+</pre>
+</div>
+
+<p>
+One aspect of GOL grids is that each cell has an associated <i>degree</i> of some sort (the number of <code>alive</code> neighbors). The function <code>neighbors</code> computes this value for a given cell location:
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgc328d0c" class="outline-4">
+<h4 id="orgc328d0c"><code>&lt;src/life.js&gt;</code></h4>
+<div class="outline-text-4" id="text-orgc328d0c">
+<div class="org-src-container">
+<pre class="src src-js"><span style="color: #859900; font-weight: bold;">function</span> <span style="color: #268bd2;">neighbors</span><span style="color: #2aa198;">(</span><span style="color: #268bd2;">life</span>, <span style="color: #268bd2;">i</span>, <span style="color: #268bd2;">j</span><span style="color: #2aa198;">)</span> <span style="color: #2aa198;">{</span>
+  <span style="color: #859900; font-weight: bold;">return</span> ref<span style="color: #b58900;">(</span>life, i-1, j-1<span style="color: #b58900;">)</span> + ref<span style="color: #b58900;">(</span>life, i  , j-1<span style="color: #b58900;">)</span> + ref<span style="color: #b58900;">(</span>life, i+1, j-1<span style="color: #b58900;">)</span> +
+         ref<span style="color: #b58900;">(</span>life, i-1, j  <span style="color: #b58900;">)</span> +          0          + ref<span style="color: #b58900;">(</span>life, i+1, j  <span style="color: #b58900;">)</span> +
+         ref<span style="color: #b58900;">(</span>life, i-1, j+1<span style="color: #b58900;">)</span> + ref<span style="color: #b58900;">(</span>life, i  , j+1<span style="color: #b58900;">)</span> + ref<span style="color: #b58900;">(</span>life, i+1, j+1<span style="color: #b58900;">)</span>;
+<span style="color: #2aa198;">}</span>
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org8497fc0" class="outline-3">
+<h3 id="org8497fc0"><span class="section-number-3">3.2</span> Evolving life</h3>
+<div class="outline-text-3" id="text-3-2">
+<p>
+Now we proceed to implement a one-step evolution for a GOL grid. The first step is determining a particular cell <i>future</i> with respect to it's value and neighborhood, the following table describes the transition for every possible combination of those two factors.
+</p>
+
+<table id="orgfbb3941" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides" class="center">
+
+
+<colgroup>
+<col  class="org-center" />
+
+<col  class="org-center" />
+
+<col  class="org-center" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-center">State \(n\)</th>
+<th scope="col" class="org-center">Neighbors</th>
+<th scope="col" class="org-center">State \(n+1\)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-center"><i>dead</i></td>
+<td class="org-center">0</td>
+<td class="org-center"><i>dead</i></td>
+</tr>
+
+<tr>
+<td class="org-center"><i>dead</i></td>
+<td class="org-center">1</td>
+<td class="org-center"><i>dead</i></td>
+</tr>
+
+<tr>
+<td class="org-center"><i>dead</i></td>
+<td class="org-center">2</td>
+<td class="org-center"><i>dead</i></td>
+</tr>
+
+<tr>
+<td class="org-center"><i>dead</i></td>
+<td class="org-center">3</td>
+<td class="org-center"><i><b>alive</b></i></td>
+</tr>
+
+<tr>
+<td class="org-center"><i>dead</i></td>
+<td class="org-center">4</td>
+<td class="org-center"><i>dead</i></td>
+</tr>
+
+<tr>
+<td class="org-center"><i>dead</i></td>
+<td class="org-center">5</td>
+<td class="org-center"><i>dead</i></td>
+</tr>
+
+<tr>
+<td class="org-center"><i>dead</i></td>
+<td class="org-center">6</td>
+<td class="org-center"><i>dead</i></td>
+</tr>
+
+<tr>
+<td class="org-center"><i>dead</i></td>
+<td class="org-center">7</td>
+<td class="org-center"><i>dead</i></td>
+</tr>
+
+<tr>
+<td class="org-center"><i>dead</i></td>
+<td class="org-center">8</td>
+<td class="org-center"><i>dead</i></td>
+</tr>
+
+<tr>
+<td class="org-center"><i>alive</i></td>
+<td class="org-center">0</td>
+<td class="org-center"><i>dead</i></td>
+</tr>
+
+<tr>
+<td class="org-center"><i>alive</i></td>
+<td class="org-center">1</td>
+<td class="org-center"><i>dead</i></td>
+</tr>
+
+<tr>
+<td class="org-center"><i>alive</i></td>
+<td class="org-center">2</td>
+<td class="org-center"><i><b>alive</b></i></td>
+</tr>
+
+<tr>
+<td class="org-center"><i>alive</i></td>
+<td class="org-center">3</td>
+<td class="org-center"><i><b>alive</b></i></td>
+</tr>
+
+<tr>
+<td class="org-center"><i>alive</i></td>
+<td class="org-center">4</td>
+<td class="org-center"><i>dead</i></td>
+</tr>
+
+<tr>
+<td class="org-center"><i>alive</i></td>
+<td class="org-center">5</td>
+<td class="org-center"><i>dead</i></td>
+</tr>
+
+<tr>
+<td class="org-center"><i>alive</i></td>
+<td class="org-center">6</td>
+<td class="org-center"><i>dead</i></td>
+</tr>
+
+<tr>
+<td class="org-center"><i>alive</i></td>
+<td class="org-center">7</td>
+<td class="org-center"><i>dead</i></td>
+</tr>
+
+<tr>
+<td class="org-center"><i>alive</i></td>
+<td class="org-center">8</td>
+<td class="org-center"><i>dead</i></td>
+</tr>
+</tbody>
+</table>
+
+
+<p>
+In a cell transition step, most of combinations in the table result in a <code>dead</code> value. To implement the procedure <code>lifeCellFuture</code> we must handle the bold cases:
+</p>
+<ul class="org-ul">
+<li>When a cell has 3 neighbors it always results in <code>alive</code>.</li>
+<li>When a cell has 2 neighbors then the previous value prevails.</li>
+<li>Otherwise, the cell remains <code>dead</code> or dies.</li>
+</ul>
+</div>
+<div id="outline-container-org80344d9" class="outline-4">
+<h4 id="org80344d9"><code>&lt;src/life.js&gt;</code></h4>
+<div class="outline-text-4" id="text-org80344d9">
+<div class="org-src-container">
+<pre class="src src-js"><span style="color: #859900; font-weight: bold;">function</span> <span style="color: #268bd2;">cellFuture</span><span style="color: #2aa198;">(</span><span style="color: #268bd2;">life</span>, <span style="color: #268bd2;">i</span>, <span style="color: #268bd2;">j</span><span style="color: #2aa198;">)</span> <span style="color: #2aa198;">{</span>
+  <span style="color: #859900; font-weight: bold;">switch</span> <span style="color: #b58900;">(</span>neighbors<span style="color: #268bd2;">(</span>life, i, j<span style="color: #268bd2;">)</span><span style="color: #b58900;">)</span> <span style="color: #b58900;">{</span>
+  <span style="color: #859900; font-weight: bold;">case</span> 3:
+    <span style="color: #859900; font-weight: bold;">return</span> alive;
+  <span style="color: #859900; font-weight: bold;">case</span> 2:
+    <span style="color: #859900; font-weight: bold;">return</span> ref<span style="color: #268bd2;">(</span>life, i, j<span style="color: #268bd2;">)</span>;
+  <span style="color: #859900; font-weight: bold;">default</span>:
+    <span style="color: #859900; font-weight: bold;">return</span> dead;
+  <span style="color: #b58900;">}</span>
+<span style="color: #2aa198;">}</span>
+</pre>
+</div>
+
+<p>
+Finally, we need to evolve the whole GOL grid and return the next version, with the abstractions previously defined this is simple:
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgd21bb82" class="outline-4">
+<h4 id="orgd21bb82"><code>&lt;src/life.js&gt;</code></h4>
+<div class="outline-text-4" id="text-orgd21bb82">
+<div class="org-src-container">
+<pre class="src src-js"><span style="color: #859900; font-weight: bold;">function</span> <span style="color: #268bd2;">evolve</span><span style="color: #2aa198;">(</span><span style="color: #268bd2;">life</span><span style="color: #2aa198;">)</span> <span style="color: #2aa198;">{</span>
+  <span style="color: #859900; font-weight: bold;">return</span> make<span style="color: #b58900;">(</span>countRows<span style="color: #268bd2;">(</span>life<span style="color: #268bd2;">)</span>, countCols<span style="color: #268bd2;">(</span>life<span style="color: #268bd2;">)</span>,
+              <span style="color: #268bd2;">(</span>i, j<span style="color: #268bd2;">)</span> =&gt; cellFuture<span style="color: #268bd2;">(</span>life, i, j<span style="color: #268bd2;">)</span><span style="color: #b58900;">)</span>;
+<span style="color: #2aa198;">}</span>
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgec6db87" class="outline-3">
+<h3 id="orgec6db87"><span class="section-number-3">3.3</span> Interface</h3>
+<div class="outline-text-3" id="text-3-3">
+<p>
+The file <code>src/life.js</code> contains the code from this section, the object <code>life</code> is the interface used in other files;
+</p>
+</div>
+
+<div id="outline-container-org7c98655" class="outline-4">
+<h4 id="org7c98655"><code>&lt;src/life.js&gt;</code></h4>
+<div class="outline-text-4" id="text-org7c98655">
+<div class="org-src-container">
+<pre class="src src-js"><span style="color: #859900; font-weight: bold;">var</span> <span style="color: #268bd2;">life</span> = <span style="color: #2aa198;">{}</span>;
+life.alive = alive;
+life.dead = dead;
+life.make = make;
+life.countRows = countRows;
+life.countCols = countCols;
+life.ref = ref;
+life.set = set;
+life.evolve = evolve;
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org5fd5c01" class="outline-2">
+<h2 id="org5fd5c01"><span class="section-number-2">4</span> React JS Components</h2>
+<div class="outline-text-2" id="text-4">
+<p>
+From what I understand, React JS components are the algorithmic representation of some substructure in an HTML document.
+</p>
+
+<p>
+To implement the interface for GOL I imagined how the HTML will look. Obviously there must be some kind of grid, and some controls to play/pause the game, kill every cell and generate a random initial condition. Also, the cells in the grid must be clickable to toggle their value.
+</p>
+
+<p>
+The code in this section uses the <code>life.js</code> source file.
+</p>
+
+<p>
+To accomplish the stated vision, we create the <code>ConwaysGame</code> <i>component</i> that will have as state a GOL grid, and a flag that determines wether the game is playing or is paused. We also need to handle the click of a cell, and the clicks of every button. The general structure of <code>ConwaysGame</code> is:
+</p>
+</div>
+
+<div id="outline-container-org182fdd3" class="outline-4">
+<h4 id="org182fdd3"><code>&lt;src/reactlife.jsx&gt;</code></h4>
+<div class="outline-text-4" id="text-org182fdd3">
+<div class="org-src-container">
+<pre class="src src-js"><span style="color: #859900; font-weight: bold;">class</span> ConwaysGame <span style="color: #859900; font-weight: bold;">extends</span> React.Component <span style="color: #2aa198;">{</span>
+  &lt;&lt;gol-constructor&gt;&gt;
+  &lt;&lt;gol-timer-setup&gt;&gt;
+  &lt;&lt;gol-simulation&gt;&gt;
+  &lt;&lt;gol-grid-click&gt;&gt;
+  &lt;&lt;gol-play-pause-click&gt;&gt;
+  &lt;&lt;gol-clear-click&gt;&gt;
+  &lt;&lt;gol-randomize-click&gt;&gt;
+  render<span style="color: #b58900;">()</span> <span style="color: #b58900;">{</span> 
+    <span style="color: #859900; font-weight: bold;">return</span> <span style="color: #268bd2;">(</span>
+        &lt;&lt;gol-view&gt;&gt;
+    <span style="color: #268bd2;">)</span>;
+  <span style="color: #b58900;">}</span>
+<span style="color: #2aa198;">}</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org936cdb0" class="outline-3">
+<h3 id="org936cdb0"><span class="section-number-3">4.1</span> Evolving life periodically</h3>
+<div class="outline-text-3" id="text-4-1">
+<p>
+The first thing we must set in place is the ability to update the grid as times goes on. This is done by setting a timer with the <code>setInterval</code> function, and with each tick of the timer we evolve the state of GOL. The <code>componentDidMount</code> function from the React component lifecycle, get's called after the rendering of the component, here we set an interval with ticks every 10 milliseconds. The <code>componentWillUnmount</code> function get's called before the component is removed from the DOM, here we clear the interval which will stop calling the <code>evolve</code> function.
+</p>
+</div>
+
+<div id="outline-container-orgc02fdaa" class="outline-4">
+<h4 id="orgc02fdaa"><code>&lt;&lt;gol-timer-setup&gt;&gt;</code></h4>
+<div class="outline-text-4" id="text-orgc02fdaa">
+<div class="org-src-container">
+<pre class="src src-js">componentDidMount<span style="color: #2aa198;">()</span> <span style="color: #2aa198;">{</span>
+  <span style="color: #268bd2; font-weight: bold;">this</span>.gameId = setInterval<span style="color: #b58900;">(</span><span style="color: #268bd2;">()</span> =&gt; <span style="color: #268bd2; font-weight: bold;">this</span>.evolve<span style="color: #268bd2;">()</span>, 10<span style="color: #b58900;">)</span>;
+<span style="color: #2aa198;">}</span>
+
+componentWillUnmount<span style="color: #2aa198;">()</span> <span style="color: #2aa198;">{</span>
+  clearInterval<span style="color: #b58900;">(</span><span style="color: #268bd2; font-weight: bold;">this</span>.gameId<span style="color: #b58900;">)</span>;
+<span style="color: #2aa198;">}</span>
+</pre>
+</div>
+
+<p>
+The definition of the <code>evolve</code> function is pretty straight-forward. When the simulation must be playing (that is, when <code>state.playing</code> is <code>true</code>) we must set a new state with <code>state.grid</code> updated to a new GOL configuration given by <code>life.evolve</code>:
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgd3d83d6" class="outline-4">
+<h4 id="orgd3d83d6"><code>&lt;&lt;gol-simulation&gt;&gt;</code></h4>
+<div class="outline-text-4" id="text-orgd3d83d6">
+<div class="org-src-container">
+<pre class="src src-js">evolve<span style="color: #2aa198;">()</span> <span style="color: #2aa198;">{</span>
+  <span style="color: #859900; font-weight: bold;">if</span> <span style="color: #b58900;">(</span><span style="color: #268bd2; font-weight: bold;">this</span>.state.playing<span style="color: #b58900;">)</span> <span style="color: #b58900;">{</span>
+    <span style="color: #268bd2; font-weight: bold;">this</span>.setState<span style="color: #268bd2;">(</span><span style="color: #6c71c4;">(</span>previous, props<span style="color: #6c71c4;">)</span> =&gt; <span style="color: #6c71c4;">(</span><span style="color: #859900;">{</span>
+      grid: life.evolve<span style="color: #b58900;">(</span>previous.grid<span style="color: #b58900;">)</span>,
+      playing: previous.playing
+    <span style="color: #859900;">}</span><span style="color: #6c71c4;">)</span><span style="color: #268bd2;">)</span>;
+  <span style="color: #b58900;">}</span>
+<span style="color: #2aa198;">}</span>
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgda4835b" class="outline-3">
+<h3 id="orgda4835b"><span class="section-number-3">4.2</span> Controlling the grid</h3>
+<div class="outline-text-3" id="text-4-2">
+<p>
+There are four different ways to controll the grid:
+</p>
+<ul class="org-ul">
+<li>Clicking on a particular location of the grid.</li>
+<li>Clicking the play/pause button.</li>
+<li>Clicking the clear button.</li>
+<li>Clicking the randomize button.</li>
+</ul>
+
+<p>
+The <code>handleGridClick</code> function will take the clicked location as arguments and change the internal state to a toggled version of that location, that is, if the cell was dead now it will be alive and vice versa.
+</p>
+</div>
+
+<div id="outline-container-orgba708e7" class="outline-4">
+<h4 id="orgba708e7"><code>&lt;&lt;gol-grid-click&gt;&gt;</code></h4>
+<div class="outline-text-4" id="text-orgba708e7">
+<div class="org-src-container">
+<pre class="src src-js">handleGridClick<span style="color: #2aa198;">(</span>i, j<span style="color: #2aa198;">)</span> <span style="color: #2aa198;">{</span>
+  <span style="color: #859900; font-weight: bold;">const</span> <span style="color: #268bd2;">grid</span> = <span style="color: #268bd2; font-weight: bold;">this</span>.state.grid;
+  <span style="color: #859900; font-weight: bold;">const</span> <span style="color: #268bd2;">cell</span> = life.ref<span style="color: #b58900;">(</span>grid, i, j<span style="color: #b58900;">)</span>;
+  <span style="color: #859900; font-weight: bold;">const</span> <span style="color: #268bd2;">modcell</span> = <span style="color: #b58900;">(</span>cell == life.alive<span style="color: #b58900;">)</span> ? life.dead : life.alive;
+  <span style="color: #859900; font-weight: bold;">let</span> <span style="color: #268bd2;">modgrid</span> = life.make<span style="color: #b58900;">(</span>life.countRows<span style="color: #268bd2;">(</span>grid<span style="color: #268bd2;">)</span>, life.countCols<span style="color: #268bd2;">(</span>grid<span style="color: #268bd2;">)</span>,
+                          <span style="color: #268bd2;">(</span>k, p<span style="color: #268bd2;">)</span> =&gt; <span style="color: #268bd2;">(</span><span style="color: #6c71c4;">(</span>i == k<span style="color: #6c71c4;">)</span> &amp;&amp; <span style="color: #6c71c4;">(</span>j == p<span style="color: #6c71c4;">)</span> ? modcell : life.ref<span style="color: #6c71c4;">(</span>grid, k, p<span style="color: #6c71c4;">)</span><span style="color: #268bd2;">)</span><span style="color: #b58900;">)</span>;
+  <span style="color: #268bd2; font-weight: bold;">this</span>.setState<span style="color: #b58900;">(</span><span style="color: #268bd2;">(</span>previous, props<span style="color: #268bd2;">)</span> =&gt; <span style="color: #268bd2;">(</span><span style="color: #6c71c4;">{</span>
+    grid: modgrid,
+    playing: previous.playing
+  <span style="color: #6c71c4;">}</span><span style="color: #268bd2;">)</span><span style="color: #b58900;">)</span>;
+<span style="color: #2aa198;">}</span>
+</pre>
+</div>
+
+<p>
+The <code>handlePlayPause</code> function will be a thunk that toggles the value of <code>state.playing</code>:
+</p>
+</div>
+</div>
+
+<div id="outline-container-orge4fcfc9" class="outline-4">
+<h4 id="orge4fcfc9"><code>&lt;&lt;gol-play-pause-click&gt;&gt;</code></h4>
+<div class="outline-text-4" id="text-orge4fcfc9">
+<div class="org-src-container">
+<pre class="src src-js">handlePlayPauseClick<span style="color: #2aa198;">()</span> <span style="color: #2aa198;">{</span>
+  <span style="color: #268bd2; font-weight: bold;">this</span>.setState<span style="color: #b58900;">(</span><span style="color: #268bd2;">{</span>
+    grid: <span style="color: #268bd2; font-weight: bold;">this</span>.state.grid,
+    playing: !<span style="color: #268bd2; font-weight: bold;">this</span>.state.playing
+  <span style="color: #268bd2;">}</span><span style="color: #b58900;">)</span>;
+<span style="color: #2aa198;">}</span>
+</pre>
+</div>
+
+<p>
+The <code>handleClearClick</code> function will be a thunk that resets <code>state.grid</code> to just dead cells:
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgafed4d0" class="outline-4">
+<h4 id="orgafed4d0"><code>&lt;&lt;gol-clear-click&gt;&gt;</code></h4>
+<div class="outline-text-4" id="text-orgafed4d0">
+<div class="org-src-container">
+<pre class="src src-js">handleClearClick<span style="color: #2aa198;">()</span> <span style="color: #2aa198;">{</span>
+  <span style="color: #859900; font-weight: bold;">const</span> <span style="color: #268bd2;">grid</span> = <span style="color: #268bd2; font-weight: bold;">this</span>.state.grid;
+  <span style="color: #859900; font-weight: bold;">let</span> <span style="color: #268bd2;">modgrid</span> = life.make<span style="color: #b58900;">(</span>life.countRows<span style="color: #268bd2;">(</span>grid<span style="color: #268bd2;">)</span>, life.countCols<span style="color: #268bd2;">(</span>grid<span style="color: #268bd2;">)</span>, <span style="color: #268bd2;">()</span> =&gt; life.dead<span style="color: #b58900;">)</span>;
+  <span style="color: #268bd2; font-weight: bold;">this</span>.setState<span style="color: #b58900;">(</span><span style="color: #268bd2;">{</span>
+    grid: modgrid,
+    playing: <span style="color: #268bd2; font-weight: bold;">this</span>.state.playing
+  <span style="color: #268bd2;">}</span><span style="color: #b58900;">)</span>;
+<span style="color: #2aa198;">}</span>
+</pre>
+</div>
+
+<p>
+Finally, the <code>handleRandomizeClick</code> will be a thunk that resets <code>state.grid</code> to cells either dead or alive with a random distribution:
+</p>
+</div>
+</div>
+
+<div id="outline-container-org0bc1e54" class="outline-4">
+<h4 id="org0bc1e54"><code>&lt;&lt;gol-randomize-click&gt;&gt;</code></h4>
+<div class="outline-text-4" id="text-org0bc1e54">
+<div class="org-src-container">
+<pre class="src src-js">handleRandomizeClick<span style="color: #2aa198;">()</span> <span style="color: #2aa198;">{</span>
+  <span style="color: #859900; font-weight: bold;">const</span> <span style="color: #268bd2;">grid</span> = <span style="color: #268bd2; font-weight: bold;">this</span>.state.grid;
+  <span style="color: #859900; font-weight: bold;">let</span> <span style="color: #268bd2;">randomgrid</span> = life.make<span style="color: #b58900;">(</span>life.countRows<span style="color: #268bd2;">(</span>grid<span style="color: #268bd2;">)</span>, life.countCols<span style="color: #268bd2;">(</span>grid<span style="color: #268bd2;">)</span>,
+                             <span style="color: #268bd2;">()</span> =&gt; <span style="color: #268bd2; font-weight: bold;">this</span>.randomCell<span style="color: #268bd2;">()</span><span style="color: #b58900;">)</span>;
+  <span style="color: #268bd2; font-weight: bold;">this</span>.setState<span style="color: #b58900;">(</span><span style="color: #268bd2;">{</span>
+    grid: randomgrid,
+    playing: <span style="color: #268bd2; font-weight: bold;">this</span>.state.playing
+  <span style="color: #268bd2;">}</span><span style="color: #b58900;">)</span>;
+<span style="color: #2aa198;">}</span>
+
+randomCell<span style="color: #2aa198;">()</span> <span style="color: #2aa198;">{</span>
+  <span style="color: #859900; font-weight: bold;">const</span> <span style="color: #268bd2;">outcomes</span> = <span style="color: #b58900;">[</span>life.dead, life.alive<span style="color: #b58900;">]</span>;
+  <span style="color: #859900; font-weight: bold;">return</span> outcomes<span style="color: #b58900;">[</span>Math.floor<span style="color: #268bd2;">(</span>outcomes.length * Math.random<span style="color: #6c71c4;">()</span><span style="color: #268bd2;">)</span><span style="color: #b58900;">]</span>;
+<span style="color: #2aa198;">}</span>
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org0fa6692" class="outline-3">
+<h3 id="org0fa6692"><span class="section-number-3">4.3</span> GOL initialization</h3>
+<div class="outline-text-3" id="text-4-3">
+<p>
+The <code>ConwaysGame</code> component will be instantiated as:
+</p>
+<div class="org-src-container">
+<pre class="src src-html">&lt;<span style="color: #268bd2;">ConwaysGame</span> nrows=n ncols=m /&gt;
+</pre>
+</div>
+<p>
+so that we can access the <code>nrows</code> and <code>ncols</code> properties, which determine the size of the grid.
+</p>
+
+<p>
+The constructor does the basic initialization: setting the initial state and binding the <code>this</code> value for the functions defined previously:
+</p>
+</div>
+
+<div id="outline-container-org155c3c0" class="outline-4">
+<h4 id="org155c3c0"><code>&lt;&lt;gol-constructor&gt;&gt;</code></h4>
+<div class="outline-text-4" id="text-org155c3c0">
+<div class="org-src-container">
+<pre class="src src-js">constructor<span style="color: #2aa198;">(</span>props<span style="color: #2aa198;">)</span> <span style="color: #2aa198;">{</span>
+  <span style="color: #859900; font-weight: bold;">super</span><span style="color: #b58900;">(</span>props<span style="color: #b58900;">)</span>;
+  <span style="color: #859900; font-weight: bold;">const</span> <span style="color: #268bd2;">nrows</span> = props.nrows;
+  <span style="color: #859900; font-weight: bold;">const</span> <span style="color: #268bd2;">ncols</span> = props.ncols;
+  <span style="color: #268bd2; font-weight: bold;">this</span>.state = <span style="color: #b58900;">{</span>
+    grid: life.make<span style="color: #268bd2;">(</span>nrows, ncols, <span style="color: #6c71c4;">()</span> =&gt; life.dead<span style="color: #268bd2;">)</span>,
+    playing: <span style="color: #268bd2; font-weight: bold;">false</span>
+  <span style="color: #b58900;">}</span>;
+  <span style="color: #268bd2; font-weight: bold;">this</span>.handleGridClick = <span style="color: #268bd2; font-weight: bold;">this</span>.handleGridClick.bind<span style="color: #b58900;">(</span><span style="color: #268bd2; font-weight: bold;">this</span><span style="color: #b58900;">)</span>;
+  <span style="color: #268bd2; font-weight: bold;">this</span>.handlePlayPauseClick = <span style="color: #268bd2; font-weight: bold;">this</span>.handlePlayPauseClick.bind<span style="color: #b58900;">(</span><span style="color: #268bd2; font-weight: bold;">this</span><span style="color: #b58900;">)</span>;
+  <span style="color: #268bd2; font-weight: bold;">this</span>.handleClearClick = <span style="color: #268bd2; font-weight: bold;">this</span>.handleClearClick.bind<span style="color: #b58900;">(</span><span style="color: #268bd2; font-weight: bold;">this</span><span style="color: #b58900;">)</span>;
+  <span style="color: #268bd2; font-weight: bold;">this</span>.handleRandomizeClick = <span style="color: #268bd2; font-weight: bold;">this</span>.handleRandomizeClick.bind<span style="color: #b58900;">(</span><span style="color: #268bd2; font-weight: bold;">this</span><span style="color: #b58900;">)</span>;
+  <span style="color: #268bd2; font-weight: bold;">this</span>.evolve = <span style="color: #268bd2; font-weight: bold;">this</span>.evolve.bind<span style="color: #b58900;">(</span><span style="color: #268bd2; font-weight: bold;">this</span><span style="color: #b58900;">)</span>;
+<span style="color: #2aa198;">}</span>
+</pre>
+</div>
+
+<p>
+Finally we setup the <code>render</code> function return value, which delegates the rendering of the controls and the grid to the <code>PlayPauseButton</code>, <code>ClearButton</code>, <code>RandomizeButton</code> and <code>VisualGrid</code> components, which will be simpler than <code>ConwaysGame</code> and won't hold any state.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgaf90a1e" class="outline-4">
+<h4 id="orgaf90a1e"><code>&lt;&lt;gol-view&gt;&gt;</code></h4>
+<div class="outline-text-4" id="text-orgaf90a1e">
+<div class="org-src-container">
+<pre class="src src-html">&lt;<span style="color: #268bd2;">div</span> <span style="color: #268bd2;">className</span>=<span style="color: #2aa198;">"gol-main"</span>&gt;
+  &lt;<span style="color: #268bd2;">div</span> <span style="color: #268bd2;">className</span>=<span style="color: #2aa198;">"gol-controls"</span>&gt;
+    &lt;<span style="color: #268bd2;">PlayPauseButton</span>
+      callback={this.handlePlayPauseClick}
+      status={this.state.playing} /&gt;
+    &lt;<span style="color: #268bd2;">ClearButton</span>
+      callback={this.handleClearClick} /&gt;
+    &lt;<span style="color: #268bd2;">RandomizeButton</span>
+      callback={this.handleRandomizeClick} /&gt;
+  &lt;/<span style="color: #268bd2;">div</span>&gt;
+  &lt;<span style="color: #268bd2;">VisualGrid</span>
+    callback={this.handleGridClick}
+    grid={this.state.grid} /&gt;
+&lt;/<span style="color: #268bd2;">div</span>&gt;
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgb791b4b" class="outline-3">
+<h3 id="orgb791b4b"><span class="section-number-3">4.4</span> Playing and pausing the game</h3>
+<div class="outline-text-3" id="text-4-4">
+<p>
+The <code>PlayPauseButton</code> component renders different buttons depending on the value of <code>props.status</code>:
+</p>
+</div>
+
+<div id="outline-container-org94d890d" class="outline-4">
+<h4 id="org94d890d"><code>&lt;src/reactlife.jsx&gt;</code></h4>
+<div class="outline-text-4" id="text-org94d890d">
+<div class="org-src-container">
+<pre class="src src-js"><span style="color: #859900; font-weight: bold;">function</span> <span style="color: #268bd2;">PlayPauseButton</span><span style="color: #2aa198;">(</span><span style="color: #268bd2;">props</span><span style="color: #2aa198;">)</span> <span style="color: #2aa198;">{</span>
+  <span style="color: #859900; font-weight: bold;">const</span> <span style="color: #268bd2;">status</span> = props.status;
+  <span style="color: #859900; font-weight: bold;">if</span> <span style="color: #b58900;">(</span>status<span style="color: #b58900;">)</span> <span style="color: #b58900;">{</span>
+    <span style="color: #859900; font-weight: bold;">return</span> <span style="color: #268bd2;">(</span>
+        &lt;&lt;control-pause&gt;&gt;
+    <span style="color: #268bd2;">)</span>;
+  <span style="color: #b58900;">}</span> <span style="color: #859900; font-weight: bold;">else</span> <span style="color: #b58900;">{</span>
+    <span style="color: #859900; font-weight: bold;">return</span> <span style="color: #268bd2;">(</span> 
+        &lt;&lt;control-play&gt;&gt;
+    <span style="color: #268bd2;">)</span>;
+  <span style="color: #b58900;">}</span>
+<span style="color: #2aa198;">}</span>
+</pre>
+</div>
+
+<p>
+These buttons are represented in the following way:
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgf73102c" class="outline-4">
+<h4 id="orgf73102c"><code>&lt;&lt;control-pause&gt;&gt;</code></h4>
+<div class="outline-text-4" id="text-orgf73102c">
+<div class="org-src-container">
+<pre class="src src-html">&lt;<span style="color: #268bd2;">button</span> onClick={props.callback} <span style="color: #268bd2;">className</span>=<span style="color: #2aa198;">"btn-pause"</span>&gt;
+  &lt;<span style="color: #268bd2;">b</span>&gt;<span style="font-weight: bold;">Pause</span>&lt;/<span style="color: #268bd2;">b</span>&gt;
+&lt;/<span style="color: #268bd2;">button</span>&gt;
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org2340e9d" class="outline-4">
+<h4 id="org2340e9d"><code>&lt;&lt;control-play&gt;&gt;</code></h4>
+<div class="outline-text-4" id="text-org2340e9d">
+<div class="org-src-container">
+<pre class="src src-html">&lt;<span style="color: #268bd2;">button</span> onClick={props.callback} <span style="color: #268bd2;">className</span>=<span style="color: #2aa198;">"btn-play"</span>&gt;
+  &lt;<span style="color: #268bd2;">b</span>&gt;<span style="font-weight: bold;">Play</span>&lt;/<span style="color: #268bd2;">b</span>&gt;
+&lt;/<span style="color: #268bd2;">button</span>&gt;
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgd7097b6" class="outline-3">
+<h3 id="orgd7097b6"><span class="section-number-3">4.5</span> Clearing and randomizing the game</h3>
+<div class="outline-text-3" id="text-4-5">
+<p>
+These buttons are simmilar to <code>PlayPauseButton</code>:
+</p>
+</div>
+
+<div id="outline-container-org5b20029" class="outline-4">
+<h4 id="org5b20029"><code>&lt;src/reactlife.jsx&gt;</code></h4>
+<div class="outline-text-4" id="text-org5b20029">
+<div class="org-src-container">
+<pre class="src src-js"><span style="color: #859900; font-weight: bold;">function</span> <span style="color: #268bd2;">ClearButton</span><span style="color: #2aa198;">(</span><span style="color: #268bd2;">props</span><span style="color: #2aa198;">)</span> <span style="color: #2aa198;">{</span>
+  <span style="color: #859900; font-weight: bold;">return</span> <span style="color: #b58900;">(</span> 
+      &lt;&lt;control-clear&gt;&gt;
+  <span style="color: #b58900;">)</span>;
+<span style="color: #2aa198;">}</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgb920981" class="outline-4">
+<h4 id="orgb920981"><code>&lt;src/reactlife.jsx&gt;</code></h4>
+<div class="outline-text-4" id="text-orgb920981">
+<div class="org-src-container">
+<pre class="src src-js"><span style="color: #859900; font-weight: bold;">function</span> <span style="color: #268bd2;">RandomizeButton</span><span style="color: #2aa198;">(</span><span style="color: #268bd2;">props</span><span style="color: #2aa198;">)</span> <span style="color: #2aa198;">{</span>
+  <span style="color: #859900; font-weight: bold;">return</span> <span style="color: #b58900;">(</span>
+      &lt;&lt;control-randomize&gt;&gt; 
+  <span style="color: #b58900;">)</span>;
+<span style="color: #2aa198;">}</span>
+</pre>
+</div>
+
+<p>
+Where <code>&lt;&lt;control-clear&gt;&gt;</code> and <code>&lt;&lt;control-randomize&gt;&gt;</code> have obvious definitions:
+</p>
+</div>
+</div>
+
+<div id="outline-container-orga156390" class="outline-4">
+<h4 id="orga156390"><code>&lt;&lt;control-clear&gt;&gt;</code></h4>
+<div class="outline-text-4" id="text-orga156390">
+<div class="org-src-container">
+<pre class="src src-html">&lt;<span style="color: #268bd2;">button</span> onClick={props.callback} <span style="color: #268bd2;">className</span>=<span style="color: #2aa198;">"btn-clear"</span>&gt;
+  &lt;<span style="color: #268bd2;">b</span>&gt;<span style="font-weight: bold;">Clear</span>&lt;/<span style="color: #268bd2;">b</span>&gt;
+&lt;/<span style="color: #268bd2;">button</span>&gt;
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org0a66537" class="outline-4">
+<h4 id="org0a66537"><code>&lt;&lt;control-randomize&gt;&gt;</code></h4>
+<div class="outline-text-4" id="text-org0a66537">
+<div class="org-src-container">
+<pre class="src src-html">&lt;<span style="color: #268bd2;">button</span> onClick={props.callback} <span style="color: #268bd2;">className</span>=<span style="color: #2aa198;">"btn-randomize"</span>&gt;
+  &lt;<span style="color: #268bd2;">b</span>&gt;<span style="font-weight: bold;">Randomize</span>&lt;/<span style="color: #268bd2;">b</span>&gt;
+&lt;/<span style="color: #268bd2;">button</span>&gt;
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgf39b69f" class="outline-3">
+<h3 id="orgf39b69f"><span class="section-number-3">4.6</span> Grid visualization</h3>
+<div class="outline-text-3" id="text-4-6">
+<p>
+This last component takes care of rendering the grid as an HTML table, where each cell has a different click callback:
+</p>
+</div>
+
+<div id="outline-container-orgb0dc041" class="outline-4">
+<h4 id="orgb0dc041"><code>&lt;src/reactlife.jsx&gt;</code></h4>
+<div class="outline-text-4" id="text-orgb0dc041">
+<div class="org-src-container">
+<pre class="src src-js"><span style="color: #859900; font-weight: bold;">function</span> <span style="color: #268bd2;">VisualGrid</span><span style="color: #2aa198;">(</span><span style="color: #268bd2;">props</span><span style="color: #2aa198;">)</span> <span style="color: #2aa198;">{</span>
+  <span style="color: #859900; font-weight: bold;">const</span> <span style="color: #268bd2;">grid</span> = props.grid;
+  <span style="color: #859900; font-weight: bold;">let</span> <span style="color: #268bd2;">rows</span> = Array<span style="color: #b58900;">(</span>life.countRows<span style="color: #268bd2;">(</span>grid<span style="color: #268bd2;">)</span><span style="color: #b58900;">)</span>;
+  <span style="color: #859900; font-weight: bold;">for</span> <span style="color: #b58900;">(</span><span style="color: #859900; font-weight: bold;">let</span> <span style="color: #268bd2;">i</span> = 0; i &lt; life.countRows<span style="color: #268bd2;">(</span>grid<span style="color: #268bd2;">)</span>; i++<span style="color: #b58900;">)</span> <span style="color: #b58900;">{</span>
+    <span style="color: #859900; font-weight: bold;">let</span> <span style="color: #268bd2;">arr</span> = Array<span style="color: #268bd2;">(</span>life.countCols<span style="color: #6c71c4;">(</span>grid<span style="color: #6c71c4;">)</span><span style="color: #268bd2;">)</span>;
+    <span style="color: #859900; font-weight: bold;">for</span> <span style="color: #268bd2;">(</span><span style="color: #859900; font-weight: bold;">let</span> <span style="color: #268bd2;">j</span> = 0; j &lt; life.countCols<span style="color: #6c71c4;">(</span>grid<span style="color: #6c71c4;">)</span>; j++<span style="color: #268bd2;">)</span> <span style="color: #268bd2;">{</span>
+      <span style="color: #859900; font-weight: bold;">let</span> <span style="color: #268bd2;">cell</span> = life.ref<span style="color: #6c71c4;">(</span>grid, i, j<span style="color: #6c71c4;">)</span>;
+      arr<span style="color: #6c71c4;">[</span>j<span style="color: #6c71c4;">]</span> = <span style="color: #6c71c4;">(</span>
+          &lt;&lt;table-cell&gt;&gt;
+      <span style="color: #6c71c4;">)</span>;
+    <span style="color: #268bd2;">}</span>
+    rows<span style="color: #268bd2;">[</span>i<span style="color: #268bd2;">]</span> = <span style="color: #268bd2;">(</span>
+        &lt;&lt;table-row&gt;&gt;
+    <span style="color: #268bd2;">)</span>;
+  <span style="color: #b58900;">}</span>
+  <span style="color: #859900; font-weight: bold;">return</span> <span style="color: #b58900;">(</span>
+      &lt;&lt;table-main&gt;&gt;
+  <span style="color: #b58900;">)</span>;
+<span style="color: #2aa198;">}</span>
+</pre>
+</div>
+
+<p>
+The visual representation of a cell's value is the background color of an HTML table cell:
+</p>
+</div>
+</div>
+
+<div id="outline-container-org873ed6f" class="outline-4">
+<h4 id="org873ed6f"><code>&lt;&lt;table-cell&gt;&gt;</code></h4>
+<div class="outline-text-4" id="text-org873ed6f">
+<div class="org-src-container">
+<pre class="src src-html">&lt;<span style="color: #268bd2;">td</span> key={j} <span style="color: #268bd2;">className</span>=<span style="color: #2aa198;">"cell"</span> style={{backgroundColor: (cell == life.alive ? <span style="color: #2aa198;">"white"</span> : <span style="color: #2aa198;">"black"</span>)}}
+    onClick={ () =&gt; props.callback(i, j) }
+  /&gt;
+</pre>
+</div>
+
+<p>
+The rest of the table structure is trivial:
+</p>
+</div>
+</div>
+
+<div id="outline-container-org86902a8" class="outline-4">
+<h4 id="org86902a8"><code>&lt;&lt;table-row&gt;&gt;</code></h4>
+<div class="outline-text-4" id="text-org86902a8">
+<div class="org-src-container">
+<pre class="src src-html">&lt;<span style="color: #268bd2;">tr</span> key={i}&gt;
+  { arr }
+&lt;/<span style="color: #268bd2;">tr</span>&gt;
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org8ba1f2d" class="outline-4">
+<h4 id="org8ba1f2d"><code>&lt;&lt;table-main&gt;&gt;</code></h4>
+<div class="outline-text-4" id="text-org8ba1f2d">
+<div class="org-src-container">
+<pre class="src src-html">&lt;<span style="color: #268bd2;">table</span> <span style="color: #268bd2;">className</span>=<span style="color: #2aa198;">"grid"</span>&gt;
+  &lt;<span style="color: #268bd2;">tbody</span>&gt;
+    { rows }
+  &lt;/<span style="color: #268bd2;">tbody</span>&gt;
+&lt;/<span style="color: #268bd2;">table</span>&gt;
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgd7b7c42" class="outline-3">
+<h3 id="orgd7b7c42"><span class="section-number-3">4.7</span> Rendering into the DOM</h3>
+<div class="outline-text-3" id="text-4-7">
+<p>
+The last step is render the <code>ConwaysGame</code> component in the DOM, we do this with the <code>render</code> function from <code>ReactDOM</code>. The following chunk of code injects <code>&lt;&lt;conways-game&gt;&gt;</code> in the HTML element with ID <code>root</code>:
+</p>
+</div>
+
+<div id="outline-container-org77216fe" class="outline-4">
+<h4 id="org77216fe"><code>&lt;src/reactlife.jsx&gt;</code></h4>
+<div class="outline-text-4" id="text-org77216fe">
+<div class="org-src-container">
+<pre class="src src-js">ReactDOM.render<span style="color: #2aa198;">(</span>
+  &lt;&lt;conways-game&gt;&gt;,
+  document.getElementById<span style="color: #b58900;">(</span><span style="color: #2aa198;">'root'</span><span style="color: #b58900;">)</span>
+<span style="color: #2aa198;">)</span>;
+</pre>
+</div>
+
+<p>
+The number of rows and columns are set to 30:
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgec17350" class="outline-4">
+<h4 id="orgec17350"><code>&lt;&lt;conways-game&gt;&gt;</code></h4>
+<div class="outline-text-4" id="text-orgec17350">
+<div class="org-src-container">
+<pre class="src src-html">&lt;<span style="color: #268bd2;">ConwaysGame</span> ncols={30} nrows={30} /&gt;
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org6f7e230" class="outline-2">
+<h2 id="org6f7e230"><span class="section-number-2">5</span> The HTML document</h2>
+<div class="outline-text-2" id="text-5">
+<p>
+This last section includes the main HTML and CSS files:
+</p>
+</div>
+
+<div id="outline-container-orgcae0b29" class="outline-4">
+<h4 id="orgcae0b29"><code>&lt;src/index.html&gt;</code></h4>
+<div class="outline-text-4" id="text-orgcae0b29">
+<div class="org-src-container">
+<pre class="src src-html">&lt;<span style="color: #859900; font-weight: bold;">!DOCTYPE</span> html&gt;
+&lt;<span style="color: #268bd2;">html</span>&gt;
+  &lt;<span style="color: #268bd2;">head</span>&gt;
+    &lt;<span style="color: #268bd2;">meta</span> <span style="color: #268bd2;">charset</span>=<span style="color: #2aa198;">"UTF-8"</span> /&gt;
+    &lt;<span style="color: #268bd2;">title</span>&gt;<span style="font-weight: bold; text-decoration: underline;">Conway's Game of Life</span>&lt;/<span style="color: #268bd2;">title</span>&gt;
+    &lt;<span style="color: #268bd2;">script</span> <span style="color: #268bd2;">src</span>=<span style="color: #2aa198;">"https://unpkg.com/react@latest/dist/react.js"</span>&gt;&lt;/<span style="color: #268bd2;">script</span>&gt;
+    &lt;<span style="color: #268bd2;">script</span> <span style="color: #268bd2;">src</span>=<span style="color: #2aa198;">"https://unpkg.com/react-dom@latest/dist/react-dom.js"</span>&gt;&lt;/<span style="color: #268bd2;">script</span>&gt;
+    &lt;<span style="color: #268bd2;">script</span> <span style="color: #268bd2;">src</span>=<span style="color: #2aa198;">"https://unpkg.com/babel-standalone@6.15.0/babel.min.js"</span>&gt;&lt;/<span style="color: #268bd2;">script</span>&gt;
+    &lt;<span style="color: #268bd2;">link</span> <span style="color: #268bd2;">rel</span>=<span style="color: #2aa198;">"stylesheet"</span> <span style="color: #268bd2;">type</span>=<span style="color: #2aa198;">"text/css"</span> 
+          <span style="color: #268bd2;">href</span>=<span style="color: #2aa198;">"http://thomasf.github.io/solarized-css/solarized-light.min.css"</span> /&gt;
+    &lt;<span style="color: #268bd2;">link</span> <span style="color: #268bd2;">href</span>=<span style="color: #2aa198;">"https://fonts.googleapis.com/css?family=Alegreya"</span> <span style="color: #268bd2;">rel</span>=<span style="color: #2aa198;">"stylesheet"</span>&gt;
+    &lt;<span style="color: #268bd2;">style</span>&gt; body { font-family: 'Alegreya', serif; } &lt;/<span style="color: #268bd2;">style</span>&gt;
+    &lt;<span style="color: #268bd2;">style</span>&gt; h1, h2, h3 { font-family: 'Alegreya', serif; } &lt;/<span style="color: #268bd2;">style</span>&gt;
+    &lt;<span style="color: #268bd2;">link</span> <span style="color: #268bd2;">rel</span>=<span style="color: #2aa198;">"stylesheet"</span> <span style="color: #268bd2;">href</span>=<span style="color: #2aa198;">"style.css"</span>&gt;
+  &lt;/<span style="color: #268bd2;">head</span>&gt;
+  &lt;<span style="color: #268bd2;">body</span>&gt;
+    &lt;<span style="color: #268bd2;">h1</span> <span style="color: #268bd2;">style</span>=<span style="color: #2aa198;">"text-align: center;"</span>&gt;<span style="font-weight: bold; text-decoration: underline;">Conway's Game of Life Demo</span>&lt;/<span style="color: #268bd2;">h1</span>&gt;
+    &lt;<span style="color: #268bd2;">div</span> <span style="color: #268bd2;">id</span>=<span style="color: #2aa198;">"root"</span>&gt;&lt;/<span style="color: #268bd2;">div</span>&gt;
+
+    &lt;<span style="color: #268bd2;">script</span> <span style="color: #268bd2;">src</span>=<span style="color: #2aa198;">"grid.js"</span>&gt;&lt;/<span style="color: #268bd2;">script</span>&gt;
+    &lt;<span style="color: #268bd2;">script</span> <span style="color: #268bd2;">src</span>=<span style="color: #2aa198;">"life.js"</span>&gt;&lt;/<span style="color: #268bd2;">script</span>&gt;
+    &lt;<span style="color: #268bd2;">script</span> <span style="color: #268bd2;">type</span>=<span style="color: #2aa198;">"text/babel"</span> <span style="color: #268bd2;">src</span>=<span style="color: #2aa198;">"reactlife.jsx"</span>&gt;&lt;/<span style="color: #268bd2;">script</span>&gt;
+  &lt;/<span style="color: #268bd2;">body</span>&gt;
+&lt;/<span style="color: #268bd2;">html</span>&gt;
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org83c1ccd" class="outline-4">
+<h4 id="org83c1ccd"><code>&lt;src/style.css&gt;</code></h4>
+<div class="outline-text-4" id="text-org83c1ccd">
+<div class="org-src-container">
+<pre class="src src-css"><span style="color: #268bd2;">.gol-main </span><span style="color: #2aa198;">{}</span>
+
+<span style="color: #268bd2;">.gol-controls </span><span style="color: #2aa198;">{</span>
+    <span style="color: #268bd2;">text-align</span>: center;
+<span style="color: #2aa198;">}</span>
+
+<span style="color: #268bd2;">.btn-pause </span><span style="color: #2aa198;">{</span>
+    <span style="color: #268bd2;">margin</span>: 10px;
+    <span style="color: #268bd2;">width</span>: 100px;
+    <span style="color: #268bd2;">display</span>: inline-block;
+    <span style="color: #268bd2;">background-color</span>: #eee8d5;
+    <span style="color: #268bd2;">border</span>: 1pt solid #93a1a1;
+    <span style="color: #268bd2;">color</span>: #d33682;
+<span style="color: #2aa198;">}</span>
+
+<span style="color: #268bd2;">.btn-play </span><span style="color: #2aa198;">{</span>
+    <span style="color: #268bd2;">margin</span>: 10px;
+    <span style="color: #268bd2;">width</span>: 100px;
+    <span style="color: #268bd2;">display</span>: inline-block;
+    <span style="color: #268bd2;">background-color</span>: #eee8d5;
+    <span style="color: #268bd2;">border</span>: 1pt solid #93a1a1;
+    <span style="color: #268bd2;">color</span>: #d33682;
+<span style="color: #2aa198;">}</span>
+
+<span style="color: #268bd2;">.btn-clear </span><span style="color: #2aa198;">{</span>
+    <span style="color: #268bd2;">margin</span>: 10px;
+    <span style="color: #268bd2;">width</span>: 100px;
+    <span style="color: #268bd2;">display</span>: inline-block;
+    <span style="color: #268bd2;">background-color</span>: #eee8d5;
+    <span style="color: #268bd2;">border</span>: 1pt solid #93a1a1;
+    <span style="color: #268bd2;">color</span>: #d33682;
+<span style="color: #2aa198;">}</span>
+
+<span style="color: #268bd2;">.btn-randomize </span><span style="color: #2aa198;">{</span>
+    <span style="color: #268bd2;">margin</span>: 10px;
+    <span style="color: #268bd2;">width</span>: 100px;
+    <span style="color: #268bd2;">display</span>: inline-block;
+    <span style="color: #268bd2;">background-color</span>: #eee8d5;
+    <span style="color: #268bd2;">border</span>: 1pt solid #93a1a1;
+    <span style="color: #268bd2;">color</span>: #d33682;
+<span style="color: #2aa198;">}</span>
+
+<span style="color: #268bd2;">.cell </span><span style="color: #2aa198;">{</span>
+    <span style="color: #268bd2;">display</span>: inline-block;
+    <span style="color: #268bd2;">width</span>: 22px;
+    <span style="color: #268bd2;">height</span>: 22px;
+    <span style="color: #268bd2;">cursor</span>: pointer;
+    <span style="color: #268bd2;">margin</span>: 0px;
+    <span style="color: #268bd2;">padding</span>: 0px;
+    <span style="color: #268bd2;">border</span>: solid 1px #333;
+<span style="color: #2aa198;">}</span>
+
+<span style="color: #268bd2;">.grid </span><span style="color: #2aa198;">{</span>
+    <span style="color: #268bd2;">margin</span>: auto;
+    <span style="color: #268bd2;">border-spacing</span>: 0px;
+    <span style="color: #268bd2;">border</span>: solid 2px #333;
+<span style="color: #2aa198;">}</span>
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">Author: Eduardo Acuña Yeomans</p>
+<p class="date">Created: 2017-01-31 Tue 23:20</p>
+<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>

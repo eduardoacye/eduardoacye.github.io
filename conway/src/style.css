@@ -1,0 +1,57 @@
+.gol-main {}
+
+.gol-controls {
+    text-align: center;
+}
+
+.btn-pause {
+    margin: 10px;
+    width: 100px;
+    display: inline-block;
+    background-color: #eee8d5;
+    border: 1pt solid #93a1a1;
+    color: #d33682;
+}
+
+.btn-play {
+    margin: 10px;
+    width: 100px;
+    display: inline-block;
+    background-color: #eee8d5;
+    border: 1pt solid #93a1a1;
+    color: #d33682;
+}
+
+.btn-clear {
+    margin: 10px;
+    width: 100px;
+    display: inline-block;
+    background-color: #eee8d5;
+    border: 1pt solid #93a1a1;
+    color: #d33682;
+}
+
+.btn-randomize {
+    margin: 10px;
+    width: 100px;
+    display: inline-block;
+    background-color: #eee8d5;
+    border: 1pt solid #93a1a1;
+    color: #d33682;
+}
+
+.cell {
+    display: inline-block;
+    width: 22px;
+    height: 22px;
+    cursor: pointer;
+    margin: 0px;
+    padding: 0px;
+    border: solid 1px #333;
+}
+
+.grid {
+    margin: auto;
+    border-spacing: 0px;
+    border: solid 2px #333;
+}
