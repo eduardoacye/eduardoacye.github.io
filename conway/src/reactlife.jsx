@@ -149,6 +149,6 @@ function VisualGrid(props) {
 }
 
 ReactDOM.render(
-  <ConwaysGame ncols={45} nrows={45} />,
+  <ConwaysGame ncols={30} nrows={30} />,
   document.getElementById('root')
 );
