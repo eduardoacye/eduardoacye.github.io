@@ -584,7 +584,7 @@ ReactDOM.render(
 
 *** ~<<conways-game>>~
     #+BEGIN_SRC html :noweb-ref conways-game
-<ConwaysGame ncols={30} nrows={30} />
+<ConwaysGame ncols={45} nrows={45} />
     #+END_SRC
 
 * The HTML document
