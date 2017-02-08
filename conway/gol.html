@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2017-02-07 Tue 18:12 -->
+<!-- 2017-02-07 Tue 18:56 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Conway's Game of Life</title>
@@ -334,124 +334,124 @@ for the JavaScript code in this tag.
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#org75c8511">1. Introduction</a></li>
-<li><a href="#org655d175">2. The grid abstraction</a>
+<li><a href="#org643caf3">1. Introduction</a></li>
+<li><a href="#orga85fcb4">2. The grid abstraction</a>
 <ul>
-<li><a href="#org43efee5">2.1. Creating a grid</a>
+<li><a href="#org97e9379">2.1. Creating a grid</a>
 <ul>
-<li><a href="#org17bf1d0">2.1.1. <code>&lt;src/grid.js&gt;</code></a></li>
+<li><a href="#org15bc3cf">2.1.1. <code>&lt;src/grid.js&gt;</code></a></li>
 </ul>
 </li>
-<li><a href="#org3c9c458">2.2. Obtaining the rows and columns of a row</a>
+<li><a href="#org04a6b9a">2.2. Obtaining the rows and columns of a row</a>
 <ul>
-<li><a href="#org9c91e0d">2.2.1. <code>&lt;src/grid.js&gt;</code></a></li>
-<li><a href="#org300f55a">2.2.2. <code>&lt;src/grid.js&gt;</code></a></li>
+<li><a href="#org14ce797">2.2.1. <code>&lt;src/grid.js&gt;</code></a></li>
+<li><a href="#orgd5fb035">2.2.2. <code>&lt;src/grid.js&gt;</code></a></li>
 </ul>
 </li>
-<li><a href="#org8bff20f">2.3. Get a particular value of a grid</a>
+<li><a href="#org664e7a0">2.3. Getting a particular value of a grid</a>
 <ul>
-<li><a href="#orgd167d5a">2.3.1. <code>&lt;src/grid.js&gt;</code></a></li>
-<li><a href="#org8b6f9c2">2.3.2. <code>&lt;src/grid.js&gt;</code></a></li>
+<li><a href="#org83060b4">2.3.1. <code>&lt;src/grid.js&gt;</code></a></li>
+<li><a href="#org7513fcf">2.3.2. <code>&lt;src/grid.js&gt;</code></a></li>
 </ul>
 </li>
-<li><a href="#orgdbb9e62">2.4. Changing a grid value</a>
+<li><a href="#org22d0f3a">2.4. Changing a grid value</a>
 <ul>
-<li><a href="#orge275ca7">2.4.1. <code>&lt;src/grid.js&gt;</code></a></li>
+<li><a href="#orgd9b8ec5">2.4.1. <code>&lt;src/grid.js&gt;</code></a></li>
 </ul>
 </li>
-<li><a href="#org353eabb">2.5. Interface</a>
+<li><a href="#org019795e">2.5. Interface</a>
 <ul>
-<li><a href="#orgbf61562">2.5.1. <code>&lt;src/grid.js&gt;</code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li><a href="#org69e9f66">3. Life rules</a>
-<ul>
-<li><a href="#org5dc1391">3.1. Mapping life to grids</a>
-<ul>
-<li><a href="#org3420116">3.1.1. <code>&lt;src/life.js&gt;</code></a></li>
-<li><a href="#org53e8eb7">3.1.2. <code>&lt;src/life.js&gt;</code></a></li>
-<li><a href="#org4b100e4">3.1.3. <code>&lt;src/life.js&gt;</code></a></li>
-</ul>
-</li>
-<li><a href="#org9b07e87">3.2. Evolving life</a>
-<ul>
-<li><a href="#org6112050">3.2.1. <code>&lt;src/life.js&gt;</code></a></li>
-<li><a href="#org036862a">3.2.2. <code>&lt;src/life.js&gt;</code></a></li>
-</ul>
-</li>
-<li><a href="#org4701de1">3.3. Interface</a>
-<ul>
-<li><a href="#org6c10f56">3.3.1. <code>&lt;src/life.js&gt;</code></a></li>
+<li><a href="#org54927b2">2.5.1. <code>&lt;src/grid.js&gt;</code></a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li><a href="#org461f005">4. React JS Components</a>
+<li><a href="#orge51c7de">3. Life rules</a>
+<ul>
+<li><a href="#org77b4938">3.1. Mapping life to grids</a>
+<ul>
+<li><a href="#orgd6aa842">3.1.1. <code>&lt;src/life.js&gt;</code></a></li>
+<li><a href="#orgf18ab73">3.1.2. <code>&lt;src/life.js&gt;</code></a></li>
+<li><a href="#orga46dce4">3.1.3. <code>&lt;src/life.js&gt;</code></a></li>
+</ul>
+</li>
+<li><a href="#org31c5593">3.2. Evolving life</a>
+<ul>
+<li><a href="#orgcb365a5">3.2.1. <code>&lt;src/life.js&gt;</code></a></li>
+<li><a href="#org26a254d">3.2.2. <code>&lt;src/life.js&gt;</code></a></li>
+</ul>
+</li>
+<li><a href="#org7353222">3.3. Interface</a>
+<ul>
+<li><a href="#orgdd22319">3.3.1. <code>&lt;src/life.js&gt;</code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#orgd0bc194">4. React JS Components</a>
 <ul>
 <li>
 <ul>
-<li><a href="#org52027b9">4.0.1. <code>&lt;src/reactlife.jsx&gt;</code></a></li>
+<li><a href="#org1b39057">4.0.1. <code>&lt;src/reactlife.jsx&gt;</code></a></li>
 </ul>
 </li>
-<li><a href="#org903e99f">4.1. Evolving life periodically</a>
+<li><a href="#org0dd512a">4.1. Evolving life periodically</a>
 <ul>
-<li><a href="#orgdb026d6">4.1.1. <code>&lt;&lt;gol-timer-setup&gt;&gt;</code></a></li>
-<li><a href="#org0831cf9">4.1.2. <code>&lt;&lt;gol-simulation&gt;&gt;</code></a></li>
+<li><a href="#org7280384">4.1.1. <code>&lt;&lt;gol-timer-setup&gt;&gt;</code></a></li>
+<li><a href="#orgbf0a80a">4.1.2. <code>&lt;&lt;gol-simulation&gt;&gt;</code></a></li>
 </ul>
 </li>
-<li><a href="#orgc704fe9">4.2. Controlling the grid</a>
+<li><a href="#orga52bbf6">4.2. Controlling the grid</a>
 <ul>
-<li><a href="#org29365f1">4.2.1. <code>&lt;&lt;gol-grid-click&gt;&gt;</code></a></li>
-<li><a href="#org344aef1">4.2.2. <code>&lt;&lt;gol-play-pause-click&gt;&gt;</code></a></li>
-<li><a href="#org7c0b3bf">4.2.3. <code>&lt;&lt;gol-clear-click&gt;&gt;</code></a></li>
-<li><a href="#orgd90895b">4.2.4. <code>&lt;&lt;gol-randomize-click&gt;&gt;</code></a></li>
+<li><a href="#org12ccd50">4.2.1. <code>&lt;&lt;gol-grid-click&gt;&gt;</code></a></li>
+<li><a href="#orga599181">4.2.2. <code>&lt;&lt;gol-play-pause-click&gt;&gt;</code></a></li>
+<li><a href="#orgc59584b">4.2.3. <code>&lt;&lt;gol-clear-click&gt;&gt;</code></a></li>
+<li><a href="#org6e1ed14">4.2.4. <code>&lt;&lt;gol-randomize-click&gt;&gt;</code></a></li>
 </ul>
 </li>
-<li><a href="#orgece46f0">4.3. GOL initialization</a>
+<li><a href="#org17ebb0e">4.3. GOL initialization</a>
 <ul>
-<li><a href="#org451798a">4.3.1. <code>&lt;&lt;gol-constructor&gt;&gt;</code></a></li>
-<li><a href="#org7bfba6f">4.3.2. <code>&lt;&lt;gol-view&gt;&gt;</code></a></li>
+<li><a href="#orga0339d4">4.3.1. <code>&lt;&lt;gol-constructor&gt;&gt;</code></a></li>
+<li><a href="#orged064e2">4.3.2. <code>&lt;&lt;gol-view&gt;&gt;</code></a></li>
 </ul>
 </li>
-<li><a href="#org8caa64d">4.4. Playing and pausing the game</a>
+<li><a href="#org910975a">4.4. Playing and pausing the game</a>
 <ul>
-<li><a href="#org1d990b3">4.4.1. <code>&lt;src/reactlife.jsx&gt;</code></a></li>
-<li><a href="#org803ca61">4.4.2. <code>&lt;&lt;control-pause&gt;&gt;</code></a></li>
-<li><a href="#org0924b10">4.4.3. <code>&lt;&lt;control-play&gt;&gt;</code></a></li>
+<li><a href="#org62091ba">4.4.1. <code>&lt;src/reactlife.jsx&gt;</code></a></li>
+<li><a href="#org96f6dc6">4.4.2. <code>&lt;&lt;control-pause&gt;&gt;</code></a></li>
+<li><a href="#org69bb265">4.4.3. <code>&lt;&lt;control-play&gt;&gt;</code></a></li>
 </ul>
 </li>
-<li><a href="#org248a436">4.5. Clearing and randomizing the game</a>
+<li><a href="#orge6ab90f">4.5. Clearing and randomizing the game</a>
 <ul>
-<li><a href="#org87292cf">4.5.1. <code>&lt;src/reactlife.jsx&gt;</code></a></li>
-<li><a href="#org184164e">4.5.2. <code>&lt;src/reactlife.jsx&gt;</code></a></li>
-<li><a href="#org5d45169">4.5.3. <code>&lt;&lt;control-clear&gt;&gt;</code></a></li>
-<li><a href="#org3217a06">4.5.4. <code>&lt;&lt;control-randomize&gt;&gt;</code></a></li>
+<li><a href="#orgaf251e3">4.5.1. <code>&lt;src/reactlife.jsx&gt;</code></a></li>
+<li><a href="#org8ba7497">4.5.2. <code>&lt;src/reactlife.jsx&gt;</code></a></li>
+<li><a href="#org349c107">4.5.3. <code>&lt;&lt;control-clear&gt;&gt;</code></a></li>
+<li><a href="#org2105e8d">4.5.4. <code>&lt;&lt;control-randomize&gt;&gt;</code></a></li>
 </ul>
 </li>
-<li><a href="#org1fb536d">4.6. Grid visualization</a>
+<li><a href="#org456652b">4.6. Grid visualization</a>
 <ul>
-<li><a href="#org5c92324">4.6.1. <code>&lt;src/reactlife.jsx&gt;</code></a></li>
-<li><a href="#org9799c4f">4.6.2. <code>&lt;&lt;table-cell&gt;&gt;</code></a></li>
-<li><a href="#orgd3c47a3">4.6.3. <code>&lt;&lt;table-row&gt;&gt;</code></a></li>
-<li><a href="#orgd28a133">4.6.4. <code>&lt;&lt;table-main&gt;&gt;</code></a></li>
+<li><a href="#orgcfb5798">4.6.1. <code>&lt;src/reactlife.jsx&gt;</code></a></li>
+<li><a href="#orgce7542a">4.6.2. <code>&lt;&lt;table-cell&gt;&gt;</code></a></li>
+<li><a href="#org9a3409e">4.6.3. <code>&lt;&lt;table-row&gt;&gt;</code></a></li>
+<li><a href="#orgf4edba7">4.6.4. <code>&lt;&lt;table-main&gt;&gt;</code></a></li>
 </ul>
 </li>
-<li><a href="#org046c49a">4.7. Rendering into the DOM</a>
+<li><a href="#org125aa13">4.7. Rendering into the DOM</a>
 <ul>
-<li><a href="#org380b4cd">4.7.1. <code>&lt;src/reactlife.jsx&gt;</code></a></li>
-<li><a href="#orgd931540">4.7.2. <code>&lt;&lt;conways-game&gt;&gt;</code></a></li>
+<li><a href="#org6b2952a">4.7.1. <code>&lt;src/reactlife.jsx&gt;</code></a></li>
+<li><a href="#org339a418">4.7.2. <code>&lt;&lt;conways-game&gt;&gt;</code></a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li><a href="#org08db24b">5. The HTML document</a>
+<li><a href="#org244d9ac">5. The HTML document</a>
 <ul>
 <li>
 <ul>
-<li><a href="#org0301fa4">5.0.1. <code>&lt;src/index.html&gt;</code></a></li>
-<li><a href="#org3c27571">5.0.2. <code>&lt;src/style.css&gt;</code></a></li>
+<li><a href="#org0283fc1">5.0.1. <code>&lt;src/index.html&gt;</code></a></li>
+<li><a href="#orgb0d1520">5.0.2. <code>&lt;src/style.css&gt;</code></a></li>
 </ul>
 </li>
 </ul>
@@ -461,44 +461,44 @@ for the JavaScript code in this tag.
 </div>
 \(\DeclareMathOperator{\modulo}{modulo}\)
 
-<div id="outline-container-org75c8511" class="outline-2">
-<h2 id="org75c8511"><span class="section-number-2">1</span> Introduction</h2>
+<div id="outline-container-org643caf3" class="outline-2">
+<h2 id="org643caf3"><span class="section-number-2">1</span> Introduction</h2>
 <div class="outline-text-2" id="text-1">
 <p>
-This document describes my first attempt at implementing the classic zero-player game <i>Conway's Game of Life</i> in Javascript using the React JS library.
+This document describes a first attempt at implementing the classic zero-player game <i>Conway's Game of Life</i> in Javascript using the React JS library.
 </p>
 
 <p>
-The Game of Life (GOL for short) consists of a two-dimensional grid of <i>cells</i> representing living things. Each cell can be either alive or dead and each turn some cells die, some born and others stay the same. The game requires an initial condition as input, that is: which cells are alive and which are dead; from there, a particular set of rules are applied iteratively to each cell and the configuration evolves over time, rendering beautiful apparent randomness and chaos.
+The Game of Life (GOL for short) consists of a two-dimensional grid of <i>cells</i> representing living things. Each cell can be in one of two states, alive or dead, and each turn some cells die, some are born and others stay in the same state. The game requires an initial condition as input, that is, which cells are alive and which are dead; from there a particular set of rules are applied iteratively to each cell and the configuration evolves over time, rendering a beautiful simulation of apparent randomness and chaos.
 </p>
 
 <p>
-The GOL rules for each cell involve counting the number of living cells in the <i>neighborhood</i> of a particular cell. In the following picture the neighborhood of the blue cell consists of the cells painted in red.
+The GOL rules for each cell involve counting the number of living cells in the <i>neighborhood</i> of a particular cell. In the following image the neighborhood of a cell (pictured in blue) consists of all the adjacent cells (pictured in red).
 </p>
 
 
-<div id="org46938d5" class="figure">
+<div id="org0a543f0" class="figure">
 <p><img src="./img/neighbors.png" alt="neighbors.png" width="200px" />
 </p>
 </div>
 
 <p>
-The transitions for every cell in the grid from one step of the game to the next are as follows:
+The evolution of every cell in the grid, from one step of the game to the next, obeys the following rules:
 </p>
 <ul class="org-ul">
-<li>Any live cell with fewer than two live neighbours dies;</li>
-<li>Any live cell with two or three live neighbours lives on to the next generation;</li>
-<li>Any live cell with more than three live neighbours dies;</li>
-<li>Any dead cell with exactly three live neighbours becomes a live cell.</li>
+<li>Any living cell with fewer than two live neighbours dies;</li>
+<li>Any living cell with two or three living neighbours lives on to the next generation;</li>
+<li>Any living cell with more than three living neighbours dies;</li>
+<li>Any dead cell with exactly three living neighbours becomes a live cell.</li>
 </ul>
 </div>
 </div>
 
-<div id="outline-container-org655d175" class="outline-2">
-<h2 id="org655d175"><span class="section-number-2">2</span> The grid abstraction</h2>
+<div id="outline-container-orga85fcb4" class="outline-2">
+<h2 id="orga85fcb4"><span class="section-number-2">2</span> The grid abstraction</h2>
 <div class="outline-text-2" id="text-2">
 <p>
-The two-dimensional grid in GOL is infinite by definition, but this implementation in particular will be a finite grid with connected frontiers. The implementation provides means to:
+The two-dimensional grid in GOL is infinite by definition, but this implementation in particular, the grid will be of finite size with connected frontiers. The implementation provides means to:
 </p>
 <ol class="org-ol">
 <li>Create a new grid with values assigned by location.</li>
@@ -508,8 +508,8 @@ The two-dimensional grid in GOL is infinite by definition, but this implementati
 </ol>
 </div>
 
-<div id="outline-container-org43efee5" class="outline-3">
-<h3 id="org43efee5"><span class="section-number-3">2.1</span> Creating a grid</h3>
+<div id="outline-container-org97e9379" class="outline-3">
+<h3 id="org97e9379"><span class="section-number-3">2.1</span> Creating a grid</h3>
 <div class="outline-text-3" id="text-2-1">
 <p>
 The function <code>make</code> handles the creation of a new grid. Grids are implemented as arrays of rows, where each row is also an array of values.
@@ -520,8 +520,8 @@ The arguments of <code>make</code> are the number of rows and columns, and a fun
 </p>
 </div>
 
-<div id="outline-container-org17bf1d0" class="outline-4">
-<h4 id="org17bf1d0"><span class="section-number-4">2.1.1</span> <code>&lt;src/grid.js&gt;</code></h4>
+<div id="outline-container-org15bc3cf" class="outline-4">
+<h4 id="org15bc3cf"><span class="section-number-4">2.1.1</span> <code>&lt;src/grid.js&gt;</code></h4>
 <div class="outline-text-4" id="text-2-1-1">
 <div class="org-src-container">
 <pre class="src src-js"><span style="color: #51afef;">function</span> <span style="color: #c678dd;">make</span><span style="color: #51afef;">(</span><span style="color: #DFDFDF;">nrows</span>, <span style="color: #DFDFDF;">ncols</span>, <span style="color: #DFDFDF;">makeValue</span><span style="color: #51afef;">)</span> <span style="color: #51afef;">{</span>
@@ -540,20 +540,20 @@ The arguments of <code>make</code> are the number of rows and columns, and a fun
 </div>
 </div>
 
-<div id="outline-container-org3c9c458" class="outline-3">
-<h3 id="org3c9c458"><span class="section-number-3">2.2</span> Obtaining the rows and columns of a row</h3>
+<div id="outline-container-org04a6b9a" class="outline-3">
+<h3 id="org04a6b9a"><span class="section-number-3">2.2</span> Obtaining the rows and columns of a row</h3>
 <div class="outline-text-3" id="text-2-2">
 <p>
 The <code>countRows</code> and <code>countCols</code> functions compute the number of rows and columns respectively for a given grid.
 </p>
 
 <p>
-Given that the grid is represented as an Array of rows we can obtain it's length with the <code>length</code> property. Easy peasy lemon squeezy:
+Given that the grid is represented as an Array of rows, to obtain it's length one must access the <code>length</code> property. Easy peasy lemon squeezy:
 </p>
 </div>
 
-<div id="outline-container-org9c91e0d" class="outline-4">
-<h4 id="org9c91e0d"><span class="section-number-4">2.2.1</span> <code>&lt;src/grid.js&gt;</code></h4>
+<div id="outline-container-org14ce797" class="outline-4">
+<h4 id="org14ce797"><span class="section-number-4">2.2.1</span> <code>&lt;src/grid.js&gt;</code></h4>
 <div class="outline-text-4" id="text-2-2-1">
 <div class="org-src-container">
 <pre class="src src-js"><span style="color: #51afef;">function</span> <span style="color: #c678dd;">countRows</span><span style="color: #51afef;">(</span><span style="color: #DFDFDF;">grid</span><span style="color: #51afef;">)</span> <span style="color: #51afef;">{</span>
@@ -563,13 +563,13 @@ Given that the grid is represented as an Array of rows we can obtain it's length
 </div>
 
 <p>
-The number of columns is almost as easy, we just need to obtain the length of any of it's rows:
+The number of columns of a grid is almost as easy to determine, it's a matter of calculating the length of any of its rows:
 </p>
 </div>
 </div>
 
-<div id="outline-container-org300f55a" class="outline-4">
-<h4 id="org300f55a"><span class="section-number-4">2.2.2</span> <code>&lt;src/grid.js&gt;</code></h4>
+<div id="outline-container-orgd5fb035" class="outline-4">
+<h4 id="orgd5fb035"><span class="section-number-4">2.2.2</span> <code>&lt;src/grid.js&gt;</code></h4>
 <div class="outline-text-4" id="text-2-2-2">
 <div class="org-src-container">
 <pre class="src src-js"><span style="color: #51afef;">function</span> <span style="color: #c678dd;">countCols</span><span style="color: #51afef;">(</span><span style="color: #DFDFDF;">grid</span><span style="color: #51afef;">)</span> <span style="color: #51afef;">{</span>
@@ -581,15 +581,15 @@ The number of columns is almost as easy, we just need to obtain the length of an
 </div>
 </div>
 
-<div id="outline-container-org8bff20f" class="outline-3">
-<h3 id="org8bff20f"><span class="section-number-3">2.3</span> Get a particular value of a grid</h3>
+<div id="outline-container-org664e7a0" class="outline-3">
+<h3 id="org664e7a0"><span class="section-number-3">2.3</span> Getting a particular value of a grid</h3>
 <div class="outline-text-3" id="text-2-3">
 <p>
-Locations in a grid are determined by a row and column index, however given that we want to have a grid with connected frontiers we must use some modular arithmetic to handle locations outside the limits of the array.
+Locations on a grid are determined by a row and column index, however given that the grid must have connected frontiers one must use some modular arithmetic to handle locations outside the limits of the array.
 </p>
 
 <p>
-Javascript's <code>%</code> operator computes the <i>remainder</i>, to compute \(\modulo(a,b)\) we need to take into account the following:
+Javascript's <code>%</code> operator computes the <i>remainder</i>, to compute \(\modulo(a,b)\) one can take into account the following:
 </p>
 <ul class="org-ul">
 <li>\(a \geq 0 \implies \modulo(a,b) = a \% b\)</li>
@@ -602,8 +602,8 @@ The <code>modulo</code> implementation is defined as:
 </p>
 </div>
 
-<div id="outline-container-orgd167d5a" class="outline-4">
-<h4 id="orgd167d5a"><span class="section-number-4">2.3.1</span> <code>&lt;src/grid.js&gt;</code></h4>
+<div id="outline-container-org83060b4" class="outline-4">
+<h4 id="org83060b4"><span class="section-number-4">2.3.1</span> <code>&lt;src/grid.js&gt;</code></h4>
 <div class="outline-text-4" id="text-2-3-1">
 <div class="org-src-container">
 <pre class="src src-js"><span style="color: #51afef;">function</span> <span style="color: #c678dd;">modulo</span><span style="color: #51afef;">(</span><span style="color: #DFDFDF;">a</span>, <span style="color: #DFDFDF;">b</span><span style="color: #51afef;">)</span> <span style="color: #51afef;">{</span>
@@ -614,13 +614,13 @@ The <code>modulo</code> implementation is defined as:
 
 
 <p>
-Now we can simply define the function <code>ref</code> in terms of array indexing and <code>modulo</code> to obtain the value of a given location in a grid.
+Now one can simply define the function <code>ref</code> in terms of array indexing and <code>modulo</code> to obtain the value of a given location in a grid.
 </p>
 </div>
 </div>
 
-<div id="outline-container-org8b6f9c2" class="outline-4">
-<h4 id="org8b6f9c2"><span class="section-number-4">2.3.2</span> <code>&lt;src/grid.js&gt;</code></h4>
+<div id="outline-container-org7513fcf" class="outline-4">
+<h4 id="org7513fcf"><span class="section-number-4">2.3.2</span> <code>&lt;src/grid.js&gt;</code></h4>
 <div class="outline-text-4" id="text-2-3-2">
 <div class="org-src-container">
 <pre class="src src-js"><span style="color: #51afef;">function</span> <span style="color: #c678dd;">ref</span><span style="color: #51afef;">(</span><span style="color: #DFDFDF;">grid</span>, <span style="color: #DFDFDF;">i</span>, <span style="color: #DFDFDF;">j</span><span style="color: #51afef;">)</span> <span style="color: #51afef;">{</span>
@@ -632,16 +632,16 @@ Now we can simply define the function <code>ref</code> in terms of array indexin
 </div>
 </div>
 
-<div id="outline-container-orgdbb9e62" class="outline-3">
-<h3 id="orgdbb9e62"><span class="section-number-3">2.4</span> Changing a grid value</h3>
+<div id="outline-container-org22d0f3a" class="outline-3">
+<h3 id="org22d0f3a"><span class="section-number-3">2.4</span> Changing a grid value</h3>
 <div class="outline-text-3" id="text-2-4">
 <p>
-Simmilar to the <code>ref</code> function, we implement <code>set</code> to accept an aditional value argument to be placed in the specified location of a grid.
+Simmilar to the <code>ref</code> function, the implementation of <code>set</code> accepts an aditional value argument to be placed in the specified location of a grid.
 </p>
 </div>
 
-<div id="outline-container-orge275ca7" class="outline-4">
-<h4 id="orge275ca7"><span class="section-number-4">2.4.1</span> <code>&lt;src/grid.js&gt;</code></h4>
+<div id="outline-container-orgd9b8ec5" class="outline-4">
+<h4 id="orgd9b8ec5"><span class="section-number-4">2.4.1</span> <code>&lt;src/grid.js&gt;</code></h4>
 <div class="outline-text-4" id="text-2-4-1">
 <div class="org-src-container">
 <pre class="src src-js"><span style="color: #51afef;">function</span> <span style="color: #c678dd;">set</span><span style="color: #51afef;">(</span><span style="color: #DFDFDF;">grid</span>, <span style="color: #DFDFDF;">i</span>, <span style="color: #DFDFDF;">j</span>, <span style="color: #DFDFDF;">value</span><span style="color: #51afef;">)</span> <span style="color: #51afef;">{</span>
@@ -653,16 +653,16 @@ Simmilar to the <code>ref</code> function, we implement <code>set</code> to acce
 </div>
 </div>
 
-<div id="outline-container-org353eabb" class="outline-3">
-<h3 id="org353eabb"><span class="section-number-3">2.5</span> Interface</h3>
+<div id="outline-container-org019795e" class="outline-3">
+<h3 id="org019795e"><span class="section-number-3">2.5</span> Interface</h3>
 <div class="outline-text-3" id="text-2-5">
 <p>
 The file <code>src/grid.js</code> contains the code from this section, the object <code>grid</code> is the interface used in other files:
 </p>
 </div>
 
-<div id="outline-container-orgbf61562" class="outline-4">
-<h4 id="orgbf61562"><span class="section-number-4">2.5.1</span> <code>&lt;src/grid.js&gt;</code></h4>
+<div id="outline-container-org54927b2" class="outline-4">
+<h4 id="org54927b2"><span class="section-number-4">2.5.1</span> <code>&lt;src/grid.js&gt;</code></h4>
 <div class="outline-text-4" id="text-2-5-1">
 <div class="org-src-container">
 <pre class="src src-js"><span style="color: #51afef;">var</span> <span style="color: #DFDFDF;">grid</span> = <span style="color: #51afef;">{}</span>;
@@ -678,11 +678,11 @@ grid.set = set;
 </div>
 </div>
 
-<div id="outline-container-org69e9f66" class="outline-2">
-<h2 id="org69e9f66"><span class="section-number-2">3</span> Life rules</h2>
+<div id="outline-container-orge51c7de" class="outline-2">
+<h2 id="orge51c7de"><span class="section-number-2">3</span> Life rules</h2>
 <div class="outline-text-2" id="text-3">
 <p>
-Now we implement a layer of abstraction on top of grids that implements the GOL rules. This task concearns the following problems:
+The next step involves implementing a layer of abstraction on top of grids that represents the GOL rules. This task concearns the following problems:
 </p>
 <ul class="org-ul">
 <li>How to encode GOL concepts with grids.</li>
@@ -694,16 +694,16 @@ The following sections tackle these points.
 </p>
 </div>
 
-<div id="outline-container-org5dc1391" class="outline-3">
-<h3 id="org5dc1391"><span class="section-number-3">3.1</span> Mapping life to grids</h3>
+<div id="outline-container-org77b4938" class="outline-3">
+<h3 id="org77b4938"><span class="section-number-3">3.1</span> Mapping life to grids</h3>
 <div class="outline-text-3" id="text-3-1">
 <p>
-A GOL grid is going to be a grid whose locations hold cells, represented by the values <code>alive</code> or <code>dead</code>. The rules of GOL take into consideration the number of live neighbors of a particular cell, therefore it's convenient to represent the cell's values as <code>1</code> and <code>0</code>, so we can add the alive neighbors more easily.
+A GOL grid is going to be a grid whose locations hold cells, represented by the values <code>alive</code> or <code>dead</code>. The rules of GOL take into consideration the number of live neighbors of a particular cell, therefore it's convenient to represent the cell's values as <code>1</code> and <code>0</code>, so one can add the alive neighbors more easily.
 </p>
 </div>
 
-<div id="outline-container-org3420116" class="outline-4">
-<h4 id="org3420116"><span class="section-number-4">3.1.1</span> <code>&lt;src/life.js&gt;</code></h4>
+<div id="outline-container-orgd6aa842" class="outline-4">
+<h4 id="orgd6aa842"><span class="section-number-4">3.1.1</span> <code>&lt;src/life.js&gt;</code></h4>
 <div class="outline-text-4" id="text-3-1-1">
 <div class="org-src-container">
 <pre class="src src-js"><span style="color: #51afef;">const</span> <span style="color: #DFDFDF;">alive</span> = 1;
@@ -712,13 +712,13 @@ A GOL grid is going to be a grid whose locations hold cells, represented by the 
 </div>
 
 <p>
-To provide a constructor, getter and setter for GOL grids, we leverage the <code>grid.make</code>, <code>grid.ref</code> and <code>grid.set</code> implementations. The only thing we must be careful is to use the cell values <code>alive</code> or <code>dead</code> when using the following functions:
+To provide a constructor, getter and setter for GOL grids, one can leverage the <code>grid.make</code>, <code>grid.ref</code> and <code>grid.set</code> implementations.
 </p>
 </div>
 </div>
 
-<div id="outline-container-org53e8eb7" class="outline-4">
-<h4 id="org53e8eb7"><span class="section-number-4">3.1.2</span> <code>&lt;src/life.js&gt;</code></h4>
+<div id="outline-container-orgf18ab73" class="outline-4">
+<h4 id="orgf18ab73"><span class="section-number-4">3.1.2</span> <code>&lt;src/life.js&gt;</code></h4>
 <div class="outline-text-4" id="text-3-1-2">
 <div class="org-src-container">
 <pre class="src src-js"><span style="color: #51afef;">function</span> <span style="color: #c678dd;">make</span><span style="color: #51afef;">(</span><span style="color: #DFDFDF;">nrows</span>, <span style="color: #DFDFDF;">ncols</span>, <span style="color: #DFDFDF;">makeCell</span><span style="color: #51afef;">)</span> <span style="color: #51afef;">{</span>
@@ -744,8 +744,8 @@ One aspect of GOL grids is that each cell has an associated <i>degree</i> of som
 </div>
 </div>
 
-<div id="outline-container-org4b100e4" class="outline-4">
-<h4 id="org4b100e4"><span class="section-number-4">3.1.3</span> <code>&lt;src/life.js&gt;</code></h4>
+<div id="outline-container-orga46dce4" class="outline-4">
+<h4 id="orga46dce4"><span class="section-number-4">3.1.3</span> <code>&lt;src/life.js&gt;</code></h4>
 <div class="outline-text-4" id="text-3-1-3">
 <div class="org-src-container">
 <pre class="src src-js"><span style="color: #51afef;">function</span> <span style="color: #c678dd;">neighbors</span><span style="color: #51afef;">(</span><span style="color: #DFDFDF;">life</span>, <span style="color: #DFDFDF;">i</span>, <span style="color: #DFDFDF;">j</span><span style="color: #51afef;">)</span> <span style="color: #51afef;">{</span>
@@ -759,14 +759,14 @@ One aspect of GOL grids is that each cell has an associated <i>degree</i> of som
 </div>
 </div>
 
-<div id="outline-container-org9b07e87" class="outline-3">
-<h3 id="org9b07e87"><span class="section-number-3">3.2</span> Evolving life</h3>
+<div id="outline-container-org31c5593" class="outline-3">
+<h3 id="org31c5593"><span class="section-number-3">3.2</span> Evolving life</h3>
 <div class="outline-text-3" id="text-3-2">
 <p>
-Now we proceed to implement a one-step evolution for a GOL grid. The first step is determining a particular cell <i>future</i> with respect to it's value and neighborhood, the following table describes the transition for every possible combination of those two factors.
+The next step involves implementing a one-step evolution for a GOL grid. To achive this one can determine a particular cell <i>future</i> with respect to it's value and neighborhood, the following table describes the transition for every possible combination of those two factors.
 </p>
 
-<table id="org58e50a3" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides" class="center">
+<table id="orge2c5134" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides" class="center">
 
 
 <colgroup>
@@ -896,7 +896,7 @@ Now we proceed to implement a one-step evolution for a GOL grid. The first step 
 
 
 <p>
-In a cell transition step, most of combinations in the table result in a <code>dead</code> value. To implement the procedure <code>lifeCellFuture</code> we must handle the bold cases:
+In a cell transition step, most of combinations in the table result in a <code>dead</code> value. To implement the procedure <code>lifeCellFuture</code> one must handle the bold cases:
 </p>
 <ul class="org-ul">
 <li>When a cell has 3 neighbors it always results in <code>alive</code>.</li>
@@ -904,8 +904,8 @@ In a cell transition step, most of combinations in the table result in a <code>d
 <li>Otherwise, the cell remains <code>dead</code> or dies.</li>
 </ul>
 </div>
-<div id="outline-container-org6112050" class="outline-4">
-<h4 id="org6112050"><span class="section-number-4">3.2.1</span> <code>&lt;src/life.js&gt;</code></h4>
+<div id="outline-container-orgcb365a5" class="outline-4">
+<h4 id="orgcb365a5"><span class="section-number-4">3.2.1</span> <code>&lt;src/life.js&gt;</code></h4>
 <div class="outline-text-4" id="text-3-2-1">
 <div class="org-src-container">
 <pre class="src src-js"><span style="color: #51afef;">function</span> <span style="color: #c678dd;">cellFuture</span><span style="color: #51afef;">(</span><span style="color: #DFDFDF;">life</span>, <span style="color: #DFDFDF;">i</span>, <span style="color: #DFDFDF;">j</span><span style="color: #51afef;">)</span> <span style="color: #51afef;">{</span>
@@ -922,13 +922,13 @@ In a cell transition step, most of combinations in the table result in a <code>d
 </div>
 
 <p>
-Finally, we need to evolve the whole GOL grid and return the next version, with the abstractions previously defined this is simple:
+Finally, to evolve the whole GOL grid and return the next version, one can use the abstractions previously defined:
 </p>
 </div>
 </div>
 
-<div id="outline-container-org036862a" class="outline-4">
-<h4 id="org036862a"><span class="section-number-4">3.2.2</span> <code>&lt;src/life.js&gt;</code></h4>
+<div id="outline-container-org26a254d" class="outline-4">
+<h4 id="org26a254d"><span class="section-number-4">3.2.2</span> <code>&lt;src/life.js&gt;</code></h4>
 <div class="outline-text-4" id="text-3-2-2">
 <div class="org-src-container">
 <pre class="src src-js"><span style="color: #51afef;">function</span> <span style="color: #c678dd;">evolve</span><span style="color: #51afef;">(</span><span style="color: #DFDFDF;">life</span><span style="color: #51afef;">)</span> <span style="color: #51afef;">{</span>
@@ -941,16 +941,16 @@ Finally, we need to evolve the whole GOL grid and return the next version, with 
 </div>
 </div>
 
-<div id="outline-container-org4701de1" class="outline-3">
-<h3 id="org4701de1"><span class="section-number-3">3.3</span> Interface</h3>
+<div id="outline-container-org7353222" class="outline-3">
+<h3 id="org7353222"><span class="section-number-3">3.3</span> Interface</h3>
 <div class="outline-text-3" id="text-3-3">
 <p>
 The file <code>src/life.js</code> contains the code from this section, the object <code>life</code> is the interface used in other files;
 </p>
 </div>
 
-<div id="outline-container-org6c10f56" class="outline-4">
-<h4 id="org6c10f56"><span class="section-number-4">3.3.1</span> <code>&lt;src/life.js&gt;</code></h4>
+<div id="outline-container-orgdd22319" class="outline-4">
+<h4 id="orgdd22319"><span class="section-number-4">3.3.1</span> <code>&lt;src/life.js&gt;</code></h4>
 <div class="outline-text-4" id="text-3-3-1">
 <div class="org-src-container">
 <pre class="src src-js"><span style="color: #51afef;">var</span> <span style="color: #DFDFDF;">life</span> = <span style="color: #51afef;">{}</span>;
@@ -969,8 +969,8 @@ life.evolve = evolve;
 </div>
 </div>
 
-<div id="outline-container-org461f005" class="outline-2">
-<h2 id="org461f005"><span class="section-number-2">4</span> React JS Components</h2>
+<div id="outline-container-orgd0bc194" class="outline-2">
+<h2 id="orgd0bc194"><span class="section-number-2">4</span> React JS Components</h2>
 <div class="outline-text-2" id="text-4">
 <p>
 From what I understand, React JS components are the algorithmic representation of some substructure in an HTML document.
@@ -985,12 +985,12 @@ The code in this section uses the <code>life.js</code> source file.
 </p>
 
 <p>
-To accomplish the stated vision, we create the <code>ConwaysGame</code> <i>component</i> that will have as state a GOL grid, and a flag that determines wether the game is playing or is paused. We also need to handle the click of a cell, and the clicks of every button. The general structure of <code>ConwaysGame</code> is:
+To accomplish the stated vision, create the <code>ConwaysGame</code> <i>component</i> that will have as state a GOL grid, and a flag that determines wether the game is playing or is paused. Also, one must handle the click of a cell, and the clicks of every button. The general structure of <code>ConwaysGame</code> is:
 </p>
 </div>
 
-<div id="outline-container-org52027b9" class="outline-4">
-<h4 id="org52027b9"><span class="section-number-4">4.0.1</span> <code>&lt;src/reactlife.jsx&gt;</code></h4>
+<div id="outline-container-org1b39057" class="outline-4">
+<h4 id="org1b39057"><span class="section-number-4">4.0.1</span> <code>&lt;src/reactlife.jsx&gt;</code></h4>
 <div class="outline-text-4" id="text-4-0-1">
 <div class="org-src-container">
 <pre class="src src-js"><span style="color: #51afef;">class</span> ConwaysGame <span style="color: #51afef;">extends</span> React.Component <span style="color: #51afef;">{</span>
@@ -1012,16 +1012,16 @@ To accomplish the stated vision, we create the <code>ConwaysGame</code> <i>compo
 </div>
 </div>
 
-<div id="outline-container-org903e99f" class="outline-3">
-<h3 id="org903e99f"><span class="section-number-3">4.1</span> Evolving life periodically</h3>
+<div id="outline-container-org0dd512a" class="outline-3">
+<h3 id="org0dd512a"><span class="section-number-3">4.1</span> Evolving life periodically</h3>
 <div class="outline-text-3" id="text-4-1">
 <p>
-The first thing we must set in place is the ability to update the grid as times goes on. This is done by setting a timer with the <code>setInterval</code> function, and with each tick of the timer we evolve the state of GOL. The <code>componentDidMount</code> function from the React component lifecycle, get's called after the rendering of the component, here we set an interval with ticks every 10 milliseconds. The <code>componentWillUnmount</code> function get's called before the component is removed from the DOM, here we clear the interval which will stop calling the <code>evolve</code> function.
+The first thing one must set in place is the ability to update the grid as times goes on. This is done by setting a timer with the <code>setInterval</code> function, and with each tick of the timer the state of GOL must evolve. The <code>componentDidMount</code> function from the React component lifecycle, get's called after the rendering of the component, here one must set an interval with ticks every 10 milliseconds. The <code>componentWillUnmount</code> function get's called before the component is removed from the DOM, here the interval get's cleared and the <code>evolve</code> function won't be invoked.
 </p>
 </div>
 
-<div id="outline-container-orgdb026d6" class="outline-4">
-<h4 id="orgdb026d6"><span class="section-number-4">4.1.1</span> <code>&lt;&lt;gol-timer-setup&gt;&gt;</code></h4>
+<div id="outline-container-org7280384" class="outline-4">
+<h4 id="org7280384"><span class="section-number-4">4.1.1</span> <code>&lt;&lt;gol-timer-setup&gt;&gt;</code></h4>
 <div class="outline-text-4" id="text-4-1-1">
 <div class="org-src-container">
 <pre class="src src-js">componentDidMount<span style="color: #51afef;">()</span> <span style="color: #51afef;">{</span>
@@ -1035,13 +1035,13 @@ componentWillUnmount<span style="color: #51afef;">()</span> <span style="color: 
 </div>
 
 <p>
-The definition of the <code>evolve</code> function is pretty straight-forward. When the simulation must be playing (that is, when <code>state.playing</code> is <code>true</code>) we must set a new state with <code>state.grid</code> updated to a new GOL configuration given by <code>life.evolve</code>:
+The definition of the <code>evolve</code> function is pretty straight-forward. When the simulation must be playing (that is, when <code>state.playing</code> is <code>true</code>) a new state is set with <code>state.grid</code> updated to a new GOL configuration given by <code>life.evolve</code>:
 </p>
 </div>
 </div>
 
-<div id="outline-container-org0831cf9" class="outline-4">
-<h4 id="org0831cf9"><span class="section-number-4">4.1.2</span> <code>&lt;&lt;gol-simulation&gt;&gt;</code></h4>
+<div id="outline-container-orgbf0a80a" class="outline-4">
+<h4 id="orgbf0a80a"><span class="section-number-4">4.1.2</span> <code>&lt;&lt;gol-simulation&gt;&gt;</code></h4>
 <div class="outline-text-4" id="text-4-1-2">
 <div class="org-src-container">
 <pre class="src src-js">evolve<span style="color: #51afef;">()</span> <span style="color: #51afef;">{</span>
@@ -1058,8 +1058,8 @@ The definition of the <code>evolve</code> function is pretty straight-forward. W
 </div>
 </div>
 
-<div id="outline-container-orgc704fe9" class="outline-3">
-<h3 id="orgc704fe9"><span class="section-number-3">4.2</span> Controlling the grid</h3>
+<div id="outline-container-orga52bbf6" class="outline-3">
+<h3 id="orga52bbf6"><span class="section-number-3">4.2</span> Controlling the grid</h3>
 <div class="outline-text-3" id="text-4-2">
 <p>
 There are four different ways to controll the grid:
@@ -1076,8 +1076,8 @@ The <code>handleGridClick</code> function will take the clicked location as argu
 </p>
 </div>
 
-<div id="outline-container-org29365f1" class="outline-4">
-<h4 id="org29365f1"><span class="section-number-4">4.2.1</span> <code>&lt;&lt;gol-grid-click&gt;&gt;</code></h4>
+<div id="outline-container-org12ccd50" class="outline-4">
+<h4 id="org12ccd50"><span class="section-number-4">4.2.1</span> <code>&lt;&lt;gol-grid-click&gt;&gt;</code></h4>
 <div class="outline-text-4" id="text-4-2-1">
 <div class="org-src-container">
 <pre class="src src-js">handleGridClick<span style="color: #51afef;">(</span>i, j<span style="color: #51afef;">)</span> <span style="color: #51afef;">{</span>
@@ -1100,8 +1100,8 @@ The <code>handlePlayPause</code> function will be a thunk that toggles the value
 </div>
 </div>
 
-<div id="outline-container-org344aef1" class="outline-4">
-<h4 id="org344aef1"><span class="section-number-4">4.2.2</span> <code>&lt;&lt;gol-play-pause-click&gt;&gt;</code></h4>
+<div id="outline-container-orga599181" class="outline-4">
+<h4 id="orga599181"><span class="section-number-4">4.2.2</span> <code>&lt;&lt;gol-play-pause-click&gt;&gt;</code></h4>
 <div class="outline-text-4" id="text-4-2-2">
 <div class="org-src-container">
 <pre class="src src-js">handlePlayPauseClick<span style="color: #51afef;">()</span> <span style="color: #51afef;">{</span>
@@ -1119,8 +1119,8 @@ The <code>handleClearClick</code> function will be a thunk that resets <code>sta
 </div>
 </div>
 
-<div id="outline-container-org7c0b3bf" class="outline-4">
-<h4 id="org7c0b3bf"><span class="section-number-4">4.2.3</span> <code>&lt;&lt;gol-clear-click&gt;&gt;</code></h4>
+<div id="outline-container-orgc59584b" class="outline-4">
+<h4 id="orgc59584b"><span class="section-number-4">4.2.3</span> <code>&lt;&lt;gol-clear-click&gt;&gt;</code></h4>
 <div class="outline-text-4" id="text-4-2-3">
 <div class="org-src-container">
 <pre class="src src-js">handleClearClick<span style="color: #51afef;">()</span> <span style="color: #51afef;">{</span>
@@ -1140,8 +1140,8 @@ Finally, the <code>handleRandomizeClick</code> will be a thunk that resets <code
 </div>
 </div>
 
-<div id="outline-container-orgd90895b" class="outline-4">
-<h4 id="orgd90895b"><span class="section-number-4">4.2.4</span> <code>&lt;&lt;gol-randomize-click&gt;&gt;</code></h4>
+<div id="outline-container-org6e1ed14" class="outline-4">
+<h4 id="org6e1ed14"><span class="section-number-4">4.2.4</span> <code>&lt;&lt;gol-randomize-click&gt;&gt;</code></h4>
 <div class="outline-text-4" id="text-4-2-4">
 <div class="org-src-container">
 <pre class="src src-js">handleRandomizeClick<span style="color: #51afef;">()</span> <span style="color: #51afef;">{</span>
@@ -1164,8 +1164,8 @@ randomCell<span style="color: #51afef;">()</span> <span style="color: #51afef;">
 </div>
 </div>
 
-<div id="outline-container-orgece46f0" class="outline-3">
-<h3 id="orgece46f0"><span class="section-number-3">4.3</span> GOL initialization</h3>
+<div id="outline-container-org17ebb0e" class="outline-3">
+<h3 id="org17ebb0e"><span class="section-number-3">4.3</span> GOL initialization</h3>
 <div class="outline-text-3" id="text-4-3">
 <p>
 The <code>ConwaysGame</code> component will be instantiated as:
@@ -1175,7 +1175,7 @@ The <code>ConwaysGame</code> component will be instantiated as:
 </pre>
 </div>
 <p>
-so that we can access the <code>nrows</code> and <code>ncols</code> properties, which determine the size of the grid.
+so that the <code>nrows</code> and <code>ncols</code> properties, which determine the size of the grid, can be accessed.
 </p>
 
 <p>
@@ -1183,8 +1183,8 @@ The constructor does the basic initialization: setting the initial state and bin
 </p>
 </div>
 
-<div id="outline-container-org451798a" class="outline-4">
-<h4 id="org451798a"><span class="section-number-4">4.3.1</span> <code>&lt;&lt;gol-constructor&gt;&gt;</code></h4>
+<div id="outline-container-orga0339d4" class="outline-4">
+<h4 id="orga0339d4"><span class="section-number-4">4.3.1</span> <code>&lt;&lt;gol-constructor&gt;&gt;</code></h4>
 <div class="outline-text-4" id="text-4-3-1">
 <div class="org-src-container">
 <pre class="src src-js">constructor<span style="color: #51afef;">(</span>props<span style="color: #51afef;">)</span> <span style="color: #51afef;">{</span>
@@ -1205,13 +1205,13 @@ The constructor does the basic initialization: setting the initial state and bin
 </div>
 
 <p>
-Finally we setup the <code>render</code> function return value, which delegates the rendering of the controls and the grid to the <code>PlayPauseButton</code>, <code>ClearButton</code>, <code>RandomizeButton</code> and <code>VisualGrid</code> components, which will be simpler than <code>ConwaysGame</code> and won't hold any state.
+Finally the <code>render</code> function return value get's setup, which delegates the rendering of the controls and the grid to the <code>PlayPauseButton</code>, <code>ClearButton</code>, <code>RandomizeButton</code> and <code>VisualGrid</code> components, which will be simpler than <code>ConwaysGame</code> and won't hold any state.
 </p>
 </div>
 </div>
 
-<div id="outline-container-org7bfba6f" class="outline-4">
-<h4 id="org7bfba6f"><span class="section-number-4">4.3.2</span> <code>&lt;&lt;gol-view&gt;&gt;</code></h4>
+<div id="outline-container-orged064e2" class="outline-4">
+<h4 id="orged064e2"><span class="section-number-4">4.3.2</span> <code>&lt;&lt;gol-view&gt;&gt;</code></h4>
 <div class="outline-text-4" id="text-4-3-2">
 <div class="org-src-container">
 <pre class="src src-html">&lt;<span style="color: #c678dd;">div</span> <span style="color: #DFDFDF;">className</span>=<span style="color: #98be65;">"gol-main"</span>&gt;
@@ -1234,16 +1234,16 @@ Finally we setup the <code>render</code> function return value, which delegates 
 </div>
 </div>
 
-<div id="outline-container-org8caa64d" class="outline-3">
-<h3 id="org8caa64d"><span class="section-number-3">4.4</span> Playing and pausing the game</h3>
+<div id="outline-container-org910975a" class="outline-3">
+<h3 id="org910975a"><span class="section-number-3">4.4</span> Playing and pausing the game</h3>
 <div class="outline-text-3" id="text-4-4">
 <p>
 The <code>PlayPauseButton</code> component renders different buttons depending on the value of <code>props.status</code>:
 </p>
 </div>
 
-<div id="outline-container-org1d990b3" class="outline-4">
-<h4 id="org1d990b3"><span class="section-number-4">4.4.1</span> <code>&lt;src/reactlife.jsx&gt;</code></h4>
+<div id="outline-container-org62091ba" class="outline-4">
+<h4 id="org62091ba"><span class="section-number-4">4.4.1</span> <code>&lt;src/reactlife.jsx&gt;</code></h4>
 <div class="outline-text-4" id="text-4-4-1">
 <div class="org-src-container">
 <pre class="src src-js"><span style="color: #51afef;">function</span> <span style="color: #c678dd;">PlayPauseButton</span><span style="color: #51afef;">(</span><span style="color: #DFDFDF;">props</span><span style="color: #51afef;">)</span> <span style="color: #51afef;">{</span>
@@ -1267,8 +1267,8 @@ These buttons are represented in the following way:
 </div>
 </div>
 
-<div id="outline-container-org803ca61" class="outline-4">
-<h4 id="org803ca61"><span class="section-number-4">4.4.2</span> <code>&lt;&lt;control-pause&gt;&gt;</code></h4>
+<div id="outline-container-org96f6dc6" class="outline-4">
+<h4 id="org96f6dc6"><span class="section-number-4">4.4.2</span> <code>&lt;&lt;control-pause&gt;&gt;</code></h4>
 <div class="outline-text-4" id="text-4-4-2">
 <div class="org-src-container">
 <pre class="src src-html">&lt;<span style="color: #c678dd;">button</span> onClick={props.callback} <span style="color: #DFDFDF;">className</span>=<span style="color: #98be65;">"btn-pause"</span>&gt;
@@ -1279,8 +1279,8 @@ These buttons are represented in the following way:
 </div>
 </div>
 
-<div id="outline-container-org0924b10" class="outline-4">
-<h4 id="org0924b10"><span class="section-number-4">4.4.3</span> <code>&lt;&lt;control-play&gt;&gt;</code></h4>
+<div id="outline-container-org69bb265" class="outline-4">
+<h4 id="org69bb265"><span class="section-number-4">4.4.3</span> <code>&lt;&lt;control-play&gt;&gt;</code></h4>
 <div class="outline-text-4" id="text-4-4-3">
 <div class="org-src-container">
 <pre class="src src-html">&lt;<span style="color: #c678dd;">button</span> onClick={props.callback} <span style="color: #DFDFDF;">className</span>=<span style="color: #98be65;">"btn-play"</span>&gt;
@@ -1292,16 +1292,16 @@ These buttons are represented in the following way:
 </div>
 </div>
 
-<div id="outline-container-org248a436" class="outline-3">
-<h3 id="org248a436"><span class="section-number-3">4.5</span> Clearing and randomizing the game</h3>
+<div id="outline-container-orge6ab90f" class="outline-3">
+<h3 id="orge6ab90f"><span class="section-number-3">4.5</span> Clearing and randomizing the game</h3>
 <div class="outline-text-3" id="text-4-5">
 <p>
 These buttons are simmilar to <code>PlayPauseButton</code>:
 </p>
 </div>
 
-<div id="outline-container-org87292cf" class="outline-4">
-<h4 id="org87292cf"><span class="section-number-4">4.5.1</span> <code>&lt;src/reactlife.jsx&gt;</code></h4>
+<div id="outline-container-orgaf251e3" class="outline-4">
+<h4 id="orgaf251e3"><span class="section-number-4">4.5.1</span> <code>&lt;src/reactlife.jsx&gt;</code></h4>
 <div class="outline-text-4" id="text-4-5-1">
 <div class="org-src-container">
 <pre class="src src-js"><span style="color: #51afef;">function</span> <span style="color: #c678dd;">ClearButton</span><span style="color: #51afef;">(</span><span style="color: #DFDFDF;">props</span><span style="color: #51afef;">)</span> <span style="color: #51afef;">{</span>
@@ -1314,8 +1314,8 @@ These buttons are simmilar to <code>PlayPauseButton</code>:
 </div>
 </div>
 
-<div id="outline-container-org184164e" class="outline-4">
-<h4 id="org184164e"><span class="section-number-4">4.5.2</span> <code>&lt;src/reactlife.jsx&gt;</code></h4>
+<div id="outline-container-org8ba7497" class="outline-4">
+<h4 id="org8ba7497"><span class="section-number-4">4.5.2</span> <code>&lt;src/reactlife.jsx&gt;</code></h4>
 <div class="outline-text-4" id="text-4-5-2">
 <div class="org-src-container">
 <pre class="src src-js"><span style="color: #51afef;">function</span> <span style="color: #c678dd;">RandomizeButton</span><span style="color: #51afef;">(</span><span style="color: #DFDFDF;">props</span><span style="color: #51afef;">)</span> <span style="color: #51afef;">{</span>
@@ -1332,8 +1332,8 @@ Where <code>&lt;&lt;control-clear&gt;&gt;</code> and <code>&lt;&lt;control-rando
 </div>
 </div>
 
-<div id="outline-container-org5d45169" class="outline-4">
-<h4 id="org5d45169"><span class="section-number-4">4.5.3</span> <code>&lt;&lt;control-clear&gt;&gt;</code></h4>
+<div id="outline-container-org349c107" class="outline-4">
+<h4 id="org349c107"><span class="section-number-4">4.5.3</span> <code>&lt;&lt;control-clear&gt;&gt;</code></h4>
 <div class="outline-text-4" id="text-4-5-3">
 <div class="org-src-container">
 <pre class="src src-html">&lt;<span style="color: #c678dd;">button</span> onClick={props.callback} <span style="color: #DFDFDF;">className</span>=<span style="color: #98be65;">"btn-clear"</span>&gt;
@@ -1344,8 +1344,8 @@ Where <code>&lt;&lt;control-clear&gt;&gt;</code> and <code>&lt;&lt;control-rando
 </div>
 </div>
 
-<div id="outline-container-org3217a06" class="outline-4">
-<h4 id="org3217a06"><span class="section-number-4">4.5.4</span> <code>&lt;&lt;control-randomize&gt;&gt;</code></h4>
+<div id="outline-container-org2105e8d" class="outline-4">
+<h4 id="org2105e8d"><span class="section-number-4">4.5.4</span> <code>&lt;&lt;control-randomize&gt;&gt;</code></h4>
 <div class="outline-text-4" id="text-4-5-4">
 <div class="org-src-container">
 <pre class="src src-html">&lt;<span style="color: #c678dd;">button</span> onClick={props.callback} <span style="color: #DFDFDF;">className</span>=<span style="color: #98be65;">"btn-randomize"</span>&gt;
@@ -1357,16 +1357,16 @@ Where <code>&lt;&lt;control-clear&gt;&gt;</code> and <code>&lt;&lt;control-rando
 </div>
 </div>
 
-<div id="outline-container-org1fb536d" class="outline-3">
-<h3 id="org1fb536d"><span class="section-number-3">4.6</span> Grid visualization</h3>
+<div id="outline-container-org456652b" class="outline-3">
+<h3 id="org456652b"><span class="section-number-3">4.6</span> Grid visualization</h3>
 <div class="outline-text-3" id="text-4-6">
 <p>
 This last component takes care of rendering the grid as an HTML table, where each cell has a different click callback:
 </p>
 </div>
 
-<div id="outline-container-org5c92324" class="outline-4">
-<h4 id="org5c92324"><span class="section-number-4">4.6.1</span> <code>&lt;src/reactlife.jsx&gt;</code></h4>
+<div id="outline-container-orgcfb5798" class="outline-4">
+<h4 id="orgcfb5798"><span class="section-number-4">4.6.1</span> <code>&lt;src/reactlife.jsx&gt;</code></h4>
 <div class="outline-text-4" id="text-4-6-1">
 <div class="org-src-container">
 <pre class="src src-js"><span style="color: #51afef;">function</span> <span style="color: #c678dd;">VisualGrid</span><span style="color: #51afef;">(</span><span style="color: #DFDFDF;">props</span><span style="color: #51afef;">)</span> <span style="color: #51afef;">{</span>
@@ -1397,8 +1397,8 @@ The visual representation of a cell's value is the background color of an HTML t
 </div>
 </div>
 
-<div id="outline-container-org9799c4f" class="outline-4">
-<h4 id="org9799c4f"><span class="section-number-4">4.6.2</span> <code>&lt;&lt;table-cell&gt;&gt;</code></h4>
+<div id="outline-container-orgce7542a" class="outline-4">
+<h4 id="orgce7542a"><span class="section-number-4">4.6.2</span> <code>&lt;&lt;table-cell&gt;&gt;</code></h4>
 <div class="outline-text-4" id="text-4-6-2">
 <div class="org-src-container">
 <pre class="src src-html">&lt;<span style="color: #c678dd;">td</span> key={j} <span style="color: #DFDFDF;">className</span>=<span style="color: #98be65;">"cell"</span> style={{backgroundColor: (cell == life.alive ? <span style="color: #98be65;">"white"</span> : <span style="color: #98be65;">"black"</span>)}}
@@ -1413,8 +1413,8 @@ The rest of the table structure is trivial:
 </div>
 </div>
 
-<div id="outline-container-orgd3c47a3" class="outline-4">
-<h4 id="orgd3c47a3"><span class="section-number-4">4.6.3</span> <code>&lt;&lt;table-row&gt;&gt;</code></h4>
+<div id="outline-container-org9a3409e" class="outline-4">
+<h4 id="org9a3409e"><span class="section-number-4">4.6.3</span> <code>&lt;&lt;table-row&gt;&gt;</code></h4>
 <div class="outline-text-4" id="text-4-6-3">
 <div class="org-src-container">
 <pre class="src src-html">&lt;<span style="color: #c678dd;">tr</span> key={i}&gt;
@@ -1425,8 +1425,8 @@ The rest of the table structure is trivial:
 </div>
 </div>
 
-<div id="outline-container-orgd28a133" class="outline-4">
-<h4 id="orgd28a133"><span class="section-number-4">4.6.4</span> <code>&lt;&lt;table-main&gt;&gt;</code></h4>
+<div id="outline-container-orgf4edba7" class="outline-4">
+<h4 id="orgf4edba7"><span class="section-number-4">4.6.4</span> <code>&lt;&lt;table-main&gt;&gt;</code></h4>
 <div class="outline-text-4" id="text-4-6-4">
 <div class="org-src-container">
 <pre class="src src-html">&lt;<span style="color: #c678dd;">table</span> <span style="color: #DFDFDF;">className</span>=<span style="color: #98be65;">"grid"</span>&gt;
@@ -1440,16 +1440,16 @@ The rest of the table structure is trivial:
 </div>
 </div>
 
-<div id="outline-container-org046c49a" class="outline-3">
-<h3 id="org046c49a"><span class="section-number-3">4.7</span> Rendering into the DOM</h3>
+<div id="outline-container-org125aa13" class="outline-3">
+<h3 id="org125aa13"><span class="section-number-3">4.7</span> Rendering into the DOM</h3>
 <div class="outline-text-3" id="text-4-7">
 <p>
-The last step is render the <code>ConwaysGame</code> component in the DOM, we do this with the <code>render</code> function from <code>ReactDOM</code>. The following chunk of code injects <code>&lt;&lt;conways-game&gt;&gt;</code> in the HTML element with ID <code>root</code>:
+The last step is render the <code>ConwaysGame</code> component in the DOM using the <code>render</code> function from <code>ReactDOM</code>. The following chunk of code injects <code>&lt;&lt;conways-game&gt;&gt;</code> in the HTML element with ID <code>root</code>:
 </p>
 </div>
 
-<div id="outline-container-org380b4cd" class="outline-4">
-<h4 id="org380b4cd"><span class="section-number-4">4.7.1</span> <code>&lt;src/reactlife.jsx&gt;</code></h4>
+<div id="outline-container-org6b2952a" class="outline-4">
+<h4 id="org6b2952a"><span class="section-number-4">4.7.1</span> <code>&lt;src/reactlife.jsx&gt;</code></h4>
 <div class="outline-text-4" id="text-4-7-1">
 <div class="org-src-container">
 <pre class="src src-js">ReactDOM.render<span style="color: #51afef;">(</span>
@@ -1465,8 +1465,8 @@ The number of rows and columns are set to 30:
 </div>
 </div>
 
-<div id="outline-container-orgd931540" class="outline-4">
-<h4 id="orgd931540"><span class="section-number-4">4.7.2</span> <code>&lt;&lt;conways-game&gt;&gt;</code></h4>
+<div id="outline-container-org339a418" class="outline-4">
+<h4 id="org339a418"><span class="section-number-4">4.7.2</span> <code>&lt;&lt;conways-game&gt;&gt;</code></h4>
 <div class="outline-text-4" id="text-4-7-2">
 <div class="org-src-container">
 <pre class="src src-html">&lt;<span style="color: #c678dd;">ConwaysGame</span> ncols={30} nrows={30} /&gt;
@@ -1477,16 +1477,16 @@ The number of rows and columns are set to 30:
 </div>
 </div>
 
-<div id="outline-container-org08db24b" class="outline-2">
-<h2 id="org08db24b"><span class="section-number-2">5</span> The HTML document</h2>
+<div id="outline-container-org244d9ac" class="outline-2">
+<h2 id="org244d9ac"><span class="section-number-2">5</span> The HTML document</h2>
 <div class="outline-text-2" id="text-5">
 <p>
 This last section includes the main HTML and CSS files:
 </p>
 </div>
 
-<div id="outline-container-org0301fa4" class="outline-4">
-<h4 id="org0301fa4"><span class="section-number-4">5.0.1</span> <code>&lt;src/index.html&gt;</code></h4>
+<div id="outline-container-org0283fc1" class="outline-4">
+<h4 id="org0283fc1"><span class="section-number-4">5.0.1</span> <code>&lt;src/index.html&gt;</code></h4>
 <div class="outline-text-4" id="text-5-0-1">
 <div class="org-src-container">
 <pre class="src src-html">&lt;<span style="color: #51afef;">!DOCTYPE</span> html&gt;
@@ -1518,8 +1518,8 @@ This last section includes the main HTML and CSS files:
 </div>
 </div>
 
-<div id="outline-container-org3c27571" class="outline-4">
-<h4 id="org3c27571"><span class="section-number-4">5.0.2</span> <code>&lt;src/style.css&gt;</code></h4>
+<div id="outline-container-orgb0d1520" class="outline-4">
+<h4 id="orgb0d1520"><span class="section-number-4">5.0.2</span> <code>&lt;src/style.css&gt;</code></h4>
 <div class="outline-text-4" id="text-5-0-2">
 <div class="org-src-container">
 <pre class="src src-css"><span style="color: #51afef;">.gol-main </span><span style="color: #51afef;">{}</span>

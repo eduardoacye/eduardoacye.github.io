@@ -16,11 +16,11 @@
 
 * Introduction
 
-  This document describes my first attempt at implementing the classic zero-player game /Conway's Game of Life/ in Javascript using the React JS library.
+  This document describes a first attempt at implementing the classic zero-player game /Conway's Game of Life/ in Javascript using the React JS library.
 
-  The Game of Life (GOL for short) consists of a two-dimensional grid of /cells/ representing living things. Each cell can be either alive or dead and each turn some cells die, some born and others stay the same. The game requires an initial condition as input, that is: which cells are alive and which are dead; from there, a particular set of rules are applied iteratively to each cell and the configuration evolves over time, rendering beautiful apparent randomness and chaos.
+  The Game of Life (GOL for short) consists of a two-dimensional grid of /cells/ representing living things. Each cell can be in one of two states, alive or dead, and each turn some cells die, some are born and others stay in the same state. The game requires an initial condition as input, that is, which cells are alive and which are dead; from there a particular set of rules are applied iteratively to each cell and the configuration evolves over time, rendering a beautiful simulation of apparent randomness and chaos.
 
-  The GOL rules for each cell involve counting the number of living cells in the /neighborhood/ of a particular cell. In the following picture the neighborhood of the blue cell consists of the cells painted in red.
+  The GOL rules for each cell involve counting the number of living cells in the /neighborhood/ of a particular cell. In the following image the neighborhood of a cell (pictured in blue) consists of all the adjacent cells (pictured in red).
 
   #+NAME: fig:neighbors
   #+ATTR_ORG: :width 200px
@@ -28,15 +28,15 @@
   #+ATTR_HTML: :width 200px
   [[./img/neighbors.png]]
 
-  The transitions for every cell in the grid from one step of the game to the next are as follows:
-  - Any live cell with fewer than two live neighbours dies;
-  - Any live cell with two or three live neighbours lives on to the next generation;
-  - Any live cell with more than three live neighbours dies;
-  - Any dead cell with exactly three live neighbours becomes a live cell.
+  The evolution of every cell in the grid, from one step of the game to the next, obeys the following rules:
+  - Any living cell with fewer than two live neighbours dies;
+  - Any living cell with two or three living neighbours lives on to the next generation;
+  - Any living cell with more than three living neighbours dies;
+  - Any dead cell with exactly three living neighbours becomes a live cell.
 
 * The grid abstraction
 
-  The two-dimensional grid in GOL is infinite by definition, but this implementation in particular will be a finite grid with connected frontiers. The implementation provides means to:
+  The two-dimensional grid in GOL is infinite by definition, but this implementation in particular, the grid will be of finite size with connected frontiers. The implementation provides means to:
   1. Create a new grid with values assigned by location.
   2. Obtain the number of rows and columns of a grid.
   3. Obtain the value of a particular location of a grid.
@@ -66,7 +66,7 @@ function make(nrows, ncols, makeValue) {
 
    The ~countRows~ and ~countCols~ functions compute the number of rows and columns respectively for a given grid.
 
-   Given that the grid is represented as an Array of rows we can obtain it's length with the ~length~ property. Easy peasy lemon squeezy:
+   Given that the grid is represented as an Array of rows, to obtain it's length one must access the ~length~ property. Easy peasy lemon squeezy:
 
 *** ~<src/grid.js>~
    #+BEGIN_SRC js :tangle ./src/grid.js
@@ -75,7 +75,7 @@ function countRows(grid) {
 }
    #+END_SRC
 
-   The number of columns is almost as easy, we just need to obtain the length of any of it's rows:
+   The number of columns of a grid is almost as easy to determine, it's a matter of calculating the length of any of its rows:
 
 *** ~<src/grid.js>~
    #+BEGIN_SRC js :tangle ./src/grid.js
@@ -84,11 +84,11 @@ function countCols(grid) {
 }
    #+END_SRC
 
-** Get a particular value of a grid
+** Getting a particular value of a grid
 
-   Locations in a grid are determined by a row and column index, however given that we want to have a grid with connected frontiers we must use some modular arithmetic to handle locations outside the limits of the array.
+   Locations on a grid are determined by a row and column index, however given that the grid must have connected frontiers one must use some modular arithmetic to handle locations outside the limits of the array.
 
-   Javascript's ~%~ operator computes the /remainder/, to compute $\modulo(a,b)$ we need to take into account the following:
+   Javascript's ~%~ operator computes the /remainder/, to compute $\modulo(a,b)$ one can take into account the following:
    - $a \geq 0 \implies \modulo(a,b) = a \% b$
    - $a < 0 \implies a \% b = r \in (-b,0],\ (b+r)\%b = \modulo(a,b) = (b + (a \% b)) \% b$
    - $a \geq 0 \implies (b + (a \% b)) \% b = (b + \modulo(a,b)) \% b = \modulo(a,b)$
@@ -103,7 +103,7 @@ function modulo(a, b) {
    #+END_SRC
 
 
-   Now we can simply define the function ~ref~ in terms of array indexing and ~modulo~ to obtain the value of a given location in a grid.
+   Now one can simply define the function ~ref~ in terms of array indexing and ~modulo~ to obtain the value of a given location in a grid.
 
 *** ~<src/grid.js>~
    #+BEGIN_SRC js :tangle ./src/grid.js
@@ -114,7 +114,7 @@ function ref(grid, i, j) {
    
 ** Changing a grid value
 
-   Simmilar to the ~ref~ function, we implement ~set~ to accept an aditional value argument to be placed in the specified location of a grid.
+   Simmilar to the ~ref~ function, the implementation of ~set~ accepts an aditional value argument to be placed in the specified location of a grid.
 
 *** ~<src/grid.js>~
    #+BEGIN_SRC js :tangle ./src/grid.js
@@ -139,7 +139,7 @@ grid.set = set;
 
 * Life rules
   
-  Now we implement a layer of abstraction on top of grids that implements the GOL rules. This task concearns the following problems:
+  The next step involves implementing a layer of abstraction on top of grids that represents the GOL rules. This task concearns the following problems:
   - How to encode GOL concepts with grids.
   - How to handle GOL transitions.
 
@@ -147,7 +147,7 @@ grid.set = set;
 
 ** Mapping life to grids
 
-   A GOL grid is going to be a grid whose locations hold cells, represented by the values ~alive~ or ~dead~. The rules of GOL take into consideration the number of live neighbors of a particular cell, therefore it's convenient to represent the cell's values as ~1~ and ~0~, so we can add the alive neighbors more easily.
+   A GOL grid is going to be a grid whose locations hold cells, represented by the values ~alive~ or ~dead~. The rules of GOL take into consideration the number of live neighbors of a particular cell, therefore it's convenient to represent the cell's values as ~1~ and ~0~, so one can add the alive neighbors more easily.
 
 *** ~<src/life.js>~
     #+BEGIN_SRC js :tangle ./src/life.js
@@ -155,7 +155,7 @@ const alive = 1;
 const dead = 0;   
     #+END_SRC
 
-    To provide a constructor, getter and setter for GOL grids, we leverage the ~grid.make~, ~grid.ref~ and ~grid.set~ implementations. The only thing we must be careful is to use the cell values ~alive~ or ~dead~ when using the following functions:
+    To provide a constructor, getter and setter for GOL grids, one can leverage the ~grid.make~, ~grid.ref~ and ~grid.set~ implementations.
 
 *** ~<src/life.js>~
     #+BEGIN_SRC js :tangle ./src/life.js
@@ -188,7 +188,7 @@ function neighbors(life, i, j) {
 
 ** Evolving life
 
-   Now we proceed to implement a one-step evolution for a GOL grid. The first step is determining a particular cell /future/ with respect to it's value and neighborhood, the following table describes the transition for every possible combination of those two factors.
+   The next step involves implementing a one-step evolution for a GOL grid. To achive this one can determine a particular cell /future/ with respect to it's value and neighborhood, the following table describes the transition for every possible combination of those two factors.
 
    #+NAME: tbl:cell-transition
    #+ATTR_HTML: :class center
@@ -215,7 +215,7 @@ function neighbors(life, i, j) {
    | /alive/     | 8         | /dead/        |
    
 
-   In a cell transition step, most of combinations in the table result in a ~dead~ value. To implement the procedure ~lifeCellFuture~ we must handle the bold cases:
+   In a cell transition step, most of combinations in the table result in a ~dead~ value. To implement the procedure ~lifeCellFuture~ one must handle the bold cases:
    - When a cell has 3 neighbors it always results in ~alive~.
    - When a cell has 2 neighbors then the previous value prevails.
    - Otherwise, the cell remains ~dead~ or dies.
@@ -233,7 +233,7 @@ function cellFuture(life, i, j) {
 }
    #+END_SRC
 
-   Finally, we need to evolve the whole GOL grid and return the next version, with the abstractions previously defined this is simple:
+   Finally, to evolve the whole GOL grid and return the next version, one can use the abstractions previously defined:
 
 *** ~<src/life.js>~
    #+BEGIN_SRC js :tangle ./src/life.js
@@ -268,7 +268,7 @@ life.evolve = evolve;
 
   The code in this section uses the ~life.js~ source file.
 
-    To accomplish the stated vision, we create the ~ConwaysGame~ /component/ that will have as state a GOL grid, and a flag that determines wether the game is playing or is paused. We also need to handle the click of a cell, and the clicks of every button. The general structure of ~ConwaysGame~ is:
+    To accomplish the stated vision, create the ~ConwaysGame~ /component/ that will have as state a GOL grid, and a flag that determines wether the game is playing or is paused. Also, one must handle the click of a cell, and the clicks of every button. The general structure of ~ConwaysGame~ is:
 
 *** ~<src/reactlife.jsx>~
   #+BEGIN_SRC js :noweb tangle :tangle ./src/reactlife.jsx
@@ -290,7 +290,7 @@ class ConwaysGame extends React.Component {
 
 ** Evolving life periodically
 
- The first thing we must set in place is the ability to update the grid as times goes on. This is done by setting a timer with the ~setInterval~ function, and with each tick of the timer we evolve the state of GOL. The ~componentDidMount~ function from the React component lifecycle, get's called after the rendering of the component, here we set an interval with ticks every 10 milliseconds. The ~componentWillUnmount~ function get's called before the component is removed from the DOM, here we clear the interval which will stop calling the ~evolve~ function.
+ The first thing one must set in place is the ability to update the grid as times goes on. This is done by setting a timer with the ~setInterval~ function, and with each tick of the timer the state of GOL must evolve. The ~componentDidMount~ function from the React component lifecycle, get's called after the rendering of the component, here one must set an interval with ticks every 10 milliseconds. The ~componentWillUnmount~ function get's called before the component is removed from the DOM, here the interval get's cleared and the ~evolve~ function won't be invoked.
 
 *** ~<<gol-timer-setup>>~
   #+BEGIN_SRC js :noweb-ref gol-timer-setup
@@ -303,7 +303,7 @@ componentWillUnmount() {
 }
   #+END_SRC
 
-  The definition of the ~evolve~ function is pretty straight-forward. When the simulation must be playing (that is, when ~state.playing~ is ~true~) we must set a new state with ~state.grid~ updated to a new GOL configuration given by ~life.evolve~:
+  The definition of the ~evolve~ function is pretty straight-forward. When the simulation must be playing (that is, when ~state.playing~ is ~true~) a new state is set with ~state.grid~ updated to a new GOL configuration given by ~life.evolve~:
 
 *** ~<<gol-simulation>>~
   #+BEGIN_SRC js :noweb-ref gol-simulation
@@ -394,7 +394,7 @@ randomCell() {
   #+BEGIN_SRC html
 <ConwaysGame nrows=n ncols=m />
   #+END_SRC
-  so that we can access the ~nrows~ and ~ncols~ properties, which determine the size of the grid.
+  so that the ~nrows~ and ~ncols~ properties, which determine the size of the grid, can be accessed.
   
   The constructor does the basic initialization: setting the initial state and binding the ~this~ value for the functions defined previously:
 
@@ -416,7 +416,7 @@ constructor(props) {
 }
    #+END_SRC
 
-   Finally we setup the ~render~ function return value, which delegates the rendering of the controls and the grid to the ~PlayPauseButton~, ~ClearButton~, ~RandomizeButton~ and ~VisualGrid~ components, which will be simpler than ~ConwaysGame~ and won't hold any state.
+   Finally the ~render~ function return value get's setup, which delegates the rendering of the controls and the grid to the ~PlayPauseButton~, ~ClearButton~, ~RandomizeButton~ and ~VisualGrid~ components, which will be simpler than ~ConwaysGame~ and won't hold any state.
 
 *** ~<<gol-view>>~
    #+BEGIN_SRC html :noweb-ref gol-view
@@ -566,7 +566,7 @@ function VisualGrid(props) {
 
 ** Rendering into the DOM
 
-   The last step is render the ~ConwaysGame~ component in the DOM, we do this with the ~render~ function from ~ReactDOM~. The following chunk of code injects ~<<conways-game>>~ in the HTML element with ID ~root~:
+   The last step is render the ~ConwaysGame~ component in the DOM using the ~render~ function from ~ReactDOM~. The following chunk of code injects ~<<conways-game>>~ in the HTML element with ID ~root~:
 
 *** ~<src/reactlife.jsx>~
     #+BEGIN_SRC js :noweb tangle :tangle ./src/reactlife.jsx

@@ -1,4 +1,4 @@
-% Created 2017-02-07 Tue 18:12
+% Created 2017-02-07 Tue 18:56
 % Intended LaTeX compiler: pdflatex
 \documentclass[11pt]{article}
 \usepackage[utf8]{inputenc}
@@ -39,31 +39,31 @@
 \maketitle
 
 \section{Introduction}
-\label{sec:org0726aaf}
+\label{sec:orgc83512f}
 
-This document describes my first attempt at implementing the classic zero-player game \emph{Conway's Game of Life} in Javascript using the React JS library.
+This document describes a first attempt at implementing the classic zero-player game \emph{Conway's Game of Life} in Javascript using the React JS library.
 
-The Game of Life (GOL for short) consists of a two-dimensional grid of \emph{cells} representing living things. Each cell can be either alive or dead and each turn some cells die, some born and others stay the same. The game requires an initial condition as input, that is: which cells are alive and which are dead; from there, a particular set of rules are applied iteratively to each cell and the configuration evolves over time, rendering beautiful apparent randomness and chaos.
+The Game of Life (GOL for short) consists of a two-dimensional grid of \emph{cells} representing living things. Each cell can be in one of two states, alive or dead, and each turn some cells die, some are born and others stay in the same state. The game requires an initial condition as input, that is, which cells are alive and which are dead; from there a particular set of rules are applied iteratively to each cell and the configuration evolves over time, rendering a beautiful simulation of apparent randomness and chaos.
 
-The GOL rules for each cell involve counting the number of living cells in the \emph{neighborhood} of a particular cell. In the following picture the neighborhood of the blue cell consists of the cells painted in red.
+The GOL rules for each cell involve counting the number of living cells in the \emph{neighborhood} of a particular cell. In the following image the neighborhood of a cell (pictured in blue) consists of all the adjacent cells (pictured in red).
 
 \begin{center}
 \includegraphics[width=10em]{./img/neighbors.png}
-\label{orge393617}
+\label{orgf6017cc}
 \end{center}
 
-The transitions for every cell in the grid from one step of the game to the next are as follows:
+The evolution of every cell in the grid, from one step of the game to the next, obeys the following rules:
 \begin{itemize}
-\item Any live cell with fewer than two live neighbours dies;
-\item Any live cell with two or three live neighbours lives on to the next generation;
-\item Any live cell with more than three live neighbours dies;
-\item Any dead cell with exactly three live neighbours becomes a live cell.
+\item Any living cell with fewer than two live neighbours dies;
+\item Any living cell with two or three living neighbours lives on to the next generation;
+\item Any living cell with more than three living neighbours dies;
+\item Any dead cell with exactly three living neighbours becomes a live cell.
 \end{itemize}
 
 \section{The grid abstraction}
-\label{sec:orgd8dbe00}
+\label{sec:org57c5c10}
 
-The two-dimensional grid in GOL is infinite by definition, but this implementation in particular will be a finite grid with connected frontiers. The implementation provides means to:
+The two-dimensional grid in GOL is infinite by definition, but this implementation in particular, the grid will be of finite size with connected frontiers. The implementation provides means to:
 \begin{enumerate}
 \item Create a new grid with values assigned by location.
 \item Obtain the number of rows and columns of a grid.
@@ -72,14 +72,14 @@ The two-dimensional grid in GOL is infinite by definition, but this implementati
 \end{enumerate}
 
 \subsection{Creating a grid}
-\label{sec:org2782b18}
+\label{sec:org02e14e2}
 
 The function \texttt{make} handles the creation of a new grid. Grids are implemented as arrays of rows, where each row is also an array of values.
 
 The arguments of \texttt{make} are the number of rows and columns, and a function that takes two arguments (the position in the grid) and returns a value.
 
 \subsubsection{\texttt{<src/grid.js>}}
-\label{sec:org4b2dc75}
+\label{sec:orgd148605}
 \begin{minted}[]{js}
 function make(nrows, ncols, makeValue) {
   let g = Array(nrows);
@@ -94,36 +94,36 @@ function make(nrows, ncols, makeValue) {
 \end{minted}
 
 \subsection{Obtaining the rows and columns of a row}
-\label{sec:org1c35e96}
+\label{sec:org33a51aa}
 
 The \texttt{countRows} and \texttt{countCols} functions compute the number of rows and columns respectively for a given grid.
 
-Given that the grid is represented as an Array of rows we can obtain it's length with the \texttt{length} property. Easy peasy lemon squeezy:
+Given that the grid is represented as an Array of rows, to obtain it's length one must access the \texttt{length} property. Easy peasy lemon squeezy:
 
 \subsubsection{\texttt{<src/grid.js>}}
-\label{sec:orgf80525a}
+\label{sec:orga168000}
 \begin{minted}[]{js}
 function countRows(grid) {
   return grid.length;
 }
 \end{minted}
 
-The number of columns is almost as easy, we just need to obtain the length of any of it's rows:
+The number of columns of a grid is almost as easy to determine, it's a matter of calculating the length of any of its rows:
 
 \subsubsection{\texttt{<src/grid.js>}}
-\label{sec:org7f58705}
+\label{sec:orgec5060f}
 \begin{minted}[]{js}
 function countCols(grid) {
   return grid[0].length;
 }
 \end{minted}
 
-\subsection{Get a particular value of a grid}
-\label{sec:orgea0f4f6}
+\subsection{Getting a particular value of a grid}
+\label{sec:org687912e}
 
-Locations in a grid are determined by a row and column index, however given that we want to have a grid with connected frontiers we must use some modular arithmetic to handle locations outside the limits of the array.
+Locations on a grid are determined by a row and column index, however given that the grid must have connected frontiers one must use some modular arithmetic to handle locations outside the limits of the array.
 
-Javascript's \texttt{\%} operator computes the \emph{remainder}, to compute \(\modulo(a,b)\) we need to take into account the following:
+Javascript's \texttt{\%} operator computes the \emph{remainder}, to compute \(\modulo(a,b)\) one can take into account the following:
 \begin{itemize}
 \item \(a \geq 0 \implies \modulo(a,b) = a \% b\)
 \item \(a < 0 \implies a \% b = r \in (-b,0],\ (b+r)\%b = \modulo(a,b) = (b + (a \% b)) \% b\)
@@ -133,7 +133,7 @@ Javascript's \texttt{\%} operator computes the \emph{remainder}, to compute \(\m
 The \texttt{modulo} implementation is defined as:
 
 \subsubsection{\texttt{<src/grid.js>}}
-\label{sec:org7b081b7}
+\label{sec:org699d222}
 \begin{minted}[]{js}
 function modulo(a, b) {
   return ((a % b) + b) % b;
@@ -141,10 +141,10 @@ function modulo(a, b) {
 \end{minted}
 
 
-Now we can simply define the function \texttt{ref} in terms of array indexing and \texttt{modulo} to obtain the value of a given location in a grid.
+Now one can simply define the function \texttt{ref} in terms of array indexing and \texttt{modulo} to obtain the value of a given location in a grid.
 
 \subsubsection{\texttt{<src/grid.js>}}
-\label{sec:orga748ab5}
+\label{sec:org5af4269}
 \begin{minted}[]{js}
 function ref(grid, i, j) {
   return grid[modulo(i, countRows(grid))][modulo(j, countCols(grid))];
@@ -152,12 +152,12 @@ function ref(grid, i, j) {
 \end{minted}
 
 \subsection{Changing a grid value}
-\label{sec:orgb0c3fca}
+\label{sec:org5763d39}
 
-Simmilar to the \texttt{ref} function, we implement \texttt{set} to accept an aditional value argument to be placed in the specified location of a grid.
+Simmilar to the \texttt{ref} function, the implementation of \texttt{set} accepts an aditional value argument to be placed in the specified location of a grid.
 
 \subsubsection{\texttt{<src/grid.js>}}
-\label{sec:org4e5889d}
+\label{sec:orgbd1d8fd}
 \begin{minted}[]{js}
 function set(grid, i, j, value) {
   grid[modulo(i, countRows(grid))][modulo(j, countCols(grid))] = value;
@@ -165,12 +165,12 @@ function set(grid, i, j, value) {
 \end{minted}
 
 \subsection{Interface}
-\label{sec:org4bfa93a}
+\label{sec:org2c7beea}
 
 The file \texttt{src/grid.js} contains the code from this section, the object \texttt{grid} is the interface used in other files:
 
 \subsubsection{\texttt{<src/grid.js>}}
-\label{sec:orgd3159dc}
+\label{sec:orgd5f9c0d}
 \begin{minted}[]{js}
 var grid = {};
 grid.make = make;
@@ -181,9 +181,9 @@ grid.set = set;
 \end{minted}
 
 \section{Life rules}
-\label{sec:orgd1f4256}
+\label{sec:org38eb445}
 
-Now we implement a layer of abstraction on top of grids that implements the GOL rules. This task concearns the following problems:
+The next step involves implementing a layer of abstraction on top of grids that represents the GOL rules. This task concearns the following problems:
 \begin{itemize}
 \item How to encode GOL concepts with grids.
 \item How to handle GOL transitions.
@@ -192,21 +192,21 @@ Now we implement a layer of abstraction on top of grids that implements the GOL 
 The following sections tackle these points.
 
 \subsection{Mapping life to grids}
-\label{sec:orgd3dec0f}
+\label{sec:org870b5c6}
 
-A GOL grid is going to be a grid whose locations hold cells, represented by the values \texttt{alive} or \texttt{dead}. The rules of GOL take into consideration the number of live neighbors of a particular cell, therefore it's convenient to represent the cell's values as \texttt{1} and \texttt{0}, so we can add the alive neighbors more easily.
+A GOL grid is going to be a grid whose locations hold cells, represented by the values \texttt{alive} or \texttt{dead}. The rules of GOL take into consideration the number of live neighbors of a particular cell, therefore it's convenient to represent the cell's values as \texttt{1} and \texttt{0}, so one can add the alive neighbors more easily.
 
 \subsubsection{\texttt{<src/life.js>}}
-\label{sec:org7ba6d88}
+\label{sec:org8435b3c}
 \begin{minted}[]{js}
 const alive = 1;
 const dead = 0;
 \end{minted}
 
-To provide a constructor, getter and setter for GOL grids, we leverage the \texttt{grid.make}, \texttt{grid.ref} and \texttt{grid.set} implementations. The only thing we must be careful is to use the cell values \texttt{alive} or \texttt{dead} when using the following functions:
+To provide a constructor, getter and setter for GOL grids, one can leverage the \texttt{grid.make}, \texttt{grid.ref} and \texttt{grid.set} implementations.
 
 \subsubsection{\texttt{<src/life.js>}}
-\label{sec:orgd60b2b6}
+\label{sec:org5b430d7}
 \begin{minted}[]{js}
 function make(nrows, ncols, makeCell) {
   return grid.make(nrows, ncols, makeCell);
@@ -227,7 +227,7 @@ function set(life, i, j, cell) {
 One aspect of GOL grids is that each cell has an associated \emph{degree} of some sort (the number of \texttt{alive} neighbors). The function \texttt{neighbors} computes this value for a given cell location:
 
 \subsubsection{\texttt{<src/life.js>}}
-\label{sec:org3766a56}
+\label{sec:org4f488cd}
 \begin{minted}[]{js}
 function neighbors(life, i, j) {
   return ref(life, i-1, j-1) + ref(life, i  , j-1) + ref(life, i+1, j-1) +
@@ -237,12 +237,12 @@ function neighbors(life, i, j) {
 \end{minted}
 
 \subsection{Evolving life}
-\label{sec:orgc270313}
+\label{sec:orgf154447}
 
-Now we proceed to implement a one-step evolution for a GOL grid. The first step is determining a particular cell \emph{future} with respect to it's value and neighborhood, the following table describes the transition for every possible combination of those two factors.
+The next step involves implementing a one-step evolution for a GOL grid. To achive this one can determine a particular cell \emph{future} with respect to it's value and neighborhood, the following table describes the transition for every possible combination of those two factors.
 
 \begin{center}
-\label{tab:org1035261}
+\label{tab:org830a7ee}
 \begin{tabular}{ccc}
 State \(n\) & Neighbors & State \(n+1\)\\
 \hline
@@ -268,14 +268,14 @@ State \(n\) & Neighbors & State \(n+1\)\\
 \end{center}
 
 
-In a cell transition step, most of combinations in the table result in a \texttt{dead} value. To implement the procedure \texttt{lifeCellFuture} we must handle the bold cases:
+In a cell transition step, most of combinations in the table result in a \texttt{dead} value. To implement the procedure \texttt{lifeCellFuture} one must handle the bold cases:
 \begin{itemize}
 \item When a cell has 3 neighbors it always results in \texttt{alive}.
 \item When a cell has 2 neighbors then the previous value prevails.
 \item Otherwise, the cell remains \texttt{dead} or dies.
 \end{itemize}
 \subsubsection{\texttt{<src/life.js>}}
-\label{sec:orgc4e3505}
+\label{sec:orgb0f489c}
 \begin{minted}[]{js}
 function cellFuture(life, i, j) {
   switch (neighbors(life, i, j)) {
@@ -289,10 +289,10 @@ function cellFuture(life, i, j) {
 }
 \end{minted}
 
-Finally, we need to evolve the whole GOL grid and return the next version, with the abstractions previously defined this is simple:
+Finally, to evolve the whole GOL grid and return the next version, one can use the abstractions previously defined:
 
 \subsubsection{\texttt{<src/life.js>}}
-\label{sec:orga95ac07}
+\label{sec:orgdc60d5c}
 \begin{minted}[]{js}
 function evolve(life) {
   return make(countRows(life), countCols(life),
@@ -301,12 +301,12 @@ function evolve(life) {
 \end{minted}
 
 \subsection{Interface}
-\label{sec:org467d933}
+\label{sec:org197b85a}
 
 The file \texttt{src/life.js} contains the code from this section, the object \texttt{life} is the interface used in other files;
 
 \subsubsection{\texttt{<src/life.js>}}
-\label{sec:orgfc5cd03}
+\label{sec:orgfd8aa97}
 \begin{minted}[]{js}
 var life = {};
 life.alive = alive;
@@ -320,7 +320,7 @@ life.evolve = evolve;
 \end{minted}
 
 \section{React JS Components}
-\label{sec:org507b49e}
+\label{sec:orgb9dbcf2}
 
 From what I understand, React JS components are the algorithmic representation of some substructure in an HTML document.
 
@@ -328,10 +328,10 @@ To implement the interface for GOL I imagined how the HTML will look. Obviously 
 
 The code in this section uses the \texttt{life.js} source file.
 
-To accomplish the stated vision, we create the \texttt{ConwaysGame} \emph{component} that will have as state a GOL grid, and a flag that determines wether the game is playing or is paused. We also need to handle the click of a cell, and the clicks of every button. The general structure of \texttt{ConwaysGame} is:
+To accomplish the stated vision, create the \texttt{ConwaysGame} \emph{component} that will have as state a GOL grid, and a flag that determines wether the game is playing or is paused. Also, one must handle the click of a cell, and the clicks of every button. The general structure of \texttt{ConwaysGame} is:
 
 \subsubsection{\texttt{<src/reactlife.jsx>}}
-\label{sec:orgfaf96fa}
+\label{sec:orgdc3d876}
 \begin{minted}[]{js}
 class ConwaysGame extends React.Component {
   <<gol-constructor>>
@@ -350,12 +350,12 @@ class ConwaysGame extends React.Component {
 \end{minted}
 
 \subsection{Evolving life periodically}
-\label{sec:orgfb5b8e9}
+\label{sec:org07719b8}
 
-The first thing we must set in place is the ability to update the grid as times goes on. This is done by setting a timer with the \texttt{setInterval} function, and with each tick of the timer we evolve the state of GOL. The \texttt{componentDidMount} function from the React component lifecycle, get's called after the rendering of the component, here we set an interval with ticks every 10 milliseconds. The \texttt{componentWillUnmount} function get's called before the component is removed from the DOM, here we clear the interval which will stop calling the \texttt{evolve} function.
+The first thing one must set in place is the ability to update the grid as times goes on. This is done by setting a timer with the \texttt{setInterval} function, and with each tick of the timer the state of GOL must evolve. The \texttt{componentDidMount} function from the React component lifecycle, get's called after the rendering of the component, here one must set an interval with ticks every 10 milliseconds. The \texttt{componentWillUnmount} function get's called before the component is removed from the DOM, here the interval get's cleared and the \texttt{evolve} function won't be invoked.
 
 \subsubsection{\texttt{<<gol-timer-setup>>}}
-\label{sec:orgcbaf159}
+\label{sec:orgd936565}
 \begin{minted}[]{js}
 componentDidMount() {
   this.gameId = setInterval(() => this.evolve(), 10);
@@ -366,10 +366,10 @@ componentWillUnmount() {
 }
 \end{minted}
 
-The definition of the \texttt{evolve} function is pretty straight-forward. When the simulation must be playing (that is, when \texttt{state.playing} is \texttt{true}) we must set a new state with \texttt{state.grid} updated to a new GOL configuration given by \texttt{life.evolve}:
+The definition of the \texttt{evolve} function is pretty straight-forward. When the simulation must be playing (that is, when \texttt{state.playing} is \texttt{true}) a new state is set with \texttt{state.grid} updated to a new GOL configuration given by \texttt{life.evolve}:
 
 \subsubsection{\texttt{<<gol-simulation>>}}
-\label{sec:org30d57cd}
+\label{sec:org9674564}
 \begin{minted}[]{js}
 evolve() {
   if (this.state.playing) {
@@ -382,7 +382,7 @@ evolve() {
 \end{minted}
 
 \subsection{Controlling the grid}
-\label{sec:org8af387f}
+\label{sec:org71cdcc1}
 
 There are four different ways to controll the grid:
 \begin{itemize}
@@ -395,7 +395,7 @@ There are four different ways to controll the grid:
 The \texttt{handleGridClick} function will take the clicked location as arguments and change the internal state to a toggled version of that location, that is, if the cell was dead now it will be alive and vice versa.
 
 \subsubsection{\texttt{<<gol-grid-click>>}}
-\label{sec:orgeeec946}
+\label{sec:org9783406}
 \begin{minted}[]{js}
 handleGridClick(i, j) {
   const grid = this.state.grid;
@@ -413,7 +413,7 @@ handleGridClick(i, j) {
 The \texttt{handlePlayPause} function will be a thunk that toggles the value of \texttt{state.playing}:
 
 \subsubsection{\texttt{<<gol-play-pause-click>>}}
-\label{sec:orgc08f1f0}
+\label{sec:org8e55a88}
 \begin{minted}[]{js}
 handlePlayPauseClick() {
   this.setState({
@@ -426,7 +426,7 @@ handlePlayPauseClick() {
 The \texttt{handleClearClick} function will be a thunk that resets \texttt{state.grid} to just dead cells:
 
 \subsubsection{\texttt{<<gol-clear-click>>}}
-\label{sec:orge54cbb0}
+\label{sec:org5659879}
 \begin{minted}[]{js}
 handleClearClick() {
   const grid = this.state.grid;
@@ -441,7 +441,7 @@ handleClearClick() {
 Finally, the \texttt{handleRandomizeClick} will be a thunk that resets \texttt{state.grid} to cells either dead or alive with a random distribution:
 
 \subsubsection{\texttt{<<gol-randomize-click>>}}
-\label{sec:orgc960980}
+\label{sec:orgf3470e5}
 \begin{minted}[]{js}
 handleRandomizeClick() {
   const grid = this.state.grid;
@@ -460,18 +460,18 @@ randomCell() {
 \end{minted}
 
 \subsection{GOL initialization}
-\label{sec:org09464ca}
+\label{sec:org5c5290e}
 
 The \texttt{ConwaysGame} component will be instantiated as:
 \begin{minted}[]{html}
 <ConwaysGame nrows=n ncols=m />
 \end{minted}
-so that we can access the \texttt{nrows} and \texttt{ncols} properties, which determine the size of the grid.
+so that the \texttt{nrows} and \texttt{ncols} properties, which determine the size of the grid, can be accessed.
 
 The constructor does the basic initialization: setting the initial state and binding the \texttt{this} value for the functions defined previously:
 
 \subsubsection{\texttt{<<gol-constructor>>}}
-\label{sec:org906f7aa}
+\label{sec:orgf7c4353}
 \begin{minted}[]{js}
 constructor(props) {
   super(props);
@@ -489,10 +489,10 @@ constructor(props) {
 }
 \end{minted}
 
-Finally we setup the \texttt{render} function return value, which delegates the rendering of the controls and the grid to the \texttt{PlayPauseButton}, \texttt{ClearButton}, \texttt{RandomizeButton} and \texttt{VisualGrid} components, which will be simpler than \texttt{ConwaysGame} and won't hold any state.
+Finally the \texttt{render} function return value get's setup, which delegates the rendering of the controls and the grid to the \texttt{PlayPauseButton}, \texttt{ClearButton}, \texttt{RandomizeButton} and \texttt{VisualGrid} components, which will be simpler than \texttt{ConwaysGame} and won't hold any state.
 
 \subsubsection{\texttt{<<gol-view>>}}
-\label{sec:org4cb78c1}
+\label{sec:orga70f4d1}
 \begin{minted}[]{html}
 <div className="gol-main">
   <div className="gol-controls">
@@ -511,12 +511,12 @@ Finally we setup the \texttt{render} function return value, which delegates the 
 \end{minted}
 
 \subsection{Playing and pausing the game}
-\label{sec:org9356dc6}
+\label{sec:org5ccf4c6}
 
 The \texttt{PlayPauseButton} component renders different buttons depending on the value of \texttt{props.status}:
 
 \subsubsection{\texttt{<src/reactlife.jsx>}}
-\label{sec:orgcbe96cb}
+\label{sec:org5e2ad6a}
 \begin{minted}[]{js}
 function PlayPauseButton(props) {
   const status = props.status;
@@ -535,7 +535,7 @@ function PlayPauseButton(props) {
 These buttons are represented in the following way:
 
 \subsubsection{\texttt{<<control-pause>>}}
-\label{sec:org7d1a410}
+\label{sec:org9f4baa3}
 \begin{minted}[]{html}
 <button onClick={props.callback} className="btn-pause">
   <b>Pause</b>
@@ -543,7 +543,7 @@ These buttons are represented in the following way:
 \end{minted}
 
 \subsubsection{\texttt{<<control-play>>}}
-\label{sec:org0942776}
+\label{sec:orge2d8d0c}
 \begin{minted}[]{html}
 <button onClick={props.callback} className="btn-play">
   <b>Play</b>
@@ -551,12 +551,12 @@ These buttons are represented in the following way:
 \end{minted}
 
 \subsection{Clearing and randomizing the game}
-\label{sec:org046e494}
+\label{sec:org48e9f77}
 
 These buttons are simmilar to \texttt{PlayPauseButton}:
 
 \subsubsection{\texttt{<src/reactlife.jsx>}}
-\label{sec:org0234a53}
+\label{sec:org36f0be1}
 \begin{minted}[]{js}
 function ClearButton(props) {
   return ( 
@@ -566,7 +566,7 @@ function ClearButton(props) {
 \end{minted}
 
 \subsubsection{\texttt{<src/reactlife.jsx>}}
-\label{sec:org1eef86e}
+\label{sec:orgdf67754}
 \begin{minted}[]{js}
 function RandomizeButton(props) {
   return (
@@ -578,7 +578,7 @@ function RandomizeButton(props) {
 Where \texttt{<<control-clear>>} and \texttt{<<control-randomize>>} have obvious definitions:
 
 \subsubsection{\texttt{<<control-clear>>}}
-\label{sec:org713101f}
+\label{sec:org51e40e8}
 \begin{minted}[]{html}
 <button onClick={props.callback} className="btn-clear">
   <b>Clear</b>
@@ -586,7 +586,7 @@ Where \texttt{<<control-clear>>} and \texttt{<<control-randomize>>} have obvious
 \end{minted}
 
 \subsubsection{\texttt{<<control-randomize>>}}
-\label{sec:orgcacfad9}
+\label{sec:org940dd9e}
 \begin{minted}[]{html}
 <button onClick={props.callback} className="btn-randomize">
   <b>Randomize</b>
@@ -594,12 +594,12 @@ Where \texttt{<<control-clear>>} and \texttt{<<control-randomize>>} have obvious
 \end{minted}
 
 \subsection{Grid visualization}
-\label{sec:orgf418124}
+\label{sec:org6504856}
 
 This last component takes care of rendering the grid as an HTML table, where each cell has a different click callback:
 
 \subsubsection{\texttt{<src/reactlife.jsx>}}
-\label{sec:org7b970f6}
+\label{sec:orgd334b84}
 \begin{minted}[]{js}
 function VisualGrid(props) {
   const grid = props.grid;
@@ -625,7 +625,7 @@ function VisualGrid(props) {
 The visual representation of a cell's value is the background color of an HTML table cell:
 
 \subsubsection{\texttt{<<table-cell>>}}
-\label{sec:org647828c}
+\label{sec:orgfbd8623}
 \begin{minted}[]{html}
 <td key={j} className="cell" style={{backgroundColor: (cell == life.alive ? "white" : "black")}}
     onClick={ () => props.callback(i, j) }
@@ -635,7 +635,7 @@ The visual representation of a cell's value is the background color of an HTML t
 The rest of the table structure is trivial:
 
 \subsubsection{\texttt{<<table-row>>}}
-\label{sec:org84a6926}
+\label{sec:org2524783}
 \begin{minted}[]{html}
 <tr key={i}>
   { arr }
@@ -643,7 +643,7 @@ The rest of the table structure is trivial:
 \end{minted}
 
 \subsubsection{\texttt{<<table-main>>}}
-\label{sec:org7427495}
+\label{sec:org1694974}
 \begin{minted}[]{html}
 <table className="grid">
   <tbody>
@@ -653,12 +653,12 @@ The rest of the table structure is trivial:
 \end{minted}
 
 \subsection{Rendering into the DOM}
-\label{sec:org22c9eab}
+\label{sec:org802715f}
 
-The last step is render the \texttt{ConwaysGame} component in the DOM, we do this with the \texttt{render} function from \texttt{ReactDOM}. The following chunk of code injects \texttt{<<conways-game>>} in the HTML element with ID \texttt{root}:
+The last step is render the \texttt{ConwaysGame} component in the DOM using the \texttt{render} function from \texttt{ReactDOM}. The following chunk of code injects \texttt{<<conways-game>>} in the HTML element with ID \texttt{root}:
 
 \subsubsection{\texttt{<src/reactlife.jsx>}}
-\label{sec:org0fdae36}
+\label{sec:org16fddb8}
 \begin{minted}[]{js}
 ReactDOM.render(
   <<conways-game>>,
@@ -669,18 +669,18 @@ ReactDOM.render(
 The number of rows and columns are set to 30:
 
 \subsubsection{\texttt{<<conways-game>>}}
-\label{sec:org9db49e0}
+\label{sec:orgf763a13}
 \begin{minted}[]{html}
 <ConwaysGame ncols={30} nrows={30} />
 \end{minted}
 
 \section{The HTML document}
-\label{sec:org719b0f8}
+\label{sec:org1abc3cd}
 
 This last section includes the main HTML and CSS files:
 
 \subsubsection{\texttt{<src/index.html>}}
-\label{sec:orgce055bf}
+\label{sec:org00b7afa}
 \begin{minted}[]{html}
 <!DOCTYPE html>
 <html>
@@ -709,7 +709,7 @@ This last section includes the main HTML and CSS files:
 \end{minted}
 
 \subsubsection{\texttt{<src/style.css>}}
-\label{sec:org0a87665}
+\label{sec:orgf1a3f7c}
 \begin{minted}[]{css}
 .gol-main {}
 
