@@ -1,19 +1,15 @@
 #+TITLE:Conway's Game of Life
 #+AUTHOR:Eduardo Acuña Yeomans
 #+EMAIL:eduardo.acye@gmail.com
-#+OPTIONS: num:2
-#+BABEL: :results output drawer :exports both :noweb yes
-#+LATEX_HEADER: \usepackage[margin=1in]{geometry}
-#+LATEX_HEADER: \usepackage{libertine}
-# #+LATEX_HEADER: \usepackage[libertine]{newtxmath}
-#+LATEX_HEADER: \usepackage[scaled=0.9]{inconsolata}
+
+#+INCLUDE: "./settings.org"
+
 #+LATEX_HEADER: \DeclareMathOperator{\modulo}{modulo}
-#+INFOJS_OPT: view:t toc:t ltoc:t mouse:underline buttons:0 path:http://thomasf.github.io/solarized-css/org-info.min.js
-#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="http://thomasf.github.io/solarized-css/solarized-light.min.css" />
-#+HTML_HEAD: <style>table.center {margin-left:auto; margin-right:auto;}</style>
-#+HTML_HEAD: <link href="https://fonts.googleapis.com/css?family=Alegreya" rel="stylesheet">
-#+HTML_HEAD: <style> body { font-family: 'Alegreya', serif; } </style>
-#+HTML_HEAD: <style> h1, h2, h3 { font-family: 'Alegreya', serif; } </style>
+#+LATEX_HEADER: \usepackage{etoolbox}
+#+LATEX_HEADER: \makeatletter
+#+LATEX_HEADER: \AtBeginEnvironment{minted}{\dontdofcolorbox}
+#+LATEX_HEADER: \def\dontdofcolorbox{\renewcommand\fcolorbox[4][]{##4}}
+#+LATEX_HEADER: \makeatother
 #+BEGIN_EXPORT html
 \(\DeclareMathOperator{\modulo}{modulo}\)
 #+END_EXPORT
@@ -601,11 +597,11 @@ ReactDOM.render(
     <script src="https://unpkg.com/react@latest/dist/react.js"></script>
     <script src="https://unpkg.com/react-dom@latest/dist/react-dom.js"></script>
     <script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
-    <link rel="stylesheet" type="text/css" 
-          href="http://thomasf.github.io/solarized-css/solarized-light.min.css" />
-    <link href="https://fonts.googleapis.com/css?family=Alegreya" rel="stylesheet">
+    <link rel="stylesheet" type="text/css"
+          href="../style/solarized-light.css" />
+    <link href="https://fonts.googleapis.com/css?family=Alegreya|Alegreya+SC" rel="stylesheet">
     <style> body { font-family: 'Alegreya', serif; } </style>
-    <style> h1, h2, h3 { font-family: 'Alegreya', serif; } </style>
+    <style> h1, h2, h3 { font-family: 'Alegreya SC', serif; } </style>
     <link rel="stylesheet" href="style.css">
   </head>
   <body>
