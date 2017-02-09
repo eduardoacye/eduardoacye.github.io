@@ -1,7 +1,279 @@
-#+TITLE:  Setting up a React JS project
+#+TITLE:  Setting up a React JS project (Webpack + Babel)
 #+AUTHOR: Eduardo Acuña Yeomans
 #+EMAIL:  eduardo.acye@gmail.com
 #+DATE:   2017-02-07
 
 #+INCLUDE: "./settings.org"
 
+* Introduction
+
+  This document describes the steps for setting up a React JS project with Webpack and Babel. It's written as a literate program using Emacs and Org mode.
+
+  From the section [[Project structure][Project structure]] onwards, one can follow the instructions ignoring the fact that this document can be evaluated from Emacs. Just notice that =*project-name*= must be replaced by the actual project name.
+
+* Emacs configuration
+
+  The next block defines the variable ~project-name~ as a string representing the project's name. The variable ~dummy-project-name~ is used to restore the buffer to the original.
+
+  #+BEGIN_SRC elisp :results output silent
+(setq project-name "cool-project")
+(setq dummy-project-name "*project-name*")
+  #+END_SRC
+
+  In Emacs, the following block of code must be evaluated before executing the scripts in the rest of the document.
+
+  #+BEGIN_SRC elisp :results output silent
+(while (search-forward dummy-project-name nil t)
+  (replace-match project-name))
+  #+END_SRC
+
+  After executing scripts from this document, the following block must be evaluated in order to restore the automated changes.
+
+  #+BEGIN_SRC elisp :results output silent
+(while (search-forward project-name nil t)
+  (replace-match dummy-project-name))
+  #+END_SRC
+
+* Project structure
+
+  The structure of the project is shown in the following tree.
+
+  - =*project-name*= /
+    - =node_modules= /
+    - =dist= /
+    - =public= /
+      - =index.html=
+    - =src= /
+      - =App.js=
+      - =App.css=
+      - =index.js=
+    - =.eslintrc.js=
+    - =.gitignore=
+    - =webpack.config.js=
+    - =package.json=
+    - =README.md=
+
+  The following code block creates the root directory.
+
+  #+BEGIN_SRC sh :results output silent
+mkdir *project-name*
+  #+END_SRC
+  
+  From now on, the shell blocks of code shall be evaluated in the ~*project-name*~ directory. The following block creates the rest of the directories.
+
+  #+BEGIN_SRC sh :results output silent :dir *project-name*
+mkdir node_modules
+mkdir dist
+mkdir public
+mkdir src
+  #+END_SRC
+
+  The description of the project goes into ~package.json~.
+  
+  #+BEGIN_SRC json :tangle *project-name*/package.json
+{
+  "name": "*project-name*",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "build": "webpack -p",
+    "start": "webpack-dev-server --progress --colors"
+  }
+}
+  #+END_SRC
+
+* Install the required modules
+
+** React JS
+
+   Install the ~react~ and ~react-dom~ modules.
+
+   #+BEGIN_SRC sh :results output silent :dir *project-name*
+npm install --save react react-dom
+   #+END_SRC
+
+** Webpack
+
+   Install the ~webpack~ module for bundling the page.
+
+   #+BEGIN_SRC sh :results output silent :dir *project-name*
+npm install --save-dev webpack
+   #+END_SRC
+
+   After that, install the ~html-webpack-plugin~, ~style-loader~ and ~css-loader~ modules.
+
+   #+BEGIN_SRC sh :results output silent :dir *project-name*
+npm install --save-dev html-webpack-plugin style-loader css-loader
+   #+END_SRC
+
+   Then install the ~webpack-dev-server~ module globally.
+
+   #+BEGIN_SRC sh :results output silent :dir *project-name*
+npm install --save-dev webpack-dev-server
+   #+END_SRC
+
+** Babel
+
+   Install the ~babel-core~ module.
+
+   #+BEGIN_SRC sh :results output silent :dir *project-name*
+npm install --save-dev babel-core
+   #+END_SRC
+
+   Then install the ~babel-loader~ module for webpack integration.
+
+   #+BEGIN_SRC sh :results output silent :dir *project-name*
+npm install --save-dev babel-loader
+   #+END_SRC
+
+   Finally install ~babel-preset-es2015~ and ~babel-preset-react~.
+
+   #+BEGIN_SRC sh :results output silent :dir *project-name*
+npm install --save-dev babel-preset-es2015 babel-preset-react
+   #+END_SRC
+
+* Boilerplate code
+
+** Sample HTML
+
+   #+BEGIN_SRC html :tangle *project-name*/public/index.html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>*project-name*</title>
+  </head>
+  <body>
+    <div id="root"></div>
+  </body>
+</html>
+   #+END_SRC
+
+** Sample CSS
+
+   #+BEGIN_SRC css :tangle *project-name*/src/App.css
+body {
+  padding: 10%;
+}
+
+h1 {
+  text-align: center;
+}
+   #+END_SRC
+
+** Sample React Component
+
+   #+BEGIN_SRC js-jsx :tangle *project-name*/src/App.js
+import React from 'react';
+import './App.css'
+
+class App extends React.Component {
+  render() {
+    return <h1>React JS Project</h1>
+  }
+}
+        
+export default App
+   #+END_SRC
+
+** Main JS Code
+
+   #+BEGIN_SRC js-jsx :tangle *project-name*/src/index.js
+import React from 'react';
+import ReactDOM from 'react-dom';
+import App from './App';
+
+ReactDOM.render(
+  <App />,
+  document.getElementById('root')
+);
+   #+END_SRC
+
+* Webpack configuration
+
+  #+BEGIN_SRC js :tangle *project-name*/webpack.config.js
+var webpack = require('webpack');
+var htmlwebpack = require('html-webpack-plugin');
+
+var htmlconfig = new htmlwebpack({
+  template: __dirname + '/public/index.html',
+  filename: 'index.html',
+  inject: 'body'
+});
+
+module.exports = {
+  entry: ['./src/index.js'],
+  output: {
+    path: __dirname + '/dist',
+    filename: 'bundle.js'
+  },
+  module: {
+    loaders: [
+      {
+        test: /.js?$/,
+        exclude: /node_modules/,
+        loader: 'babel-loader',
+        query: {
+          presets: ['es2015', 'react']
+        }
+      },
+      {
+        test: /\.css$/,
+        exclude: /node_modules/,
+        loader: "style-loader!css-loader"
+      }
+    ]
+  },
+  plugins: [htmlconfig]
+};
+  #+END_SRC
+
+* ESLint configuration
+
+  In order for Emacs to lint the JS source files correctly, a =.eslint.js= file is provided.
+
+  #+BEGIN_SRC js :tangle *project-name*/.eslintrc.js
+module.exports = {
+  "env": {
+    "browser": true,
+    "es6": true
+  },
+  "extends": "eslint:recommended",
+  "parserOptions": {
+    "ecmaFeatures": {
+      "experimentalObjectRestSpread": true,
+      "jsx": true
+    },
+    "sourceType": "module"
+  },
+  "plugins": [
+    "react"
+  ],
+  "rules": {
+    "linebreak-style": [
+      "error",
+      "unix"
+    ],
+    "react/jsx-uses-vars": 1,
+    "react/react-in-jsx-scope": 1,
+    "no-console": 0
+  }
+};
+  #+END_SRC
+
+* Git integration
+
+  The following block of code corresponds to the ~.gitignore~ file, which is used by Git and some code editors to determine which files and directories must be ignored.
+
+  #+BEGIN_SRC gitignore :tangle *project-name*/.gitignore
+node_modules
+dist
+,*~
+\#*\#
+  #+END_SRC
+
+  Finally, the ~README.md~ file is the one that provides a general description of the present code in the ~*project-name*~ directory.
+
+  #+BEGIN_SRC markdown :tangle *project-name*/README.md
+# *project-name*
+  #+END_SRC

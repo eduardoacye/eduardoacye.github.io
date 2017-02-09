@@ -13,5 +13,5 @@
 * Setups
 
 ** Javscript
-   - [[file:react-setup.org][ReactJS + ES6 + Webpack]]
+   - [[file:react-setup.org][Setting up a React JS project (Webpack + Babel)]]
    

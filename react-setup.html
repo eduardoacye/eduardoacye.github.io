@@ -3,10 +3,10 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2017-02-07 Tue 18:08 -->
+<!-- 2017-02-08 Wed 17:51 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Setting up a React JS project</title>
+<title>Setting up a React JS project (Webpack + Babel)</title>
 <meta name="generator" content="Org mode" />
 <meta name="author" content="Eduardo Acuña Yeomans" />
 <style type="text/css">
@@ -307,8 +307,418 @@ for the JavaScript code in this tag.
  |
  <a accesskey="H" href="./index.html"> HOME </a>
 </div><div id="content">
-<h1 class="title">Setting up a React JS project</h1>
+<h1 class="title">Setting up a React JS project (Webpack + Babel)</h1>
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#org49f1b56">1. Introduction</a></li>
+<li><a href="#org5dafedc">2. Emacs configuration</a></li>
+<li><a href="#org4fe9d11">3. Project structure</a></li>
+<li><a href="#orgeb65ed5">4. Install the required modules</a>
+<ul>
+<li><a href="#orgad23a56">4.1. React JS</a></li>
+<li><a href="#org96a7613">4.2. Webpack</a></li>
+<li><a href="#org7d214e0">4.3. Babel</a></li>
+</ul>
+</li>
+<li><a href="#orgf0cd8e6">5. Boilerplate code</a>
+<ul>
+<li><a href="#orgb963860">5.1. Sample HTML</a></li>
+<li><a href="#orga9c4ded">5.2. Sample CSS</a></li>
+<li><a href="#org98c74be">5.3. Sample React Component</a></li>
+<li><a href="#org52720fc">5.4. Main JS Code</a></li>
+</ul>
+</li>
+<li><a href="#org2b1d1d5">6. Webpack configuration</a></li>
+<li><a href="#org035720a">7. ESLint configuration</a></li>
+<li><a href="#orga5f884e">8. Git integration</a></li>
+</ul>
+</div>
+</div>
 
+<div id="outline-container-org49f1b56" class="outline-2">
+<h2 id="org49f1b56"><span class="section-number-2">1</span> Introduction</h2>
+<div class="outline-text-2" id="text-1">
+<p>
+This document describes the steps for setting up a React JS project with Webpack and Babel. It's written as a literate program using Emacs and Org mode.
+</p>
+
+<p>
+From the section <a href="#org4fe9d11">Project structure</a> onwards, one can follow the instructions ignoring the fact that this document can be evaluated from Emacs. Just notice that <code>*project-name*</code> must be replaced by the actual project name.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org5dafedc" class="outline-2">
+<h2 id="org5dafedc"><span class="section-number-2">2</span> Emacs configuration</h2>
+<div class="outline-text-2" id="text-2">
+<p>
+The next block defines the variable <code>project-name</code> as a string representing the project's name. The variable <code>dummy-project-name</code> is used to restore the buffer to the original.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-elisp"><span style="color: #2aa198;">(</span><span style="color: #859900; font-weight: bold;">setq</span> project-name <span style="color: #2aa198;">"cool-project"</span><span style="color: #2aa198;">)</span>
+<span style="color: #2aa198;">(</span><span style="color: #859900; font-weight: bold;">setq</span> dummy-project-name <span style="color: #2aa198;">"*project-name*"</span><span style="color: #2aa198;">)</span>
+</pre>
+</div>
+
+<p>
+In Emacs, the following block of code must be evaluated before executing the scripts in the rest of the document.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-elisp"><span style="color: #2aa198;">(</span><span style="color: #859900; font-weight: bold;">while</span> <span style="color: #b58900;">(</span>search-forward dummy-project-name nil t<span style="color: #b58900;">)</span>
+  <span style="color: #b58900;">(</span>replace-match project-name<span style="color: #b58900;">)</span><span style="color: #2aa198;">)</span>
+</pre>
+</div>
+
+<p>
+After executing scripts from this document, the following block must be evaluated in order to restore the automated changes.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-elisp"><span style="color: #2aa198;">(</span><span style="color: #859900; font-weight: bold;">while</span> <span style="color: #b58900;">(</span>search-forward project-name nil t<span style="color: #b58900;">)</span>
+  <span style="color: #b58900;">(</span>replace-match dummy-project-name<span style="color: #b58900;">)</span><span style="color: #2aa198;">)</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org4fe9d11" class="outline-2">
+<h2 id="org4fe9d11"><span class="section-number-2">3</span> Project structure</h2>
+<div class="outline-text-2" id="text-3">
+<p>
+The structure of the project is shown in the following tree.
+</p>
+
+<ul class="org-ul">
+<li><code>*project-name*</code> /
+<ul class="org-ul">
+<li><code>node_modules</code> /</li>
+<li><code>dist</code> /</li>
+<li><code>public</code> /
+<ul class="org-ul">
+<li><code>index.html</code></li>
+</ul></li>
+<li><code>src</code> /
+<ul class="org-ul">
+<li><code>App.js</code></li>
+<li><code>App.css</code></li>
+<li><code>index.js</code></li>
+</ul></li>
+<li><code>.eslintrc.js</code></li>
+<li><code>.gitignore</code></li>
+<li><code>webpack.config.js</code></li>
+<li><code>package.json</code></li>
+<li><code>README.md</code></li>
+</ul></li>
+</ul>
+
+<p>
+The following code block creates the root directory.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-sh">mkdir *project-name*
+</pre>
+</div>
+
+<p>
+From now on, the shell blocks of code shall be evaluated in the <code>*project-name*</code> directory. The following block creates the rest of the directories.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-sh">mkdir node_modules
+mkdir dist
+mkdir public
+mkdir src
+</pre>
+</div>
+
+<p>
+The description of the project goes into <code>package.json</code>.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-json"><span style="color: #2aa198;">{</span>
+  <span style="color: #859900; font-weight: bold;">"name"</span>: <span style="color: #2aa198;">"*project-name*"</span>,
+  <span style="color: #859900; font-weight: bold;">"version"</span>: <span style="color: #2aa198;">"0.1.0"</span>,
+  <span style="color: #859900; font-weight: bold;">"private"</span>: <span style="color: #268bd2; font-weight: bold;">true</span>,
+  <span style="color: #859900; font-weight: bold;">"scripts"</span>: <span style="color: #b58900;">{</span>
+    <span style="color: #859900; font-weight: bold;">"build"</span>: <span style="color: #2aa198;">"webpack -p"</span>,
+    <span style="color: #859900; font-weight: bold;">"start"</span>: <span style="color: #2aa198;">"webpack-dev-server --progress --colors"</span>
+  <span style="color: #b58900;">}</span>
+<span style="color: #2aa198;">}</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgeb65ed5" class="outline-2">
+<h2 id="orgeb65ed5"><span class="section-number-2">4</span> Install the required modules</h2>
+<div class="outline-text-2" id="text-4">
+</div><div id="outline-container-orgad23a56" class="outline-3">
+<h3 id="orgad23a56"><span class="section-number-3">4.1</span> React JS</h3>
+<div class="outline-text-3" id="text-4-1">
+<p>
+Install the <code>react</code> and <code>react-dom</code> modules.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-sh">npm install --save react react-dom
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org96a7613" class="outline-3">
+<h3 id="org96a7613"><span class="section-number-3">4.2</span> Webpack</h3>
+<div class="outline-text-3" id="text-4-2">
+<p>
+Install the <code>webpack</code> module for bundling the page.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-sh">npm install --save-dev webpack
+</pre>
+</div>
+
+<p>
+After that, install the <code>html-webpack-plugin</code>, <code>style-loader</code> and <code>css-loader</code> modules.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-sh">npm install --save-dev html-webpack-plugin style-loader css-loader
+</pre>
+</div>
+
+<p>
+Then install the <code>webpack-dev-server</code> module globally.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-sh">npm install --save-dev webpack-dev-server
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org7d214e0" class="outline-3">
+<h3 id="org7d214e0"><span class="section-number-3">4.3</span> Babel</h3>
+<div class="outline-text-3" id="text-4-3">
+<p>
+Install the <code>babel-core</code> module.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-sh">npm install --save-dev babel-core
+</pre>
+</div>
+
+<p>
+Then install the <code>babel-loader</code> module for webpack integration.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-sh">npm install --save-dev babel-loader
+</pre>
+</div>
+
+<p>
+Finally install <code>babel-preset-es2015</code> and <code>babel-preset-react</code>.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-sh">npm install --save-dev babel-preset-es2015 babel-preset-react
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgf0cd8e6" class="outline-2">
+<h2 id="orgf0cd8e6"><span class="section-number-2">5</span> Boilerplate code</h2>
+<div class="outline-text-2" id="text-5">
+</div><div id="outline-container-orgb963860" class="outline-3">
+<h3 id="orgb963860"><span class="section-number-3">5.1</span> Sample HTML</h3>
+<div class="outline-text-3" id="text-5-1">
+<div class="org-src-container">
+<pre class="src src-html">&lt;<span style="color: #859900; font-weight: bold;">!DOCTYPE</span> html&gt;
+&lt;<span style="color: #268bd2;">html</span> <span style="color: #268bd2;">lang</span>=<span style="color: #2aa198;">"en"</span>&gt;
+  &lt;<span style="color: #268bd2;">head</span>&gt;
+    &lt;<span style="color: #268bd2;">meta</span> <span style="color: #268bd2;">charset</span>=<span style="color: #2aa198;">"UTF-8"</span>&gt;
+    &lt;<span style="color: #268bd2;">title</span>&gt;<span style="font-weight: bold; text-decoration: underline;">*project-name*</span>&lt;/<span style="color: #268bd2;">title</span>&gt;
+  &lt;/<span style="color: #268bd2;">head</span>&gt;
+  &lt;<span style="color: #268bd2;">body</span>&gt;
+    &lt;<span style="color: #268bd2;">div</span> <span style="color: #268bd2;">id</span>=<span style="color: #2aa198;">"root"</span>&gt;&lt;/<span style="color: #268bd2;">div</span>&gt;
+  &lt;/<span style="color: #268bd2;">body</span>&gt;
+&lt;/<span style="color: #268bd2;">html</span>&gt;
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orga9c4ded" class="outline-3">
+<h3 id="orga9c4ded"><span class="section-number-3">5.2</span> Sample CSS</h3>
+<div class="outline-text-3" id="text-5-2">
+<div class="org-src-container">
+<pre class="src src-css"><span style="color: #268bd2;">body </span><span style="color: #2aa198;">{</span>
+  <span style="color: #268bd2;">padding</span>: 10%;
+<span style="color: #2aa198;">}</span>
+
+<span style="color: #268bd2;">h1 </span><span style="color: #2aa198;">{</span>
+  <span style="color: #268bd2;">text-align</span>: center;
+<span style="color: #2aa198;">}</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org98c74be" class="outline-3">
+<h3 id="org98c74be"><span class="section-number-3">5.3</span> Sample React Component</h3>
+<div class="outline-text-3" id="text-5-3">
+<div class="org-src-container">
+<pre class="src src-js-jsx"><span style="color: #859900; font-weight: bold;">import</span> React from <span style="color: #2aa198;">'react'</span>;
+<span style="color: #859900; font-weight: bold;">import</span> <span style="color: #2aa198;">'./App.css'</span>
+
+<span style="color: #859900; font-weight: bold;">class</span> App <span style="color: #859900; font-weight: bold;">extends</span> React.Component <span style="color: #2aa198;">{</span>
+  render<span style="color: #b58900;">()</span> <span style="color: #b58900;">{</span>
+    <span style="color: #859900; font-weight: bold;">return</span> &lt;h1&gt;React JS Project&lt;/h1&gt;
+  <span style="color: #b58900;">}</span>
+<span style="color: #2aa198;">}</span>
+        
+<span style="color: #859900; font-weight: bold;">export</span> <span style="color: #859900; font-weight: bold;">default</span> App
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org52720fc" class="outline-3">
+<h3 id="org52720fc"><span class="section-number-3">5.4</span> Main JS Code</h3>
+<div class="outline-text-3" id="text-5-4">
+<div class="org-src-container">
+<pre class="src src-js-jsx"><span style="color: #859900; font-weight: bold;">import</span> React from <span style="color: #2aa198;">'react'</span>;
+<span style="color: #859900; font-weight: bold;">import</span> ReactDOM from <span style="color: #2aa198;">'react-dom'</span>;
+<span style="color: #859900; font-weight: bold;">import</span> App from <span style="color: #2aa198;">'./App'</span>;
+
+ReactDOM.render<span style="color: #2aa198;">(</span>
+  &lt;App /&gt;,
+  document.getElementById<span style="color: #b58900;">(</span><span style="color: #2aa198;">'root'</span><span style="color: #b58900;">)</span>
+<span style="color: #2aa198;">)</span>;
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org2b1d1d5" class="outline-2">
+<h2 id="org2b1d1d5"><span class="section-number-2">6</span> Webpack configuration</h2>
+<div class="outline-text-2" id="text-6">
+<div class="org-src-container">
+<pre class="src src-js"><span style="color: #859900; font-weight: bold;">var</span> <span style="color: #268bd2;">webpack</span> = require<span style="color: #2aa198;">(</span><span style="color: #2aa198;">'webpack'</span><span style="color: #2aa198;">)</span>;
+<span style="color: #859900; font-weight: bold;">var</span> <span style="color: #268bd2;">htmlwebpack</span> = require<span style="color: #2aa198;">(</span><span style="color: #2aa198;">'html-webpack-plugin'</span><span style="color: #2aa198;">)</span>;
+
+<span style="color: #859900; font-weight: bold;">var</span> <span style="color: #268bd2;">htmlconfig</span> = <span style="color: #859900; font-weight: bold;">new</span> <span style="color: #b58900;">htmlwebpack</span><span style="color: #2aa198;">(</span><span style="color: #b58900;">{</span>
+  template: __dirname + <span style="color: #2aa198;">'/public/index.html'</span>,
+  filename: <span style="color: #2aa198;">'index.html'</span>,
+  inject: <span style="color: #2aa198;">'body'</span>
+<span style="color: #b58900;">}</span><span style="color: #2aa198;">)</span>;
+
+module.exports = <span style="color: #2aa198;">{</span>
+  entry: <span style="color: #b58900;">[</span><span style="color: #2aa198;">'./src/index.js'</span><span style="color: #b58900;">]</span>,
+  output: <span style="color: #b58900;">{</span>
+    path: __dirname + <span style="color: #2aa198;">'/dist'</span>,
+    filename: <span style="color: #2aa198;">'bundle.js'</span>
+  <span style="color: #b58900;">}</span>,
+  module: <span style="color: #b58900;">{</span>
+    loaders: <span style="color: #268bd2;">[</span>
+      <span style="color: #6c71c4;">{</span>
+        test: <span style="color: #2aa198;">/.js?$/</span>,
+        exclude: <span style="color: #2aa198;">/node_modules/</span>,
+        loader: <span style="color: #2aa198;">'babel-loader'</span>,
+        query: <span style="color: #859900;">{</span>
+          presets: <span style="color: #b58900;">[</span><span style="color: #2aa198;">'es2015'</span>, <span style="color: #2aa198;">'react'</span><span style="color: #b58900;">]</span>
+        <span style="color: #859900;">}</span>
+      <span style="color: #6c71c4;">}</span>,
+      <span style="color: #6c71c4;">{</span>
+        test: <span style="color: #2aa198;">/\.css$/</span>,
+        exclude: <span style="color: #2aa198;">/node_modules/</span>,
+        loader: <span style="color: #2aa198;">"style-loader!css-loader"</span>
+      <span style="color: #6c71c4;">}</span>
+    <span style="color: #268bd2;">]</span>
+  <span style="color: #b58900;">}</span>,
+  plugins: <span style="color: #b58900;">[</span>htmlconfig<span style="color: #b58900;">]</span>
+<span style="color: #2aa198;">}</span>;
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org035720a" class="outline-2">
+<h2 id="org035720a"><span class="section-number-2">7</span> ESLint configuration</h2>
+<div class="outline-text-2" id="text-7">
+<p>
+In order for Emacs to lint the JS source files correctly, a <code>.eslint.js</code> file is provided.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-js">module.exports = <span style="color: #2aa198;">{</span>
+  <span style="color: #2aa198;">"env"</span>: <span style="color: #b58900;">{</span>
+    <span style="color: #2aa198;">"browser"</span>: <span style="color: #268bd2; font-weight: bold;">true</span>,
+    <span style="color: #2aa198;">"es6"</span>: <span style="color: #268bd2; font-weight: bold;">true</span>
+  <span style="color: #b58900;">}</span>,
+  <span style="color: #2aa198;">"extends"</span>: <span style="color: #2aa198;">"eslint:recommended"</span>,
+  <span style="color: #2aa198;">"parserOptions"</span>: <span style="color: #b58900;">{</span>
+    <span style="color: #2aa198;">"ecmaFeatures"</span>: <span style="color: #268bd2;">{</span>
+      <span style="color: #2aa198;">"experimentalObjectRestSpread"</span>: <span style="color: #268bd2; font-weight: bold;">true</span>,
+      <span style="color: #2aa198;">"jsx"</span>: <span style="color: #268bd2; font-weight: bold;">true</span>
+    <span style="color: #268bd2;">}</span>,
+    <span style="color: #2aa198;">"sourceType"</span>: <span style="color: #2aa198;">"module"</span>
+  <span style="color: #b58900;">}</span>,
+  <span style="color: #2aa198;">"plugins"</span>: <span style="color: #b58900;">[</span>
+    <span style="color: #2aa198;">"react"</span>
+  <span style="color: #b58900;">]</span>,
+  <span style="color: #2aa198;">"rules"</span>: <span style="color: #b58900;">{</span>
+    <span style="color: #2aa198;">"linebreak-style"</span>: <span style="color: #268bd2;">[</span>
+      <span style="color: #2aa198;">"error"</span>,
+      <span style="color: #2aa198;">"unix"</span>
+    <span style="color: #268bd2;">]</span>,
+    <span style="color: #2aa198;">"react/jsx-uses-vars"</span>: 1,
+    <span style="color: #2aa198;">"react/react-in-jsx-scope"</span>: 1,
+    <span style="color: #2aa198;">"no-console"</span>: 0
+  <span style="color: #b58900;">}</span>
+<span style="color: #2aa198;">}</span>;
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orga5f884e" class="outline-2">
+<h2 id="orga5f884e"><span class="section-number-2">8</span> Git integration</h2>
+<div class="outline-text-2" id="text-8">
+<p>
+The following block of code corresponds to the <code>.gitignore</code> file, which is used by Git and some code editors to determine which files and directories must be ignored.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-gitignore">node_modules
+dist
+<span style="color: #859900; font-weight: bold;">*</span>~
+\#<span style="color: #859900; font-weight: bold;">*</span>\#
+</pre>
+</div>
+
+<p>
+Finally, the <code>README.md</code> file is the one that provides a general description of the present code in the <code>*project-name*</code> directory.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-markdown"><span style="color: #93a1a1;">#</span> <span style="color: #93a1a1;">*</span><span style="color: #268bd2; text-decoration: underline;">project-name</span><span style="color: #93a1a1;">*</span>
+</pre>
+</div>
+</div>
+</div>
 </div>
 </body>
 </html>
