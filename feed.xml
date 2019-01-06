@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.8.5">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2019-01-05T19:09:43-07:00</updated><id>/feed.xml</id><title type="html">Points, Lines &amp;amp; Polygons</title><subtitle>A blog about programs.</subtitle><entry><title type="html">First blog post</title><link href="/2019/01/05/first-blogpost.html" rel="alternate" type="text/html" title="First blog post" /><published>2019-01-05T18:32:54-07:00</published><updated>2019-01-05T18:32:54-07:00</updated><id>/2019/01/05/first-blogpost</id><content type="html" xml:base="/2019/01/05/first-blogpost.html">&lt;h1 id=&quot;heading&quot;&gt;Heading&lt;/h1&gt;
+
+&lt;h2 id=&quot;sub-heading&quot;&gt;Sub-heading&lt;/h2&gt;
+
+&lt;h3 id=&quot;sub-sub-heading&quot;&gt;Sub-sub-heading&lt;/h3&gt;
+
+&lt;h4 id=&quot;sub-sub-sub-heading&quot;&gt;Sub-sub-sub-heading&lt;/h4&gt;
+
+&lt;h5 id=&quot;sub-sub-sub-sub-heading&quot;&gt;Sub-sub-sub-sub-heading&lt;/h5&gt;
+
+&lt;h6 id=&quot;sub-sub-sub-sub-sub-heading&quot;&gt;Sub-sub-sub-sub-sub-heading&lt;/h6&gt;
+
+&lt;p&gt;&lt;em&gt;Lorem&lt;/em&gt; &lt;strong&gt;&lt;abbr title=&quot;Some abbreviation explanation&quot;&gt;ipsum&lt;/abbr&gt;&lt;/strong&gt; &lt;code class=&quot;highlighter-rouge&quot;&gt;dolor&lt;/code&gt; &lt;del&gt;sit&lt;/del&gt; amet, consectetur adipiscing elit. Morbi quis quam pulvinar, tristique quam quis, porta purus. Fusce &lt;abbr title=&quot;Some abbreviation explanation&quot;&gt;ipsum&lt;/abbr&gt; sem, elementum sit amet fermentum vitae, fringilla ac risus. Phasellus velit odio, vulputate ac mi at, accumsan consectetur risus. Suspendisse ornare ex turpis, sit amet gravida diam congue non. Duis sit amet nunc eu justo blandit commodo. Aenean blandit luctus efficitur. Nam id nibh vestibulum lacus consectetur elementum vel eget &lt;abbr title=&quot;Some abbreviation explanation&quot;&gt;ipsum&lt;/abbr&gt;. Suspendisse potenti. Nulla id lorem at augue commodo tempor quis in nibh. Mauris bibendum malesuada iaculis. Maecenas placerat condimentum lacinia. Aenean commodo elementum dolor, nec ultrices libero tincidunt ut.&lt;sup id=&quot;fnref:1&quot;&gt;&lt;a href=&quot;#fn:1&quot; class=&quot;footnote&quot;&gt;1&lt;/a&gt;&lt;/sup&gt;&lt;/p&gt;
+
+&lt;p&gt;Suspendisse potenti. Vestibulum facilisis orci eu urna efficitur ultrices. Curabitur nec pharetra ex, sed fringilla quam. Curabitur in faucibus nulla. Nam sit amet gravida arcu. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Etiam vel porttitor tortor. Maecenas lobortis, velit vulputate placerat lacinia, nisl mauris maximus arcu, quis molestie metus elit vitae odio. Vestibulum eget tortor faucibus, malesuada mauris sed, tempus libero. Aliquam placerat sodales aliquet. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Quisque efficitur orci sit amet nunc ultrices, sit amet laoreet tellus aliquam. Sed odio odio, scelerisque suscipit varius eu, tincidunt at odio. Quisque volutpat sapien nec est vehicula, in congue magna tincidunt. In hac habitasse platea dictumst. Aliquam vel nisl ut velit mattis aliquam.&lt;/p&gt;
+
+&lt;p class=&quot;side-note&quot;&gt;Aliquam eu pretium leo, ac semper &lt;abbr title=&quot;Some abbreviation explanation&quot;&gt;ipsum&lt;/abbr&gt;. Integer ligula tellus, accumsan sed fermentum mollis, ultrices sed sapien. Nullam convallis consectetur metus, ut accumsan urna lobortis eget. Suspendisse egestas pulvinar justo non fringilla. Etiam tortor sem, vestibulum quis porttitor a, cursus imperdiet urna. Sed mattis molestie felis vulputate mattis. Vestibulum a fringilla metus, quis egestas sem.&lt;/p&gt;
+
+&lt;p&gt;Duis pellentesque turpis id porttitor tempus. Maecenas interdum fringilla pulvinar. Cras malesuada mi et ex aliquet efficitur. Nunc nec condimentum dui. Nam interdum eros ut ultrices facilisis. Curabitur mollis tincidunt condimentum. Quisque urna purus, vestibulum id ligula at, ornare dignissim mauris.&lt;/p&gt;
+
+&lt;p&gt;Morbi commodo venenatis ornare. Sed at magna vel nibh molestie feugiat vitae porttitor quam. In hac habitasse platea dictumst. Donec sem mi, rutrum id quam nec, maximus egestas felis. Sed tempus fringilla orci, in faucibus dui pulvinar ut. Ut lobortis est in laoreet fermentum. Aenean venenatis congue ligula ac laoreet. Suspendisse eros arcu, pellentesque egestas pretium ut, vestibulum eget enim. Proin dignissim nec magna et tempus. Sed accumsan urna laoreet nisl viverra, eu congue libero sollicitudin.&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;Curabitur quis nisl at ex finibus aliquet. Pellentesque at lacus dapibus neque congue vestibulum. Curabitur sagittis, felis in rhoncus dapibus, elit purus tincidunt orci, vitae porttitor mi tortor ac augue. Fusce vitae nisi leo. Sed turpis orci, feugiat sed eleifend nec, aliquam id felis. Nam libero lorem, egestas at molestie venenatis, rutrum et turpis. Nulla aliquet sit amet velit ut bibendum. Sed ultricies lacinia tempor. Donec pharetra et magna sit amet consectetur. Quisque et hendrerit libero. Curabitur sem arcu, imperdiet eu vehicula a, tincidunt at libero. Phasellus tincidunt, diam at eleifend fringilla, lacus arcu vestibulum lorem, non condimentum erat magna eget quam. Donec eget dignissim augue. Proin condimentum lacus libero, id vestibulum diam volutpat nec. Etiam nec &lt;abbr title=&quot;Some abbreviation explanation&quot;&gt;ipsum&lt;/abbr&gt; dui.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h1 id=&quot;common-lisp-code&quot;&gt;Common Lisp code&lt;/h1&gt;
+
+&lt;div class=&quot;language-common-lisp highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;((&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;x&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1266778&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+      &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;y&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;458&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;multiple-value-bind&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;quotient&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;remainder&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+      &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;truncate&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;x&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;y&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;format&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;nil&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;~A divided by ~A is ~A remainder ~A&quot;&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;x&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;y&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;quotient&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;remainder&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)))&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h1 id=&quot;scheme-code&quot;&gt;Scheme code&lt;/h1&gt;
+
+&lt;div class=&quot;language-scheme highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;define&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;find-first&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;func&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;lst&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;call-with-current-continuation&lt;/span&gt;
+   &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;lambda&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;return-immediately&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+     &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;for-each&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;lambda&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+                 &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;func&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+                     &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;return-immediately&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)))&lt;/span&gt;
+               &lt;span class=&quot;nv&quot;&gt;lst&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+     &lt;span class=&quot;no&quot;&gt;#f&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)))&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h1 id=&quot;clojure-code&quot;&gt;Clojure code&lt;/h1&gt;
+
+&lt;div class=&quot;language-clojure highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;map&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;fn&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;form&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+       &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;case&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;form&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+         &lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;ss&quot;&gt;'one&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+         &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;ss&quot;&gt;'plus&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+     &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;quote&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)))&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h1 id=&quot;c-code&quot;&gt;C code&lt;/h1&gt;
+
+&lt;div class=&quot;language-c highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;cp&quot;&gt;#include &amp;lt;stdio.h&amp;gt;
+&lt;/span&gt;
+&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;printf&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;hello, world&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h1 id=&quot;math&quot;&gt;Math&lt;/h1&gt;
+
+&lt;p&gt;\[2x+3\]&lt;/p&gt;
+
+&lt;p&gt;\[ \sum_{i=0}^{n} \frac{i^{2}}{\pi} \]&lt;/p&gt;
+
+&lt;p&gt;This is an example of inline math: \( E = mc^{2} \).&lt;/p&gt;
+&lt;div class=&quot;footnotes&quot;&gt;
+  &lt;ol&gt;
+    &lt;li id=&quot;fn:1&quot;&gt;
+      &lt;p&gt;classic placeholder text &lt;a href=&quot;#fnref:1&quot; class=&quot;reversefootnote&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
+    &lt;/li&gt;
+  &lt;/ol&gt;
+&lt;/div&gt;</content><author><name></name></author><category term="Misc" /><summary type="html">Heading</summary></entry></feed>

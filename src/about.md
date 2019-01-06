@@ -7,4 +7,4 @@ navtitle: about
 position: 1000
 ---
 
-This is my blog.
+This is my blog

@@ -1,0 +1,13 @@
+title: Points, Lines & Polygons
+email: eduardo.acye@gmail.com
+description: >- #
+  A blog about programs.
+baseurl: ""
+url: ""
+github_username: eduardoacye
+
+# Build settings
+markdown: kramdown
+theme: jekyll-theme-kagami
+color_scheme: github
+mathjax: true
