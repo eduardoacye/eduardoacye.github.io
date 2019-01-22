@@ -1,7 +1,7 @@
-title: Just a Blog
+title: Solo un blog
 email: eduardo.acye@gmail.com
 description: >- #
-  This is just a blog.
+  Este es solo un blog.
 baseurl: ""
 url: ""
 github_username: eduardoacye
@@ -11,3 +11,5 @@ markdown: kramdown
 theme: jekyll-theme-kagami
 color_scheme: github
 mathjax: true
+plugins:
+  - jekyll-seo-tag

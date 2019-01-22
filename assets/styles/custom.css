@@ -1,0 +1,7 @@
+.wrapper {
+    max-width: 800px;
+}
+
+article code {
+    font-size: 0.75em;
+}

@@ -7,4 +7,4 @@ navtitle: about
 position: 1000
 ---
 
-This is my blog
+Este es mi blog personal, probablemente quedará en el olvido en un par de meses.

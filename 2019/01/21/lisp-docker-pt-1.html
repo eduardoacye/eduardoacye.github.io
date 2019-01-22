@@ -1,0 +1,1027 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Common Lisp y Docker Parte 1 - Solo un blog</title>
+  <meta name="description" content="TL;DR: Esta es una guía para usar Lisp en un ambiente de desarrollo basado en Docker, este repositorio incluye todo el código presentado aqui.">
+
+  
+  <link rel="stylesheet" href="/assets/styles/core.css?v=20190121210046">
+  <link rel="stylesheet" href="/assets/styles/fontello.css?v=20190121210046">
+  <link rel="stylesheet" href="/assets/styles/highlighting/github.css?v=20190121210046">
+
+  <link rel="canonical" href="/2019/01/21/lisp-docker-pt-1.html">
+  <link rel="alternate" type="application/rss+xml" title="Solo un blog" href="/feed.xml">
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+  <style>.MathJax_ExBox { font-family: serif; }</style>
+  
+
+  
+
+  <link rel="stylesheet" href="/assets/styles/custom.css?v=20190121210046">
+  <link rel="shortcut icon" type="image/png" href="/favicon.png">
+</head>
+
+  <body>
+
+  <main class="page-content" aria-label="Content">
+    <div class="wrapper">
+      <article class="post" lang="en" itemscope itemtype="http://schema.org/BlogPosting" >
+
+  <header class="post-header">
+  <a class="site-title" href="/">Solo un blog</a>
+  <h1 class="post-title" itemprop="name headline">Common Lisp y Docker Parte 1</h1>
+</header>
+
+
+<div class="post-cover" aria-label="Cover">
+  <div class="post-cover-wrapper">
+    <img src="../../../assets/banner-lisp.jpg" alt="" />
+  </div>
+  <div class="cover-meta">
+</div>
+</div>
+
+
+
+  <div class="post-content" itemprop="articleBody">
+    <blockquote>
+  <p>TL;DR: Esta es una guía para usar Lisp en un ambiente de desarrollo
+basado en Docker, <a href="https://github.com/eduardoacye/lisp-docker">este
+repositorio</a> incluye
+todo el código presentado aqui.</p>
+</blockquote>
+
+<p>Hace unos cuantos meses comencé a escribir una aplicación web en
+Common Lisp. Era un sistema para gestionar una biblioteca, con el cual
+se podía comunicar a través de un servidor con una RESTful API.</p>
+
+<p>En mi <a href="https://nearsoft.com/">trabajo</a> había estado trabajando con
+Docker y la idea de tener un ambiente reproducible para deployar el
+programa al servidor de pruebas y a producción me parecía atracivo
+(aunque quizá era algo un poco overkill para este caso de uso).</p>
+
+<p>Me propuse extender la idea del ambiente reproducible a la etapa de
+desarrollo, quería tener el programa corriendo en un contenedor Docker
+en mi ambiente local, junto con otros servicios como la base de datos,
+los servidores de desarrollo de un par de frontends, así como NGINX
+como reverse proxy de todo el sistema.</p>
+
+<p>El flujo de trabajo consistia en:</p>
+
+<p>1.- Levantar los contenedores:</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>make up
+</code></pre></div></div>
+
+<p>2.- Abrir en el navegador los frontends, dirigiéndome a las direcciones:</p>
+<ul>
+  <li>http://admin.dominio/ para el panel de administración</li>
+  <li>http://dominio/ para el sitio principal</li>
+</ul>
+
+<p>3.- Abrir <a href="https://www.getpostman.com/">Postman</a> e interactuar con la
+API usando:</p>
+<ul>
+  <li>http://api.dominio/</li>
+</ul>
+
+<p>4.- Abrir Emacs y conectarme a la imagen de Lisp dentro del contenedor
+de la API usando <code class="highlighter-rouge">slime-connect</code>.</p>
+
+<blockquote>
+  <p>Para este paso, es posible no tener una implementación de Lisp en tu
+ambiente local, ya que Lisp corre en el contenedor y solo se usa
+SLIME para interactuar con esa instancia. La ventaja de esto es que
+puedes tener varios contenedores de Lisp cada uno con distintas
+implementaciones y versiones del lenguaje.</p>
+</blockquote>
+
+<p>5.- Abrir una ventana con los logs de la aplicación:</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>make logs
+</code></pre></div></div>
+
+<p>6.- Programar alguna funcionalidad o arreglaba algún bug.</p>
+
+<p>7.- Hacer un <code class="highlighter-rouge">git push</code> a una branch, la cual corria pruebas unitarias
+en <a href="https://about.gitlab.com/">GitLab</a>, así como linters para el
+código. Y al momento de hacer merge de esta branch a <code class="highlighter-rouge">master</code> se
+ejecutaba un pipeline de manera automática para deployar a producción,
+el cual era un droplet de Digital Ocean con docker instalado.</p>
+
+<blockquote>
+  <p>Los contenedores en los que corria el programa en producción estaban
+configurados de diferente manera a los contenedores del ambiente de
+desarrollo, pero en general funcionaban de manera similar.</p>
+</blockquote>
+
+<h1 id="objetivo">Objetivo</h1>
+
+<p>En esta entrada del blog presento una guía para tener la base del
+flujo de trabajo anterior, al final de esta parte I tendremos:</p>
+
+<ol>
+  <li>Un archivo <code class="highlighter-rouge">Makefile</code> que será nuestro <em>“recetario”</em> para construir
+las imágenes de Docker e interactuar con docker compose.</li>
+  <li>Dockerfiles sencillos para construir imágenes para
+<a href="http://sbcl.org/"><abbr title="Steele Bank Common Lisp">SBCL</abbr></a> y <a href="https://ccl.clozure.com/"><abbr title="Clozure Common Lisp">CCL</abbr></a>, dos
+implementaciones libres de Common Lisp.</li>
+  <li>Dockerfiles sencillos para tener Quicklisp listo para usarse tanto
+para <abbr title="Steele Bank Common Lisp">SBCL</abbr> como para <abbr title="Clozure Common Lisp">CCL</abbr>.</li>
+  <li>Una configuración de Docker Compose para levantar el contenedor de
+Lisp.</li>
+  <li>Configuración especial para Emacs y Slime</li>
+  <li>Archivo de inicialización para el programa en lisp.</li>
+</ol>
+
+<p>Antes de comenzar, asegúrate de instalar Emacs, Make, Docker y Docker
+Compose. En <a href="/2019/01/08/configuracion-de-emacs.html">esta entrada</a> muestro la configuración de
+Emacs que usaré para escribir esta guía.</p>
+
+<p>Para darle contexto a los archivos que se irán creando, este es el
+listado que tengo en mi máquina local:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>/home/eduardo/
+          └── proyecto-magnifico
+              ├── app-majestuosa
+              │   └── código de la aplicación en Lisp ...
+              ├── Dockerfile.ccl
+              ├── Dockerfile.ccl.ql
+              ├── Dockerfile.sbcl
+              ├── Dockerfile.sbcl.ql
+              ├── docker-compose.yml
+              ├── Makefile
+              ├── swank-server.lisp
+              ├── .dir-locals.el
+              └── .projectile
+
+</code></pre></div></div>
+
+<h1 id="imágenes-de-docker">Imágenes de Docker</h1>
+
+<p>No soy un experto en Docker, y probablemente los Dockerfiles de esta
+guía tengan mucho por donde mejorar. Si quieres ver imágenes mas
+robustas para Lisp, pudieras darle una leída a los repositorios de
+<a href="https://github.com/daewok">daewok</a>, recuerdo haber leido sus
+Dockerfiles para crear los mios.</p>
+
+<h2 id="preparando-el-recetario">Preparando el recetario</h2>
+
+<p>Antes de comenzar a escribir Dockerfiles, comenzemos con el <code class="highlighter-rouge">Makefile</code>
+el cual nos servirá tanto para ejecutar comandos complicados, como
+para proveer una pequeña capa de abstracción para la implementación y
+versión de Lisp que deseamos utilizar.</p>
+
+<p>Primero definimos de manera condicional las variables <code class="highlighter-rouge">IMPLEMENTATION</code>
+y <code class="highlighter-rouge">VERSION</code>, al usar <code class="highlighter-rouge">?=</code> estamos estableciendo valores por default
+para estas variables, es decir, si corremos <code class="highlighter-rouge">make</code> estas variables
+tendran sus valores por defecto, pero siempre se podrá especificar,
+por ejemplo, <code class="highlighter-rouge">IMPLEMENTATION=ccl VERSION=1.11.5 make</code>.</p>
+
+<div class="language-make highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">IMPLEMENTATION</span> <span class="o">?=</span> sbcl
+<span class="nv">VERSION</span> <span class="o">?=</span> 1.4.15
+</code></pre></div></div>
+
+<p>Ahora definimos una tarea para construir dos imágenes de Docker:</p>
+<ul>
+  <li>La imagen base con la implementación especificada ya instalada.</li>
+  <li>La imagen con quicklisp lista para instalar algunos paquetes de terceros.</li>
+</ul>
+
+<div class="language-make highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">IMPLEMENTATION</span> <span class="o">?=</span> sbcl
+<span class="nv">VERSION</span> <span class="o">?=</span> 1.4.15
+
+<span class="nl">build</span><span class="o">:</span>
+	docker build <span class="nt">--build-arg</span> <span class="nv">VERSION</span><span class="o">=</span><span class="k">${</span><span class="nv">VERSION</span><span class="k">}</span> <span class="nt">-f</span> Dockerfile.<span class="k">${</span><span class="nv">IMPLEMENTATION</span><span class="k">}</span> <span class="nt">-t</span> common-lisp-<span class="k">${</span><span class="nv">IMPLEMENTATION</span><span class="k">}</span>:<span class="k">${</span><span class="nv">VERSION</span><span class="k">}</span> .
+	docker build <span class="nt">--build-arg</span> <span class="nv">VERSION</span><span class="o">=</span><span class="k">${</span><span class="nv">VERSION</span><span class="k">}</span> <span class="nt">-f</span> Dockerfile.<span class="k">${</span><span class="nv">IMPLEMENTATION</span><span class="k">}</span>.ql <span class="nt">-t</span> common-lisp-<span class="k">${</span><span class="nv">IMPLEMENTATION</span><span class="k">}</span><span class="nt">-ql</span>:<span class="k">${</span><span class="nv">VERSION</span><span class="k">}</span> .
+</code></pre></div></div>
+
+<p>Haciendo una sustitución de las variables por los valores por defecto
+podremos entender mejor lo que hacen estos comandos:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker build --build-arg VERSION=1.4.15 -f Dockerfile.sbcl -t common-lisp-sbcl:1.4.15 .
+</code></pre></div></div>
+
+<p>y</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker build --build-arg VERSION=1.4.15 -f Dockerfile.sbcl.ql -t common-lisp-sbcl-ql:1.4.15 .
+</code></pre></div></div>
+
+<p>El archivo Dockerfile que se utiliza para construir las imágenes
+depende de la implementación. Y la versión se utiliza para el nombre
+del <em>tag</em> de la imágen, así como argumento de <em>build</em>.</p>
+
+<p>En esta guía se presentan Dockerfiles para <abbr title="Steele Bank Common Lisp">SBCL</abbr> y para <abbr title="Clozure Common Lisp">CCL</abbr>, por lo que
+necesitamos cuatro Dockerfiles en total:</p>
+
+<ul>
+  <li>Dockerfile.sbcl</li>
+  <li>Dockerfile.sbcl.ql</li>
+  <li>Dockerfile.ccl</li>
+  <li>Dockerfile.ccl.ql</li>
+</ul>
+
+<h2 id="imágenes-para-steele-bank-common-lisp">Imágenes para Steele Bank Common Lisp</h2>
+
+<h3 id="dockerfilesbcl">Dockerfile.sbcl</h3>
+
+<p>Esta imagen se basa en <code class="highlighter-rouge">debian:stretch-slim</code> la cual es una versión
+reducida de Debian, pero no tan reducida como las versiones <em>Alpine</em>.</p>
+
+<p>Recordando el <code class="highlighter-rouge">build-arg</code> que se utiliza en el comando para construir
+la imagen, se declara <code class="highlighter-rouge">VERSION</code> como un argumento que usaremos dentro
+del Dockerfile.</p>
+
+<div class="language-dockerfile highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">FROM</span><span class="s"> debian:stretch-slim</span>
+
+<span class="k">ARG</span><span class="s"> VERSION</span>
+</code></pre></div></div>
+
+<p>Posteriormente, se procede a instalar algunas dependencias para la
+compilación de <abbr title="Steele Bank Common Lisp">SBCL</abbr>:</p>
+
+<div class="language-dockerfile highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">RUN </span>apt-get update <span class="se">\
+</span>        <span class="o">&amp;&amp;</span> apt-get <span class="nb">install</span> <span class="nt">-y</span> <span class="nt">--no-install-recommends</span> <span class="se">\
+</span>        ca-certificates <span class="se">\
+</span>        wget <span class="se">\
+</span>        build-essential <span class="se">\
+</span>        zlib1g-dev <span class="se">\
+</span>        sbcl <span class="se">\
+</span>        <span class="o">&amp;&amp;</span> <span class="nb">rm</span> <span class="nt">-rf</span> /var/lib/apt/lists/<span class="k">*</span>
+</code></pre></div></div>
+
+<p>El último elemento en esta lista es <code class="highlighter-rouge">sbcl</code> el cual es necesario para
+compilar <abbr title="Steele Bank Common Lisp">SBCL</abbr>. Pudieramos usar la versión que incluye el repositorio
+de Debian como la implementación de trabajo, sin embargo, la idea es
+poder elegir que version de Lisp necesitas para el caso de uso
+específico.</p>
+
+<p>Ahora lo que debemos hacer es instruirle a Docker que se ubique en el
+directorio <code class="highlighter-rouge">/usr/local/src</code> y que consiga la versión de <abbr title="Steele Bank Common Lisp">SBCL</abbr>
+especificada en la variable <code class="highlighter-rouge">VERSION</code>:</p>
+
+<div class="language-docker highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">WORKDIR</span><span class="s"> /usr/local/src</span>
+
+<span class="k">RUN </span>wget <span class="s2">"http://prdownloads.sourceforge.net/sbcl/sbcl-</span><span class="k">${</span><span class="nv">VERSION</span><span class="k">}</span><span class="s2">-source.tar.bz2"</span> <span class="se">\
+</span>        <span class="o">&amp;&amp;</span> <span class="nb">tar </span>xjf sbcl-<span class="k">${</span><span class="nv">VERSION</span><span class="k">}</span><span class="nt">-source</span>.tar.bz2 <span class="se">\
+</span>        <span class="o">&amp;&amp;</span> <span class="nb">rm</span> <span class="nt">-rf</span> sbcl-<span class="k">${</span><span class="nv">VERSION</span><span class="k">}</span><span class="nt">-source</span>.tar.bz2
+</code></pre></div></div>
+
+<p>El comando de arriba descarga, descomprime y elimina el archivo
+comprimido correspondiente a la versión de <abbr title="Steele Bank Common Lisp">SBCL</abbr> que deseamos. Ahora
+falta ubicarnos dentro del directorio extraido y compilar esta
+versión:</p>
+
+<div class="language-docker highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">WORKDIR</span><span class="s"> /usr/local/src/sbcl-${VERSION}</span>
+
+<span class="k">RUN </span>sh make.sh <span class="nt">--prefix</span><span class="o">=</span>/usr/local <span class="nt">--fancy</span> <span class="se">\
+</span>        <span class="o">&amp;&amp;</span> sh install.sh
+</code></pre></div></div>
+
+<p>Para evitar tener una imagen con programas innecesarios, eliminamos la
+versión de <abbr title="Steele Bank Common Lisp">SBCL</abbr> que utilizamos para compilar la versión especificada:</p>
+
+<div class="language-docker highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">RUN </span>apt-get remove <span class="nt">--purge</span> <span class="nt">-y</span> <span class="se">\
+</span>        sbcl <span class="se">\
+</span>        <span class="o">&amp;&amp;</span> apt-get autoremove <span class="nt">-y</span> <span class="se">\
+</span>        <span class="o">&amp;&amp;</span> <span class="nb">rm</span> <span class="nt">-rf</span> /var/lib/apt/lists/<span class="k">*</span>
+</code></pre></div></div>
+
+<p>Como último paso, nos ubicamos en el directorio <code class="highlighter-rouge">/root/common-lisp</code> y
+establecemos el comando principal de la imagen como <code class="highlighter-rouge">sbcl</code>:</p>
+
+<div class="language-docker highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">WORKDIR</span><span class="s"> /root/common-lisp</span>
+
+<span class="k">CMD</span><span class="s"> ["sbcl"]</span>
+</code></pre></div></div>
+
+<p>La elección de este directorio no es arbitraria, resulta que cuando se
+usa quicklisp para encontrar sistemas ASDF, se escanea el path
+<code class="highlighter-rouge">~/common-lisp</code>, el cuál dentro del contenedor será
+<code class="highlighter-rouge">/root/common-lisp</code>.</p>
+
+<h3 id="dockerfilesbclql">Dockerfile.sbcl.ql</h3>
+
+<p>Para la imagen con Quicklisp utilizamos la variable <code class="highlighter-rouge">VERSION</code> para determinar el nombre de la imagen “padre”, es decir, la imagen que se construye con el Dockerfile definido en la anterior sección:</p>
+
+<div class="language-docker highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">ARG</span><span class="s"> VERSION</span>
+
+<span class="k">FROM</span><span class="s"> common-lisp-sbcl:${VERSION}</span>
+</code></pre></div></div>
+
+<p>Ahora procedemos a instalar dependencias que vayan a requerir los
+sistemas que instalemos por medio de quicklisp, como ejemplo, en esta
+imagen instalaremos <code class="highlighter-rouge">libffi-dev</code> para los sistemas que tengan alguna
+interacción con bibliotecas de C y <code class="highlighter-rouge">libssl-dev</code> el cual es requerido
+por algunos servidores web:</p>
+
+<div class="language-docker highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">RUN </span>apt-get update <span class="se">\
+</span>        <span class="o">&amp;&amp;</span> apt-get <span class="nb">install</span> <span class="nt">-y</span> <span class="nt">--no-install-recommends</span> <span class="se">\
+</span>        libffi-dev <span class="se">\
+</span>        libssl-dev <span class="se">\
+</span>        <span class="o">&amp;&amp;</span> <span class="nb">rm</span> <span class="nt">-rf</span> /var/lib/apt/lists/<span class="k">*</span>
+</code></pre></div></div>
+
+<p>Teniendo las dependencias instaladas, nos ubicamos en el directorio
+<code class="highlighter-rouge">/root</code> y descargamos e instalamos quicklisp:</p>
+
+<div class="language-docker highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">WORKDIR</span><span class="s"> /root</span>
+
+<span class="k">RUN </span>wget http://beta.quicklisp.org/quicklisp.lisp
+
+<span class="k">RUN </span>sbcl <span class="nt">--no-sysinit</span> <span class="nt">--no-userinit</span> <span class="nt">--non-interactive</span> <span class="se">\
+</span>        <span class="nt">--load</span> ./quicklisp.lisp <span class="se">\
+</span>        <span class="nt">--eval</span> <span class="s2">"(quicklisp-quickstart:install)"</span> <span class="se">\
+</span>        <span class="nt">--eval</span> <span class="s2">"(ql::without-prompting (ql:add-to-init-file))"</span>
+</code></pre></div></div>
+
+<p>Ahora, cuando corramos <code class="highlighter-rouge">sbcl</code> podremos utilizar la función
+<code class="highlighter-rouge">ql:quickload</code> para cargar sistemas de terceros y sistemas propios.</p>
+
+<p>Para finalizar, volvemos a establecer como el directorio actual a
+<code class="highlighter-rouge">/root/common-lisp</code> y se agrega el archivo <code class="highlighter-rouge">swank-server.lisp</code> como un
+programa de ejemplo para estas imágenes.</p>
+
+<div class="language-docker highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">WORKDIR</span><span class="s"> /root/common-lisp</span>
+
+<span class="k">ADD</span><span class="s"> swank-server.lisp .</span>
+
+<span class="k">CMD</span><span class="s"> ["sbcl", "--load", "swank-server.lisp"]</span>
+</code></pre></div></div>
+
+<h4 id="swank-serverlisp">swank-server.lisp</h4>
+
+<p>Este archivo de arranque va a cargar el sistema <code class="highlighter-rouge">swank</code> el cual
+permite que slime se comunique con una imagen de Lisp, posteriormente
+va a correr un servidor de swank y mantenerlo escuchando a conexiones.</p>
+
+<div class="language-common-lisp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="nv">ql:quickload</span> <span class="ss">:swank</span><span class="p">)</span>
+<span class="p">(</span><span class="nb">setf</span> <span class="nv">swank:*globally-redirect-io*</span> <span class="no">t</span><span class="p">)</span>
+<span class="p">(</span><span class="nb">setf</span> <span class="nv">swank::*loopback-interface*</span> <span class="s">"0.0.0.0"</span><span class="p">)</span>
+<span class="p">(</span><span class="nv">swank:create-server</span> <span class="ss">:dont-close</span> <span class="no">t</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>Usualmente escribo un archivo muy similar a este, que además levante
+un servidor HTTP o ejecute algun servicio.</p>
+
+<h2 id="imágenes-para-clozure-common-lisp">Imágenes para Clozure Common Lisp</h2>
+
+<p>Las imágenes para <abbr title="Clozure Common Lisp">CCL</abbr> son muy similares a las de <abbr title="Steele Bank Common Lisp">SBCL</abbr>. La diferencia
+principal es que <abbr title="Clozure Common Lisp">CCL</abbr> distribuye tanto los binarios como el código
+fuente en un mismo paquete, por lo que solo debemos hacer un <em>rebuild</em>
+de la implementación para verificar que el sistema se encuentre
+totalmente funcional.</p>
+
+<h3 id="dockerfileccl">Dockerfile.ccl</h3>
+
+<div class="language-docker highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">FROM</span><span class="s"> debian:stretch-slim</span>
+
+<span class="k">ARG</span><span class="s"> VERSION</span>
+
+<span class="k">RUN </span>apt-get update <span class="se">\
+</span>        <span class="o">&amp;&amp;</span> apt-get <span class="nb">install</span> <span class="nt">-y</span> <span class="nt">--no-install-recommends</span> <span class="se">\
+</span>        ca-certificates <span class="se">\
+</span>        wget <span class="se">\
+</span>        build-essential <span class="se">\
+</span>        m4 <span class="se">\
+</span>        <span class="o">&amp;&amp;</span> <span class="nb">rm</span> <span class="nt">-rf</span> /var/lib/apt/lists/<span class="k">*</span>
+
+<span class="k">WORKDIR</span><span class="s"> /usr/local/src</span>
+
+<span class="k">RUN </span>wget <span class="s2">"https://github.com/Clozure/ccl/releases/download/v</span><span class="k">${</span><span class="nv">VERSION</span><span class="k">}</span><span class="s2">/ccl-</span><span class="k">${</span><span class="nv">VERSION</span><span class="k">}</span><span class="s2">-linuxx86.tar.gz"</span> <span class="se">\
+</span>        <span class="o">&amp;&amp;</span> <span class="nb">tar </span>xvzf ccl-<span class="k">${</span><span class="nv">VERSION</span><span class="k">}</span><span class="nt">-linuxx86</span>.tar.gz <span class="se">\
+</span>        <span class="o">&amp;&amp;</span> <span class="nb">rm</span> <span class="nt">-rf</span> ccl-<span class="k">${</span><span class="nv">VERSION</span><span class="k">}</span><span class="nt">-linuxx86</span>.tar.gz
+
+<span class="k">WORKDIR</span><span class="s"> /usr/local/src/ccl</span>
+
+<span class="k">RUN </span>./lx86cl64 <span class="nt">--no-init</span> <span class="nt">--eval</span> <span class="s2">"(rebuild-ccl :full t)"</span> <span class="nt">--eval</span> <span class="s2">"(quit)"</span>
+
+<span class="k">RUN </span><span class="nb">ln</span> <span class="nt">-s</span> /usr/local/src/ccl/scripts/ccl64 /usr/local/bin/ccl <span class="se">\
+</span>        <span class="o">&amp;&amp;</span> <span class="nb">ln</span> <span class="nt">-s</span> /usr/local/src/ccl/scripts/ccl /usr/local/bin/ccl32
+
+<span class="k">WORKDIR</span><span class="s"> /root/common-lisp</span>
+
+<span class="k">CMD</span><span class="s"> ["ccl"]</span>
+</code></pre></div></div>
+
+<h3 id="dockerfilecclql">Dockerfile.ccl.ql</h3>
+
+<p>Este archivo es casi casi igual que la versión de <abbr title="Steele Bank Common Lisp">SBCL</abbr>, lo único que
+cambia son los argumentos al cargar Quicklisp:</p>
+
+<div class="language-docker highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">ARG</span><span class="s"> VERSION</span>
+
+<span class="k">FROM</span><span class="s"> common-lisp-ccl:${VERSION}</span>
+
+<span class="k">RUN </span>apt-get update <span class="se">\
+</span>        <span class="o">&amp;&amp;</span> apt-get <span class="nb">install</span> <span class="nt">-y</span> <span class="nt">--no-install-recommends</span> <span class="se">\
+</span>        libffi-dev <span class="se">\
+</span>        libssl-dev <span class="se">\
+</span>        <span class="o">&amp;&amp;</span> <span class="nb">rm</span> <span class="nt">-rf</span> /var/lib/apt/lists/<span class="k">*</span>
+
+<span class="k">WORKDIR</span><span class="s"> /root</span>
+
+<span class="k">RUN </span>wget http://beta.quicklisp.org/quicklisp.lisp
+
+<span class="k">RUN </span>ccl <span class="nt">--no-init</span> <span class="nt">--load</span> ./quicklisp.lisp <span class="se">\
+</span>        <span class="nt">--eval</span> <span class="s2">"(quicklisp-quickstart:install)"</span> <span class="se">\
+</span>        <span class="nt">--eval</span> <span class="s2">"(ql::without-prompting (ql:add-to-init-file))"</span>
+
+<span class="k">WORKDIR</span><span class="s"> /root/common-lisp</span>
+
+<span class="k">ADD</span><span class="s"> swank-server.lisp .</span>
+
+<span class="k">CMD</span><span class="s"> ["ccl", "--load", "swank-server.lisp"]</span>
+</code></pre></div></div>
+
+<h2 id="construyendo-las-imágenes">Construyendo las imágenes</h2>
+
+<p>A pleno inicio del 2019, la última versión de <abbr title="Steele Bank Common Lisp">SBCL</abbr> es la 1.4.15, mientras que
+la última versión de <abbr title="Clozure Common Lisp">CCL</abbr> es la 1.11.5, para probar que el código que
+hemos escrito funciona correctamente, ejecutamos:</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">IMPLEMENTATION</span><span class="o">=</span>sbcl <span class="nv">VERSION</span><span class="o">=</span>1.4.15 make build
+</code></pre></div></div>
+
+<p>Y posteriormente:</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">IMPLEMENTATION</span><span class="o">=</span>ccl <span class="nv">VERSION</span><span class="o">=</span>1.11.5 make build
+</code></pre></div></div>
+
+<p>Este proceso puede tardar algo de tiempo, en la máquina virtual con la
+que verifico los pasos de esta guía obtuve los siguientes tiempos:</p>
+
+<p>Para <code class="highlighter-rouge">IMPLEMENTATION=sbcl VERSION=1.4.15 make build</code>:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>0.36s user 0.26s system 0% cpu 8:59.38 total
+</code></pre></div></div>
+
+<p>Para <code class="highlighter-rouge">IMPLEMENTATION=ccl VERSION=1.11.5 make build</code>:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>0.36s user 0.13s system 0% cpu 2:24.35 total
+</code></pre></div></div>
+
+<p>La imagen de <abbr title="Clozure Common Lisp">CCL</abbr> fue mas rápida de construir en parte porque se
+reutilizó la imagen de <code class="highlighter-rouge">debian:stretch-slim</code> que ambas utilizan.</p>
+
+<h2 id="probando-las-imágenes">Probando las imágenes</h2>
+
+<p>En las siguientes secciones iremos creando más tareas en el
+<code class="highlighter-rouge">Makefile</code>, para probar que la imagen base corre de manera normal,
+utilizamos:</p>
+
+<div class="language-make highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nl">run</span><span class="o">:</span>
+	docker run <span class="nt">--rm</span> <span class="nt">-it</span> common-lisp-<span class="k">${</span><span class="nv">IMPLEMENTATION</span><span class="k">}</span>:<span class="k">${</span><span class="nv">VERSION</span><span class="k">}</span>
+</code></pre></div></div>
+
+<p>Y para probar ambas implementaciones, se ejecuta:</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">IMPLEMENTATION</span><span class="o">=</span>sbcl <span class="nv">VERSION</span><span class="o">=</span>1.4.15 make run
+</code></pre></div></div>
+
+<p>y</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">IMPLEMENTATION</span><span class="o">=</span>ccl <span class="nv">VERSION</span><span class="o">=</span>1.11.5 make run
+</code></pre></div></div>
+
+<p>Para probar las imágenes con quicklisp, uno pudiera pensar que basta
+modificar la tarea <code class="highlighter-rouge">run</code> de la siguiente manera:</p>
+
+<div class="language-make highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nl">run</span><span class="o">:</span>
+	docker run <span class="nt">--rm</span> <span class="nt">-it</span> <span class="nt">-p</span> <span class="s2">"4005:4005"</span> common-lisp-<span class="k">${</span><span class="nv">IMPLEMENTATION</span><span class="k">}</span><span class="nt">-ql</span>:<span class="k">${</span><span class="nv">VERSION</span><span class="k">}</span>
+</code></pre></div></div>
+
+<p>El puerto 4500 lo habilitamos para poder conectarnos al servidor Swank
+que se levanta en <code class="highlighter-rouge">swank-server.lisp</code>.</p>
+
+<p>Intenta correr esta tarea y verás como Swank es descargado y
+compilado. Al ejecutar el comando <code class="highlighter-rouge">slime-connect</code> desde Emacs,
+eligiendo <code class="highlighter-rouge">localhost</code> y <code class="highlighter-rouge">4500</code> como los parámetros de conexión, es
+posible que puedas lograr conectarte a la imagen de Lisp que está
+corriendo en el contenedor de Docker… Pero no necesariamente será
+este el caso. De hecho, si no pudiste establecer la conexión, ya
+tendrás una idea del problema.</p>
+
+<p>Resulta que Swank y Slime se distribuyen en el mismo paquete pero de
+diferente manera, en Emacs pudimos haber instalado Slime desde los
+repositorios MELPA, mientras que en el contenedor, lo descargamos
+desde Quicklisp (esto sucede de forma automática al correr
+<code class="highlighter-rouge">(ql:quickload :swank)</code>). Esto puede provocar que la versión de Swank
+usada en el contenedor sea distinta a la versión de Slime en
+Emacs. Incluso si hubieras instalado Slime usando el sistema
+<code class="highlighter-rouge">quicklisp-slime-helper</code> de Quicklisp, es posible que tengas una
+versión distinta en algún contenedor.</p>
+
+<p>Para arreglar este problema, podemos montar un volúmen de Docker del
+directorio de Slime en la máquina local a un directorio que pueda
+encontrar Quicklisp dentro del contenedor, de tal manera, que cuando
+se haga <code class="highlighter-rouge">(ql:quickload :swank)</code> en <code class="highlighter-rouge">swank-server.lisp</code>, se encontrará
+el sistema local (con la versión sincronizada a Emacs) y no se
+necesitará descargar desde el repositorio de Quicklisp.</p>
+
+<p>El <code class="highlighter-rouge">Makefile</code> actualizado para abordar esta situación se vería así:</p>
+
+<div class="language-make highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">IMPLEMENTATION</span> <span class="o">?=</span> sbcl
+<span class="nv">VERSION</span> <span class="o">?=</span> 1.4.15
+<span class="nv">SLIME_DIR</span> <span class="o">?=</span> ~/.emacs.d/elpa/slime-20190105.2006
+
+<span class="nl">build</span><span class="o">:</span>
+	docker build <span class="nt">--build-arg</span> <span class="nv">VERSION</span><span class="o">=</span><span class="k">${</span><span class="nv">VERSION</span><span class="k">}</span> <span class="nt">-f</span> Dockerfile.<span class="k">${</span><span class="nv">IMPLEMENTATION</span><span class="k">}</span> <span class="nt">-t</span> common-lisp-<span class="k">${</span><span class="nv">IMPLEMENTATION</span><span class="k">}</span>:<span class="k">${</span><span class="nv">VERSION</span><span class="k">}</span> .
+	docker build <span class="nt">--build-arg</span> <span class="nv">VERSION</span><span class="o">=</span><span class="k">${</span><span class="nv">VERSION</span><span class="k">}</span> <span class="nt">-f</span> Dockerfile.<span class="k">${</span><span class="nv">IMPLEMENTATION</span><span class="k">}</span>.ql <span class="nt">-t</span> common-lisp-<span class="k">${</span><span class="nv">IMPLEMENTATION</span><span class="k">}</span><span class="nt">-ql</span>:<span class="k">${</span><span class="nv">VERSION</span><span class="k">}</span> .
+
+<span class="nl">run</span><span class="o">:</span>
+	docker run <span class="nt">--rm</span> <span class="nt">-it</span> <span class="nt">-p</span> <span class="s2">"4005:4005"</span> <span class="nt">-v</span> <span class="k">${</span><span class="nv">SLIME_DIR</span><span class="k">}</span>:/root/common-lisp/slime common-lisp-<span class="k">${</span><span class="nv">IMPLEMENTATION</span><span class="k">}</span><span class="nt">-ql</span>:<span class="k">${</span><span class="nv">VERSION</span><span class="k">}</span>
+</code></pre></div></div>
+
+<p>El valor de la variable <code class="highlighter-rouge">SLIME_DIR</code> debe de ser el directorio donde
+tienes instalado Slime en tu máquina local. Yo instalé slime por medio
+de MELPA, pero tu directorio puede estar en otro lado, por ejemplo, si
+instalaste Slime por medio de Quicklisp, el directorio será algo como
+<code class="highlighter-rouge">~/quicklisp/dists/quicklisp/software/slime-v2.22</code>.</p>
+
+<p>Si dudas sobre el directorio donde está instalado Slime, puedes
+evaluar la siguiente expresión en Emacs con <code class="highlighter-rouge">M-:</code>:</p>
+
+<div class="language-elisp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="nv">file-name-directory</span> <span class="p">(</span><span class="nv">locate-library</span> <span class="s">"slime"</span><span class="p">))</span>
+</code></pre></div></div>
+
+<p>Otro aspecto que cambia en el <code class="highlighter-rouge">Makefile</code> es el comando para correr el
+contenedor. Se monta un volúmen que asocia <code class="highlighter-rouge">SLIME_DIR</code> en la máquina
+local, con el directorio <code class="highlighter-rouge">/root/common-lisp/slime</code> en el
+contenedor. Al establecer esta sincronización entre directorios,
+cuando Quicklisp busque el sistema de Swank, lo encontrará en
+<code class="highlighter-rouge">/root/common-lisp/slime</code> y no se necesitará descargar la versión de
+Quicklisp.</p>
+
+<p>A partir de este punto en la guía, utilizaremos los valores por
+default del <code class="highlighter-rouge">Makefile</code> para mantener los comandos cortos.</p>
+
+<p>Para verificar que esta carpeta es montada correctamente, agregamos
+una tarea adicional al <code class="highlighter-rouge">Makefile</code>:</p>
+
+<div class="language-make highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nl">bash</span><span class="o">:</span>
+	docker run <span class="nt">--rm</span> <span class="nt">-it</span> <span class="nt">-v</span> <span class="k">${</span><span class="nv">SLIME_DIR</span><span class="k">}</span>:/root/common-lisp/slime common-lisp-<span class="k">${</span><span class="nv">IMPLEMENTATION</span><span class="k">}</span><span class="nt">-ql</span>:<span class="k">${</span><span class="nv">VERSION</span><span class="k">}</span> /bin/bash
+</code></pre></div></div>
+
+<p>Ejecutando <code class="highlighter-rouge">make bash</code> corremos el contenedor, pero en lugar de
+comenzar en el <abbr title="Read Eval Print Loop">REPL</abbr> de Lisp, comenzamos en una sesión de bash.</p>
+
+<p>Puedes navegar al directorio <code class="highlighter-rouge">/root/common-lisp/slime</code> y verificar que
+son los mismos archivos presentes en el directorio <code class="highlighter-rouge">SLIME_DIR</code> en la
+máquina local.</p>
+
+<p>Ejecutando <code class="highlighter-rouge">make run</code> podrás levantar el servidor Swank y conectarte
+desde Emacs sin tener el conflicto entre versiones de Swank y Slime.</p>
+
+<h1 id="mejor-integración-con-emacs">Mejor integración con Emacs</h1>
+
+<p>La configuración que se ha presentado hasta el momento tiene una grán
+falla, sin embargo, no tiene que ver tanto con la configuración de
+Docker. Resulta que Slime tiene una funcionalidad para navegar a
+través de definiciones de funciones y variables usando los comandos
+<code class="highlighter-rouge">slime-edit-definition</code> (<code class="highlighter-rouge">M-.</code>) y <code class="highlighter-rouge">slime-pop-find-definition-stack</code>
+(<code class="highlighter-rouge">M-,</code>). Por ejemplo, si escribimos en el <abbr title="Read Eval Print Loop">REPL</abbr> <code class="highlighter-rouge">(mapcar </code>,
+posicionamos el cursor en el símbolo <code class="highlighter-rouge">mapcar</code> y se inserta la
+combinación <code class="highlighter-rouge">M-.</code>, esperaríamos trasladarnos al código fuente en donde
+esta función es definida. Sin embargo, no podemos hacer esto con la
+configuración actual.</p>
+
+<p><img src="../../../assets/docker-lisp-001.gif" alt="Ir a definición no funcionando" /></p>
+
+<p>Cuando intentamos <em>ir a la definición</em> de <code class="highlighter-rouge">mapcar</code> nos encontramos con
+que Swank comunica correctamente la ubicación en el código fuente,
+pero cuando seleccionamos la definición deseada terminamos en un
+archivo en blanco. Esto ocurre debido a que Emacs intenta abrir el
+archivo en la máquina local y no en el contenedor.</p>
+
+<p>Montar un volúmen no sería muy útil ya que podriamos terminar
+sobreescribiendo el código fuente en el contenedor o sobreescribiendo
+alguna versión local de Lisp localmente.</p>
+
+<p>Por fortuna para nosotros, los programadores de Slime pensaron en una
+solución general, y es que este mismo problema existe cuando nos
+conectamos a una instancia remota en otra computadora. Emacs, Slime y
+Lisp tienen la capacidad de permitirle al programador <em>parchar</em>, por
+ejemplo, una imágen de Lisp en producción, de manera remota y sin
+detener la ejecución del programa. Por lo que existe un mecanismo para
+traducir <em>paths</em>.</p>
+
+<h2 id="desmenuzando-el-problema">Desmenuzando el problema</h2>
+
+<p>Existe una variable de Slime llamada <code class="highlighter-rouge">slime-filename-translations</code> y
+su valor consiste en una lista con elementos de la siguiente forma:</p>
+
+<div class="language-elisp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="nv">&lt;machine-instance-regexp&gt;</span>
+  <span class="nv">&lt;from-emacs-fn&gt;</span>
+  <span class="nv">&lt;from-lisp-fn&gt;</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>__<machine-instance-regexp>__ es una expresión regular la cuál es
+utilizada para intentar encontrar un match con el valor de
+`(machine-instance)` de la imágen de Lisp remota. Por defecto, el
+valor que Lisp regresa como respuesta a esta llamada es el ID del
+contenedor en donde corre.</machine-instance-regexp></p>
+
+<p>__<from-emacs-fn>__ es una función que toma un path desde Emacs y lo
+convierte a un path que pueda entender la imagen de Lisp remota. Esto
+se utiliza, por ejemplo, cuando compilamos un archivo desde Emacs, el
+código con el que Emacs está trabajando se encuentra en la máquina
+local, pero la imagen de Lisp solo podrá entender un path dentro del
+contenedor de Docker.</from-emacs-fn></p>
+
+<p>__<from-lisp-fn>__ es una función que toma un path desde la imagen de
+Lisp remota y lo convierte en un path con el que Emacs pueda
+trabajar. Esto se utiliza en el ejemplo que se mencionó arriba, el
+path del código fuente de la función `mapcar` era dentro del
+contenedor y Emacs no podía abrirlo en la máquina local.</from-lisp-fn></p>
+
+<p>Para solucionar este problema de traducción de paths, tendremos que:</p>
+<ul>
+  <li>Entender como usar o modificar el valor de <code class="highlighter-rouge">(machine-instance)</code>.</li>
+  <li>Entender como abrir en Emacs un archivo que se encuentra dentro de un contenedor de Docker.</li>
+  <li>Establecer un mecanismo sencillo que nos permita extender <code class="highlighter-rouge">slime-filename-translations</code>.</li>
+</ul>
+
+<h2 id="tomando-control-de-machine-instance">Tomando control de machine-instance</h2>
+
+<p>En el <abbr title="Common Lisp HyperSpec">CLHS</abbr> se describe la función <code class="highlighter-rouge">machine-instance</code> de la siguiente manera:</p>
+
+<blockquote>
+  <p>Returns a string that identifies the particular instance of the
+computer hardware on which Common Lisp is running, or nil if no such
+string can be computed.</p>
+</blockquote>
+
+<p>En la sesión de Slime, se obtiene que:</p>
+
+<div class="language-common-lisp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">CL-USER&gt;</span> <span class="p">(</span><span class="nb">machine-instance</span><span class="p">)</span>
+<span class="s">"98f07c995b1b"</span>
+</code></pre></div></div>
+
+<p>Este valor concuerda con el ID del contenedor:</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>docker container <span class="nb">ls
+</span>CONTAINER ID        IMAGE                        COMMAND                  CREATED             STATUS              PORTS                    NAMES
+98f07c995b1b        common-lisp-sbcl-ql:1.4.15   <span class="s2">"sbcl --load swank-s…"</span>   About an hour ago   Up About an hour    0.0.0.0:4005-&gt;4005/tcp   agitated_joliot
+</code></pre></div></div>
+
+<p>Al analizar la definición de esta función en <abbr title="Steele Bank Common Lisp">SBCL</abbr>, resulta ser que
+para sistemas basados en UNIX se utiliza el hostname y Docker por
+defecto elige el container ID como hostname.</p>
+
+<p>Para cambiar este comportamiento, podemos definir otro hostname en el
+comando run, por ejemplo, el nombre de la aplicación:</p>
+
+<div class="language-make highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nl">run</span><span class="o">:</span>
+	docker run <span class="nt">--rm</span> <span class="nt">-it</span> <span class="nt">-p</span> <span class="s2">"4005:4005"</span> <span class="nt">-v</span> <span class="k">${</span><span class="nv">SLIME_DIR</span><span class="k">}</span>:/root/common-lisp/slime <span class="nt">--hostname</span> app-majestuosa common-lisp-<span class="k">${</span><span class="nv">IMPLEMENTATION</span><span class="k">}</span><span class="nt">-ql</span>:<span class="k">${</span><span class="nv">VERSION</span><span class="k">}</span>
+</code></pre></div></div>
+
+<p>Al correr este comando, se obtiene:</p>
+
+<div class="language-common-lisp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">CL-USER&gt;</span> <span class="p">(</span><span class="nb">machine-instance</span><span class="p">)</span>
+<span class="s">"app-majestuosa"</span>
+</code></pre></div></div>
+
+<h2 id="abriendo-archivos-en-contenedores-desde-emacs">Abriendo archivos en contenedores desde Emacs</h2>
+
+<p>El código fuente de Lisp se encuentra dentro del contenedor, por lo
+que Emacs debe de saber como comunicarse con contenedores de Docker
+para poder interactuar con ellos.</p>
+
+<p>Para nuestra fortuna, está el paquete <code class="highlighter-rouge">docker-tramp</code> el cuál le indica
+a Emacs como integrar la funcionalidad de Tramp para contenedores de
+Docker.</p>
+
+<p>Del manual de Emacs, se dice que:</p>
+
+<blockquote>
+  <p>TRAMP is for transparently accessing remote files from within
+Emacs. TRAMP enables an easy, convenient, and consistent interface
+to remote files as if they are local files. TRAMP’s transparency
+extends to editing, version control, and dired.</p>
+</blockquote>
+
+<p>Por ejemplo, si quisieramos abrir en Emacs un archivo que se encuentra
+en un servidor remoto con el cual nos podemos comunicar mediante SSH,
+se puede escribir el siguiente valor para el comando <code class="highlighter-rouge">find-files</code>:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>/ssh:usuario@ip-remoto:/path/al/archivo/remoto
+</code></pre></div></div>
+
+<p>De manera similar, con Docker Tramp escribiríamos:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>/docker:nombre-contenedor:/path/al/archivo/en/contenedor
+</code></pre></div></div>
+
+<p>Por default, el nombre del contenedor se puede sustituir por el ID del
+contenedor y lo anterior funciona perfectamente. Sin embargo, para
+nuestro caso de uso es mejor definir el nombre del contenedor antes de
+correrlo, ya que el ID del contenedor cambia cada vez que lo tumbamos
+y levantamos de nuevo. Para lograr esto, se modifica la tarea <code class="highlighter-rouge">run</code> de
+la siguiente forma:</p>
+
+<div class="language-make highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nl">run</span><span class="o">:</span>
+	docker run <span class="nt">--rm</span> <span class="nt">-it</span> <span class="nt">-p</span> <span class="s2">"4005:4005"</span> <span class="nt">-v</span> <span class="k">${</span><span class="nv">SLIME_DIR</span><span class="k">}</span>:/root/common-lisp/slime <span class="nt">--hostname</span> app-majestuosa <span class="nt">--name</span> app-majestuosa common-lisp-<span class="k">${</span><span class="nv">IMPLEMENTATION</span><span class="k">}</span><span class="nt">-ql</span>:<span class="k">${</span><span class="nv">VERSION</span><span class="k">}</span>
+</code></pre></div></div>
+
+<p>Ahora ya podemos abrir archivos dentro del contenedor:</p>
+
+<p><img src="../../../assets/docker-lisp-002.gif" alt="abriendo código fuente de SBCL en un contenedor desde Emacs" /></p>
+
+<h2 id="traductor-de-archivos-para-slime-y-docker">Traductor de archivos para Slime y Docker</h2>
+
+<p>Ya estamos listos para terminar de integrar Emacs con Docker, solo
+debemos proveer las instrucciones para traducir archivos de local al
+contenedor y viceversa.</p>
+
+<p>Escribí una función llamada <code class="highlighter-rouge">docker-slime-translation</code> que funciona
+para las convenciones que hemos adoptado en esta guía. Puedes
+modificarla para tus propias necesidades si lo deseas:</p>
+
+<div class="language-elisp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="nb">defun</span> <span class="nv">docker-slime-translation</span> <span class="p">(</span><span class="nv">app-name</span><span class="p">)</span>
+  <span class="p">(</span><span class="nv">lexical-let</span> <span class="p">((</span><span class="nv">docker-tramp-prefix</span> <span class="p">(</span><span class="nv">concat</span> <span class="s">"/docker:"</span> <span class="nv">app-name</span> <span class="s">":"</span><span class="p">))</span>
+                <span class="p">(</span><span class="nv">docker-prefix</span> <span class="s">"/root/common-lisp/"</span><span class="p">)</span>
+                <span class="p">(</span><span class="nv">local-prefix</span> <span class="p">(</span><span class="nv">projectile-project-root</span><span class="p">)))</span>
+    <span class="p">(</span><span class="nb">list</span> <span class="p">(</span><span class="nv">concat</span> <span class="s">"^"</span> <span class="nv">app-name</span> <span class="s">"$"</span><span class="p">)</span>
+          <span class="o">`</span><span class="p">(</span><span class="k">lambda</span> <span class="p">(</span><span class="nv">emacs-filename</span><span class="p">)</span>
+             <span class="p">(</span><span class="k">if</span> <span class="p">(</span><span class="nv">string-prefix-p</span> <span class="o">,</span><span class="nv">docker-tramp-prefix</span> <span class="nv">emacs-filename</span><span class="p">)</span>
+                 <span class="p">(</span><span class="nv">string-remove-prefix</span> <span class="o">,</span><span class="nv">docker-tramp-prefix</span> <span class="nv">emacs-filename</span><span class="p">)</span>
+               <span class="p">(</span><span class="nv">concat</span> <span class="o">,</span><span class="nv">docker-prefix</span> <span class="p">(</span><span class="nv">string-remove-prefix</span> <span class="o">,</span><span class="nv">local-prefix</span> <span class="nv">emacs-filename</span><span class="p">))))</span>
+          <span class="o">`</span><span class="p">(</span><span class="k">lambda</span> <span class="p">(</span><span class="nv">lisp-filename</span><span class="p">)</span>
+             <span class="p">(</span><span class="k">if</span> <span class="p">(</span><span class="nv">string-prefix-p</span> <span class="o">,</span><span class="nv">docker-prefix</span> <span class="nv">lisp-filename</span><span class="p">)</span>
+                 <span class="p">(</span><span class="nv">concat</span> <span class="o">,</span><span class="nv">local-prefix</span> <span class="p">(</span><span class="nv">string-remove-prefix</span> <span class="o">,</span><span class="nv">docker-prefix</span> <span class="nv">lisp-filename</span><span class="p">))</span>
+               <span class="p">(</span><span class="nv">concat</span> <span class="o">,</span><span class="nv">docker-tramp-prefix</span> <span class="nv">lisp-filename</span><span class="p">))))))</span>
+</code></pre></div></div>
+
+<p>Esta función la utilizo para crear un elemento para
+<code class="highlighter-rouge">slime-filename-translations</code>.</p>
+
+<p>Suponiendo que el argumento <code class="highlighter-rouge">app-name</code> es la cadena de caracteres
+<code class="highlighter-rouge">"app-majestuosa"</code>, obtendremos las siguientes componentes:</p>
+
+<p>La expresión regular será:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>"^app-majestuosa$"
+</code></pre></div></div>
+
+<p>La cuál hace match únicamente con la cadena de caracteres
+<code class="highlighter-rouge">"app-majestuosa"</code>, ya que el <code class="highlighter-rouge">^</code> denota el inicio de la cadena y el
+<code class="highlighter-rouge">$</code> el final de la cadena.</p>
+
+<p>La función para traducir archivos que vengan de Emacs sería
+equivalente a la siguiente:</p>
+
+<div class="language-elisp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="k">lambda</span> <span class="p">(</span><span class="nv">emacs-filename</span><span class="p">)</span>
+  <span class="p">(</span><span class="k">if</span> <span class="p">(</span><span class="nv">string-prefix-p</span> <span class="s">"/docker:app-majestuosa:"</span> <span class="nv">emacs-filename</span><span class="p">)</span>
+      <span class="p">(</span><span class="nv">string-remove-prefix</span> <span class="s">"/docker:app-majestuosa:"</span> <span class="nv">emacs-filename</span><span class="p">)</span>
+    <span class="p">(</span><span class="nv">concat</span> <span class="s">"/root/common-lisp/"</span> <span class="p">(</span><span class="nv">string-remove-prefix</span> <span class="p">(</span><span class="nv">projectile-project-root</span><span class="p">)</span> <span class="nv">emacs-filename</span><span class="p">))))</span>
+</code></pre></div></div>
+
+<p>En esta función se manejan dos casos:</p>
+<ul>
+  <li>Cuando Emacs está trabajando con un archivo dentro del contenedor</li>
+  <li>Otros archivos</li>
+</ul>
+
+<p>En el primer caso, se elimina el prefijo usado por Docker Tramp, el
+cuál sabemos que se refiere a un archivo dentro del contenedor.</p>
+
+<p>El segundo caso es un poco más engañoso ya que involucra información
+que no hemos explorado de manera explícita. Imaginemos que tenemos un
+sistema de Lisp que estamos desarrollando, independientemente de la
+ubicación del código en la máquina local, al usar Docker deberemos
+montar el código usando volumenes de Docker en alguna parte del
+contenedor en donde ASDF o Quicklisp puedan encontrarlo. Por
+convención, estamos utilizando el path <code class="highlighter-rouge">/root/common-lisp</code> para ubicar
+nuestros sistemas.</p>
+
+<p>De esta manera, si <code class="highlighter-rouge">emacs-filename</code> en la máquina local es
+<code class="highlighter-rouge">/home/eduardo/repos/proyecto-magnifico/app-majestuosa/src/foo.lisp</code>, y tenemos el volumen:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>/home/eduardo/repos/proyecto-magnifico/app-majestuosa:/root/common-lisp/app-majestuosa
+</code></pre></div></div>
+
+<p>Lo que logra este segundo caso es calcular el path:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>/root/common-lisp/app-majestuosa/src/foo.lisp
+</code></pre></div></div>
+
+<p>Esto asume que el projectile identifica como raíz del proyecto a
+<code class="highlighter-rouge">/home/eduardo/repos/proyecto-magnifico</code>, esto se puede lograr
+colocando el archivo <code class="highlighter-rouge">.projectile</code> en este directorio, o bien, tener
+un repositorio de Git en este lugar.</p>
+
+<p>Ahora veamos lo que hace la función para traducir archivos que vengan
+de la imagen de Lisp, sería una equivalente a la siguiente:</p>
+
+<div class="language-elisp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="k">lambda</span> <span class="p">(</span><span class="nv">lisp-filename</span><span class="p">)</span>
+  <span class="p">(</span><span class="k">if</span> <span class="p">(</span><span class="nv">string-prefix-p</span> <span class="s">"/root/common-lisp/"</span> <span class="nv">lisp-filename</span><span class="p">)</span>
+      <span class="p">(</span><span class="nv">concat</span> <span class="p">(</span><span class="nv">projectile-project-root</span><span class="p">)</span> <span class="p">(</span><span class="nv">string-remove-prefix</span> <span class="s">"/root/common-lisp/"</span> <span class="nv">lisp-filename</span><span class="p">))</span>
+    <span class="p">(</span><span class="nv">concat</span> <span class="s">"/docker:app-majestuosa:"</span> <span class="nv">lisp-filename</span><span class="p">)))</span>
+</code></pre></div></div>
+
+<p>En esta función también se manejan dos casos:</p>
+<ul>
+  <li>Cuando el archivo de la imagen de Lisp proviene de <code class="highlighter-rouge">/root/common-lisp/</code></li>
+  <li>Otros archivos del contenedor</li>
+</ul>
+
+<p>Por convención, los volúmenes los montamos en subdirectorios de
+<code class="highlighter-rouge">/root/common-lisp/</code>, por lo tanto, se asume que si <code class="highlighter-rouge">lisp-filename</code>
+tiene como prefijo este path, es un archivo del proyecto que se está
+desarrollando.</p>
+
+<blockquote>
+  <p>Esto no es necesariamente cierto, <code class="highlighter-rouge">docker-slime-translation</code> tiene
+mucho por donde mejorar ya que esta guía presenta un mecanismo
+fragil para comunicar Slime y Docker. En el futuro, presentaré una
+manera mas robusta de realizar lo mismo.</p>
+</blockquote>
+
+<p>El segundo caso es para archivos que no tienen el prefijo en
+cuestión. Por ejemplo, archivos que son parte del código fuente de la
+implementación de Lisp dentro del contenedor. Para estos archivos,
+basta con utilizar el prefijo de Docker Tramp para acceder a ellos,
+justo como se plantea en la anterior sección.</p>
+
+<p>Ahora lo que se tiene que hacer es incluir la definición de
+<code class="highlighter-rouge">docker-slime-translation</code> en el archivo de inicialización de Emacs y
+evaluar la forma.</p>
+
+<p>Para informarle a Emacs de esta traducción, debemos agregar este
+elemento a <code class="highlighter-rouge">slime-filename-translations</code>, esto lo podemos hacer en el
+archivo de inicialización de Emacs, pero el método que he utilizado
+ultimamente es en el archivo <code class="highlighter-rouge">.dir-locals.el</code> ubicado en la raíz del
+proyecto:</p>
+
+<div class="language-elisp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">((</span><span class="no">nil</span> <span class="o">.</span> <span class="p">((</span><span class="nb">eval</span> <span class="o">.</span> <span class="p">(</span><span class="nb">when</span> <span class="p">(</span><span class="nb">not</span> <span class="p">(</span><span class="nb">assoc</span> <span class="s">"^app-majestuosa$"</span> <span class="nv">slime-filename-translations</span><span class="p">))</span>
+                   <span class="p">(</span><span class="nb">push</span> <span class="p">(</span><span class="nv">docker-slime-translation</span> <span class="s">"app-majestuosa"</span><span class="p">)</span>
+                         <span class="nv">slime-filename-translations</span><span class="p">))))))</span>
+</code></pre></div></div>
+
+<p>Cuando visites un archivo de este proyecto, Emacs te preguntará si
+deseas aceptar este código. Podrás elegir que si, en cuyo caso te
+preguntará cada vez que abras un archivo del proyecto, o bien, elegir
+que siempre lo aceptarás, cuya respuesta recordará.</p>
+
+<h1 id="usando-docker-compose">Usando Docker Compose</h1>
+
+<p>En esta sección vamos a crear una configuración para docker-compose,
+esto nos permitirá poder manejar una aplicación con varios
+contenedores.</p>
+
+<h2 id="tareas-de-make-para-interactuar-con-docker-compose">Tareas de make para interactuar con docker-compose</h2>
+
+<p>Primero adaptamos el <code class="highlighter-rouge">Makefile</code> con las tareas <code class="highlighter-rouge">up</code>, <code class="highlighter-rouge">down</code>, <code class="highlighter-rouge">restart</code> y <code class="highlighter-rouge">logs</code>:</p>
+
+<div class="language-make highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nl">up</span><span class="o">:</span>
+	<span class="nv">IMPLEMENTATION</span><span class="o">=</span><span class="k">${</span><span class="nv">IMPLEMENTATION</span><span class="k">}</span> <span class="nv">VERSION</span><span class="o">=</span><span class="k">${</span><span class="nv">VERSION</span><span class="k">}</span> <span class="nv">SLIME_DIR</span><span class="o">=</span><span class="k">${</span><span class="nv">SLIME_DIR</span><span class="k">}</span> docker-compose up <span class="nt">-d</span>
+
+<span class="nl">down</span><span class="o">:</span>
+	<span class="nv">IMPLEMENTATION</span><span class="o">=</span><span class="k">${</span><span class="nv">IMPLEMENTATION</span><span class="k">}</span> <span class="nv">VERSION</span><span class="o">=</span><span class="k">${</span><span class="nv">VERSION</span><span class="k">}</span> <span class="nv">SLIME_DIR</span><span class="o">=</span><span class="k">${</span><span class="nv">SLIME_DIR</span><span class="k">}</span> docker-compose down
+
+<span class="nl">restart</span><span class="o">:</span> <span class="nf">down up</span>
+
+<span class="nl">logs</span><span class="o">:</span>
+	<span class="nv">IMPLEMENTATION</span><span class="o">=</span><span class="k">${</span><span class="nv">IMPLEMENTATION</span><span class="k">}</span> <span class="nv">VERSION</span><span class="o">=</span><span class="k">${</span><span class="nv">VERSION</span><span class="k">}</span> <span class="nv">SLIME_DIR</span><span class="o">=</span><span class="k">${</span><span class="nv">SLIME_DIR</span><span class="k">}</span> docker-compose logs <span class="nt">-f</span> <span class="err">$</span><span class="o">(</span>filter-out <span class="nv">$@</span>,<span class="nv">$(MAKECMDGOALS)</span><span class="o">)</span>
+</code></pre></div></div>
+
+<p>La tarea <code class="highlighter-rouge">up</code> va a levantar los contenedores que definamos en el
+archivo <code class="highlighter-rouge">docker-compose.yml</code>, en el cuál usaremos las variables
+<code class="highlighter-rouge">IMPLEMENTATION</code>, <code class="highlighter-rouge">VERSION</code> y <code class="highlighter-rouge">SLIME_DIR</code>. El flag <code class="highlighter-rouge">-d</code> indica que el
+proceso estará <em>detached</em>, lo cual implica que el proceso de Docker
+Compose será ejecutado en el background.</p>
+
+<p>La tarea <code class="highlighter-rouge">down</code> detiene y elimina los contenedores que hayan sido
+levantados con la tarea <code class="highlighter-rouge">up</code>, y la tarea <code class="highlighter-rouge">restart</code> ejecuta primero
+<code class="highlighter-rouge">down</code> y posteriormente vuelve a levantar los contenedores con <code class="highlighter-rouge">up</code>.</p>
+
+<p>La tarea <code class="highlighter-rouge">logs</code> va a mostrar la bitácora de todos los contenedores
+levantados por Docker Compose. Esta tarea tiene una especificación que
+no es usual:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$(filter-out $@,$(MAKECMDGOALS))
+</code></pre></div></div>
+
+<p>La cuál toma los argumentos que se le proveen a <code class="highlighter-rouge">make logs</code> y los
+inserta como argumentos al flag <code class="highlighter-rouge">-f</code> de <code class="highlighter-rouge">docker-compose</code>, de tal
+manera que <code class="highlighter-rouge">make logs foo bar baz</code> sólo mostrará las bitácoras de los
+servicios <code class="highlighter-rouge">foo</code>, <code class="highlighter-rouge">bar</code> y <code class="highlighter-rouge">baz</code>.</p>
+
+<h2 id="el-archivo-docker-composeyml">El archivo docker-compose.yml</h2>
+
+<p>Este archivo tiene una sintaxis diferente a los comandos que hemos
+mostrado, sin embargo, hay muy poco que explicar:</p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">version</span><span class="pi">:</span> <span class="s1">'</span><span class="s">3'</span>
+
+<span class="na">services</span><span class="pi">:</span>
+  <span class="na">lisp</span><span class="pi">:</span>
+    <span class="na">image</span><span class="pi">:</span> <span class="s2">"</span><span class="s">common-lisp-${IMPLEMENTATION}-ql:${VERSION}"</span>
+    <span class="na">container_name</span><span class="pi">:</span> <span class="s">app-majestuosa</span>
+    <span class="na">hostname</span><span class="pi">:</span> <span class="s">app-majestuosa</span>
+    <span class="na">stdin_open</span><span class="pi">:</span> <span class="no">true</span>
+    <span class="na">tty</span><span class="pi">:</span> <span class="no">true</span>
+    <span class="na">ports</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s2">"</span><span class="s">4005:4005"</span>
+    <span class="na">volumes</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s2">"</span><span class="s">${SLIME_DIR}:/root/common-lisp/slime"</span>
+</code></pre></div></div>
+
+<p>Lo único inusual en este archivo son las configuraciones para
+<code class="highlighter-rouge">stdin_open</code> y <code class="highlighter-rouge">tty</code>. Resulta que cuando se ejecuta <code class="highlighter-rouge">make run</code>, Docker
+sabe que estamos interactuando desde la línea de comandos y podemos
+interactuar mediante la entrada estándar con el contenedor que se
+levanta. Sin embargo, cuando Docker Compose levanta los servicios
+especificados, no los hace bajo el supuesto que interactuaremos
+directamente con ellos y no mantiene este tipo de comunicación por
+defecto. Cuando el contenedor termina de levantar el servidor de
+Swank, detecta que no hay un mecanismo de interacción con el <abbr title="Read Eval Print Loop">REPL</abbr> y
+termina el programa:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>app-majestuosa | * app-majestuosa exited with code 0
+</code></pre></div></div>
+
+<p>Usando estas dos configuraciones, indicamos que se necesita mantener
+abierto estos mecanismos de comunicación.</p>
+
+<h1 id="conclusión">Conclusión</h1>
+
+<p>A pesar de no ser una configuración robusta, considero que la cantidad
+de código presentado en esta guía no fue mucho para tener un ambiente
+de desarrollo con Emacs, Slime y Docker.</p>
+
+<p>Espero pronto poder mejorar esta configuración para depender menos de
+convenciones innecesarias. Un problema con la configuración actual es
+que no se podrá <em>ir a la definición</em> de una función o variable de
+Swank. Tengo algunas ideas para solucionar este problema que no
+implica menearle al registro de ASDF.</p>
+
+<p>El código de esta guía se puede consultar en <a href="https://github.com/eduardoacye/lisp-docker">este
+repositorio</a>, cualquier
+duda, queja o sugerencia al respecto, me puedes mandar un correo
+electrónico a <code class="highlighter-rouge">eduardo.acye</code> arroba <code class="highlighter-rouge">gmail.com</code>.</p>
+
+  </div>
+
+  <footer class="post-footer">
+    <div class="post-meta">
+       <time datetime="2019-01-21T21:00:38-07:00" itemprop="datePublished">Jan 21, 2019</time> 
+      
+    </div>
+
+    
+    <ul class="post-tags" aria-label="TagList">
+      
+      <li><a class="tag-link" href="/tags/Lisp">Lisp</a></li>
+      
+    </ul>
+    
+  </footer>
+
+  
+</article>
+
+    </div>
+    <script type="text/javascript">
+  (function () {
+    var resize = function () {
+      this.width = 0.5 * (this.naturalWidth || this.width);
+    }
+    Array.prototype.forEach.call(document.querySelectorAll(".half-size, .retina2x"), function(el) {
+      if (el.naturalWidth) {
+        resize.call(el);
+      } else {
+        el.onload = resize;
+      }
+    });
+  })();
+</script>
+
+  </main>
+
+  <footer class="site-footer">
+
+  <div class="wrapper">
+    <div class="social-links">
+      <a class="social-link social-github" href="https://github.com/eduardoacye">
+        <i class="icon-github"></i>
+      </a>
+    </div>
+    <div class="credits">
+      Eduardo Acuña Yeomans - 2018
+    </div>
+  </div>
+
+</footer>
+
+
+</body>
+
+</html>

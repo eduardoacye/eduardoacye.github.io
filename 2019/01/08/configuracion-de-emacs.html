@@ -1,0 +1,1182 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>¡Configura Emacs sin hacer dieta ni dejar de comer! - Solo un blog</title>
+  <meta name="description" content="Configurar emacs puede ser un broncón para una persona sin experiencia en Emacs 1 . A pesar de esto, en internet se pueden encontrar configuraciones prefabri...">
+
+  
+  <link rel="stylesheet" href="/assets/styles/core.css?v=20190121210046">
+  <link rel="stylesheet" href="/assets/styles/fontello.css?v=20190121210046">
+  <link rel="stylesheet" href="/assets/styles/highlighting/github.css?v=20190121210046">
+
+  <link rel="canonical" href="/2019/01/08/configuracion-de-emacs.html">
+  <link rel="alternate" type="application/rss+xml" title="Solo un blog" href="/feed.xml">
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+  <style>.MathJax_ExBox { font-family: serif; }</style>
+  
+
+  
+
+  <link rel="stylesheet" href="/assets/styles/custom.css?v=20190121210046">
+  <link rel="shortcut icon" type="image/png" href="/favicon.png">
+</head>
+
+  <body>
+
+  <main class="page-content" aria-label="Content">
+    <div class="wrapper">
+      <article class="post" lang="en" itemscope itemtype="http://schema.org/BlogPosting" >
+
+  <header class="post-header">
+  <a class="site-title" href="/">Solo un blog</a>
+  <h1 class="post-title" itemprop="name headline">¡Configura Emacs sin hacer dieta ni dejar de comer!</h1>
+</header>
+
+
+
+
+  <div class="post-content" itemprop="articleBody">
+    <p>Configurar emacs puede ser un broncón para una persona sin experiencia
+en Emacs <sup id="fnref:1"><a href="#fn:1" class="footnote">1</a></sup> . A pesar de esto, en internet se pueden encontrar
+configuraciones prefabricadas que tienen sus propias idiosincrasias e
+incluso algunas que vienen con <em>“baterías incluidas”</em> (todo lo que
+quisieras hacer con un editor y más) como por ejemplo:
+<a href="https://github.com/syl20bnr/spacemacs">Spacemacs</a> y
+<a href="https://github.com/bbatsov/prelude">Prelude</a>.</p>
+
+<p>Sin embargo, hay algo sobre tener tu propia configuración que resulta
+atractivo. Hacer que <strong>el</strong> Emacs se convierta en <strong>tu</strong> Emacs es, en
+mi opinión, uno de los principios fundamentales de este editor.</p>
+
+<p>En esta entrada compartiré una versión reducida de mi configuración,
+primero abordo cuestiones genéricas del aspecto visual y funcionalidad
+básica; y posteriormente muestro una configuración relativamente
+simple para trabajar específicamente con el lenguaje Common Lisp.</p>
+
+<blockquote>
+  <p>Si deseas evitarte la molestia de leer el resto de esta entrada y
+solo quieres probar la configuración, puedes ir directo al <a href="#apéndice">apéndice</a>, en donde encontrarás el código
+completo listo para hacer un <strong>copy-paste</strong>.</p>
+</blockquote>
+
+<p>Pero antes de comenzar, en pleno año 2019, no se puede hablar de Emacs
+y una configuración lista para usarse sin mencionar a
+<a href="https://portacle.github.io/">Portacle</a>. Recomiendo que si te resulta
+atractivo usar Emacs, pruebes usar Spacemacs, Prelude y Portacle, ya
+que además de ser muy útiles, sirven de inspiración.</p>
+
+<h1 id="primero-lo-primero">Primero lo primero</h1>
+
+<p>Instala Emacs en la computadora, hay muchas maneras de hacer esto. En
+sistemas operativos como Linux puedes usar los repositorios de
+paquetes incluidos en tu distribución y en Mac puedes usar Aquamacs o
+<code class="highlighter-rouge">brew</code>. También puedes ir al <a href="https://www.gnu.org/software/emacs/">sitio oficial de
+Emacs</a> y descargarlo de ahí.</p>
+
+<p>En esta entrada estoy usando Linux y optaré por esta última opción.</p>
+
+<p><img src="../../../assets/emacs-000.png" alt="Al parecer Emacs tiene un sitio web más chulo que antes" /></p>
+
+<p>Es posible que si instalas Emacs desde la fuente, tengas que instalar
+varias dependencias. Si tienes problemas con esto, pon atención a los
+mensajes de error en la compilación, usualmente son bastante
+explícitos con respecto a lo que necesitas instalar.</p>
+
+<h1 id="segundo-lo-segundo">Segundo lo segundo</h1>
+
+<p>Ya que tienes Emacs instalado, abre el editor y escribe <code class="highlighter-rouge">C-x C-f
+~/.emacs</code>. Esta combinación de teclas significa que debes de mantener
+presionada la tecla Control (<code class="highlighter-rouge">Ctrl</code>) y luego presionar la tecla <code class="highlighter-rouge">x</code>;
+dejas de presionar ambas teclas y luego mantienes presionada la tecla
+Control y luego presiona la tecla <code class="highlighter-rouge">f</code>; esta combinación invoca la
+funcionalidad <code class="highlighter-rouge">find-files</code>, la cual espera que ingreses un <em>path</em> del
+sistema de archivos de tu computadora, en este caso el path es
+<code class="highlighter-rouge">~/.emacs</code>, el cual hace referencia al archivo de inicialización de
+Emacs.</p>
+
+<p>Lo mas probable es que este archivo esté vacío. En esta entrada se
+divide la configuración de Emacs en cuatro partes:</p>
+<ol>
+  <li>Configuración general del editor</li>
+  <li>Configuración de paquetes incluidos</li>
+  <li>Instalación y configuración de paquetes de terceros</li>
+  <li>Configuración específica para Common Lisp</li>
+</ol>
+
+<h1 id="configuración-general-del-editor">Configuración general del editor</h1>
+
+<h2 id="actualizar-el-archivo-de-paquetes-de-emacs">Actualizar el archivo de paquetes de Emacs</h2>
+
+<p>Emacs incluye su propio repositorio de paquetes, sin embargo, es
+conveniente incluir el repositorio MELPA, ya que incluye versiones más
+nuevas de la paquetería.</p>
+
+<div class="language-elisp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="nb">require</span> <span class="ss">'package</span><span class="p">)</span>
+
+<span class="p">(</span><span class="nv">add-to-list</span> <span class="ss">'package-archives</span>
+             <span class="o">'</span><span class="p">(</span><span class="s">"melpa"</span> <span class="o">.</span> <span class="s">"https://melpa.org/packages/"</span><span class="p">)</span> <span class="no">t</span><span class="p">)</span>
+
+<span class="p">(</span><span class="nv">package-initialize</span><span class="p">)</span>
+
+<span class="p">(</span><span class="nb">unless</span> <span class="nv">package-archive-contents</span>
+  <span class="p">(</span><span class="nv">package-refresh-contents</span><span class="p">))</span>
+</code></pre></div></div>
+
+<p>En esta ultima parte, se evita refrescar el contenido de la paquetería
+si ya se ha actualizado esta información. Si deseas obtener
+información reciente de los paquetes puedes usar <code class="highlighter-rouge">M-x
+package-refresh-contents</code>, donde <code class="highlighter-rouge">M-x</code> es usualmente presionar <code class="highlighter-rouge">Alt</code> y
+<code class="highlighter-rouge">x</code>.</p>
+
+<h2 id="límites-de-memoria">Límites de memoria</h2>
+
+<p>Si tienes una máquina perrona, puedes aumentar el umbral del
+recolector de basura y el umbral para advertir que el archivo en el
+que trabajas es <em>“demasiado grande”</em>.</p>
+
+<div class="language-elisp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="k">setq</span> <span class="nv">gc-cons-threshold</span> <span class="p">(</span><span class="nb">*</span> <span class="nv">gc-cons-threshold</span> <span class="mi">2</span><span class="p">))</span>
+<span class="p">(</span><span class="k">setq</span> <span class="nv">large-file-warning-threshold</span> <span class="p">(</span><span class="nb">*</span> <span class="nv">large-file-warning-threshold</span> <span class="mi">2</span><span class="p">))</span>
+</code></pre></div></div>
+
+<p>En este ejemplo dupliqué ambos umbrales. Pero bien pudieras escribir
+una cantidad directa (en bytes).</p>
+
+<h2 id="aspecto-visual">Aspecto visual</h2>
+
+<p>El Emacs viene con algunos valores por defecto que llegan a ser
+intrusivos con el tiempo. Ya sea porque quitan espacio al editor, o
+porque son simplemente comportamientos molestos.</p>
+
+<div class="language-elisp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="nv">global-auto-revert-mode</span> <span class="no">t</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>Encender este modo permite que Emacs actualice el archivo en memoria,
+cuando el archivo en disco haya cambiado.</p>
+
+<div class="language-elisp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="nv">tool-bar-mode</span> <span class="mi">-1</span><span class="p">)</span>
+<span class="p">(</span><span class="nv">menu-bar-mode</span> <span class="mi">-1</span><span class="p">)</span>
+<span class="p">(</span><span class="nv">scroll-bar-mode</span> <span class="mi">-1</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>Desactivar estos modos hace que la barra de herramientas, la barra de
+menú y la barra de scroll no sean visibles. Si estás usando Mac,
+puedes dejar visible la barra de menú, ya que esta se encuentra
+integrada al menú global del sistema operativo.</p>
+
+<div class="language-elisp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="nv">column-number-mode</span> <span class="mi">+1</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>Por default, Emacs muestra la línea en la que se ubica el cursor, con
+el comando de arriba se habilita también el número de columna.</p>
+
+<div class="language-elisp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="nv">blink-cursor-mode</span> <span class="mi">-1</span><span class="p">)</span>
+<span class="p">(</span><span class="k">setq</span> <span class="nv">ring-bell-function</span> <span class="ss">'ignore</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>Estas dos expresiones hacen que el cursor no parpadee cuando no se
+está escribiendo y que Emacs no suene en ciertas situaciones, como por
+ejemplo, cuando haces scroll estando ya en el límite del archivo.</p>
+
+<div class="language-elisp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="k">setq</span> <span class="nv">inhibit-startup-screen</span> <span class="no">t</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>También quitamos la pantalla de inicio (pero no te preocupes, más
+adelante pondremos una mas placosa).</p>
+
+<p><strong>Antes:</strong></p>
+
+<p><img src="../../../assets/emacs-001-a.png" alt="" /></p>
+
+<p><strong>Después:</strong></p>
+
+<p><img src="../../../assets/emacs-001-b.png" alt="" /></p>
+
+<h2 id="mejorar-el-scroll">Mejorar el <em>scroll</em></h2>
+
+<p>Hacer scroll suavesito como en otros editores es algo bastante nuevo
+en Emacs, me imagino que con el tiempo irán mejorando esta
+funcionalidad. Si quieres probar este tipo de scroll puedes incluir lo
+siguiente en la configuración:</p>
+
+<div class="language-elisp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="nv">pixel-scroll-mode</span><span class="p">)</span>
+<span class="p">(</span><span class="k">setq</span> <span class="nv">pixel-dead-time</span> <span class="mi">0</span><span class="p">)</span>
+<span class="p">(</span><span class="k">setq</span> <span class="nv">pixel-resolution-fine-flag</span> <span class="no">t</span><span class="p">)</span>
+<span class="p">(</span><span class="k">setq</span> <span class="nv">mouse-wheel-scroll-amount</span> <span class="o">'</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+<span class="p">(</span><span class="k">setq</span> <span class="nv">mouse-wheel-progressive-speed</span> <span class="no">nil</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h2 id="configuración-miscelánea">Configuración miscelánea</h2>
+
+<p>Aqui pongo configuración variadona, si quieres más información sobre
+lo que hacen estas variables y funciones puedes usar los comandos <code class="highlighter-rouge">M-x
+describe-variable</code> y <code class="highlighter-rouge">M-x describe-function</code>.</p>
+
+<div class="language-elisp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="k">setq</span> <span class="nv">load-prefer-newer</span> <span class="no">t</span><span class="p">)</span>
+<span class="p">(</span><span class="nv">fset</span> <span class="ss">'yes-or-no-p</span> <span class="ss">'y-or-n-p</span><span class="p">)</span>
+<span class="p">(</span><span class="nv">setq-default</span> <span class="nv">indent-tabs-mode</span> <span class="no">nil</span><span class="p">)</span>
+<span class="p">(</span><span class="k">setq</span> <span class="nv">tab-always-indent</span> <span class="ss">'complete</span><span class="p">)</span>
+<span class="p">(</span><span class="nv">delete-selection-mode</span> <span class="no">t</span><span class="p">)</span>
+<span class="p">(</span><span class="nv">prefer-coding-system</span> <span class="ss">'utf-8</span><span class="p">)</span>
+<span class="p">(</span><span class="nv">set-default-coding-systems</span> <span class="ss">'utf-8</span><span class="p">)</span>
+<span class="p">(</span><span class="nv">set-terminal-coding-system</span> <span class="ss">'utf-8</span><span class="p">)</span>
+<span class="p">(</span><span class="nv">set-keyboard-coding-system</span> <span class="ss">'utf-8</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h2 id="preparando-el-manejo-de-respaldos">Preparando el manejo de respaldos</h2>
+
+<p>Emacs suele respaldar archivos y guardar buffers temporales en el
+mismo directorio que el archivo que se está editando, esto puede ser
+un poco molesto, sin embargo sigue siendo útil.</p>
+
+<p>Lo que haremos a continuación es crear el directorio <code class="highlighter-rouge">%saves-dir</code> en
+donde se almacenarán este tipo de archivos auxiliares.</p>
+
+<div class="language-elisp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="nv">defconst</span> <span class="nv">%saves-dir</span> <span class="p">(</span><span class="nv">expand-file-name</span> <span class="s">"saves"</span> <span class="nv">user-emacs-directory</span><span class="p">))</span>
+
+<span class="p">(</span><span class="nb">unless</span> <span class="p">(</span><span class="nv">file-exists-p</span> <span class="nv">%saves-dir</span><span class="p">)</span>
+  <span class="p">(</span><span class="nv">make-directory</span> <span class="nv">%saves-dir</span><span class="p">))</span>
+
+<span class="p">(</span><span class="k">setq</span> <span class="nv">backup-directory-alist</span>
+      <span class="o">`</span><span class="p">((</span><span class="s">".*"</span> <span class="o">.</span> <span class="o">,</span><span class="nv">%saves-dir</span><span class="p">)))</span>
+
+<span class="p">(</span><span class="k">setq</span> <span class="nv">auto-save-file-name-transforms</span>
+      <span class="o">`</span><span class="p">((</span><span class="s">".*"</span> <span class="o">,</span><span class="nv">%saves-dir</span> <span class="no">t</span><span class="p">)))</span>
+</code></pre></div></div>
+
+<h1 id="configuración-de-paquetes-incluidos">Configuración de paquetes incluidos</h1>
+
+<h2 id="facilita-la-configuración-usando-use-package">Facilita la configuración usando use package</h2>
+
+<p>Hay un paquete bastante útil llamado <code class="highlighter-rouge">use-package</code> el cual nos permite
+tener una configuración declarativa de otros paquetes y modos en
+Emacs. En las secciones de abajo, podrás ver como se utiliza.</p>
+
+<div class="language-elisp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="nb">unless</span> <span class="p">(</span><span class="nv">package-installed-p</span> <span class="ss">'use-package</span><span class="p">)</span>
+  <span class="p">(</span><span class="nv">package-install</span> <span class="ss">'use-package</span><span class="p">))</span>
+
+<span class="p">(</span><span class="nb">require</span> <span class="ss">'use-package</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h2 id="prefijo-para-personalizar">Prefijo para personalizar</h2>
+
+<p>A veces resulta ser impredecible cuando un comando personalizado ocupa
+una combinación de teclas que ya está usando algun otro paquete o
+modo, es por eso que he tenido la costumbre de tener un prefijo para
+los comandos que tienen combinaciones que se me hacen dificiles de
+recordar y para comandos propios.</p>
+
+<div class="language-elisp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="nv">define-prefix-command</span> <span class="ss">'custom-map</span><span class="p">)</span>
+<span class="p">(</span><span class="nv">global-set-key</span> <span class="p">(</span><span class="nv">kbd</span> <span class="s">"C-."</span><span class="p">)</span> <span class="ss">'custom-map</span><span class="p">)</span>
+<span class="p">(</span><span class="nv">global-set-key</span> <span class="p">(</span><span class="nv">kbd</span> <span class="s">"C-c ."</span><span class="p">)</span> <span class="ss">'custom-map</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>Este <code class="highlighter-rouge">custom-map</code> esta asociado a <code class="highlighter-rouge">C-.</code>, es decir, dejar presionada la
+tecla <code class="highlighter-rouge">Ctrl</code> y luego presionar la tecla para insertar el punto.</p>
+
+<h2 id="respaldos-e-historial">Respaldos e historial</h2>
+
+<p>Aqui se pone en uso el directorio <code class="highlighter-rouge">%saves-dir</code> para almacenar diversos
+tipos de archivos auxiliares.</p>
+
+<div class="language-elisp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="nb">use-package</span> <span class="nv">saveplace</span>
+  <span class="ss">:config</span>
+  <span class="p">(</span><span class="k">setq</span> <span class="nv">save-place-file</span> <span class="p">(</span><span class="nv">expand-file-name</span> <span class="s">"saveplace"</span> <span class="nv">%saves-dir</span><span class="p">))</span>
+  <span class="p">(</span><span class="nv">setq-default</span> <span class="nv">save-place</span> <span class="no">t</span><span class="p">))</span>
+
+<span class="p">(</span><span class="nb">use-package</span> <span class="nv">savehist</span>
+  <span class="ss">:config</span>
+  <span class="p">(</span><span class="k">setq</span> <span class="nv">savehist-additional-variables</span> <span class="o">'</span><span class="p">(</span><span class="nv">search-ring</span> <span class="nv">regexp-search-ring</span><span class="p">)</span>
+        <span class="nv">savehist-autosave-interval</span> <span class="mi">60</span>
+        <span class="nv">savehist-file</span> <span class="p">(</span><span class="nv">expand-file-name</span> <span class="s">"savehist"</span> <span class="nv">%saves-dir</span><span class="p">))</span>
+  <span class="p">(</span><span class="nv">savehist-mode</span> <span class="mi">+1</span><span class="p">))</span>
+
+<span class="p">(</span><span class="nb">use-package</span> <span class="nv">recentf</span>
+  <span class="ss">:config</span>
+  <span class="p">(</span><span class="k">setq</span> <span class="nv">recentf-save-file</span> <span class="p">(</span><span class="nv">expand-file-name</span> <span class="s">"recentf"</span> <span class="nv">%saves-dir</span><span class="p">)</span>
+        <span class="nv">recentf-max-saved-items</span> <span class="mi">500</span>
+        <span class="nv">recentf-max-menu-items</span> <span class="mi">15</span>
+        <span class="nv">recentf-auto-cleanup</span> <span class="ss">'never</span><span class="p">)</span>
+  <span class="p">(</span><span class="nv">recentf-mode</span> <span class="mi">+1</span><span class="p">))</span>
+</code></pre></div></div>
+
+<h2 id="paquetes-incluidos">Paquetes incluidos</h2>
+
+<h3 id="whitespace">Whitespace</h3>
+
+<p>Whitespace nos permite visualizar y limpiar ciertos tipos de
+caracteres de espacio como el tab o nuevas líneas redundantes.</p>
+
+<div class="language-elisp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="nb">use-package</span> <span class="nv">whitespace</span>
+  <span class="ss">:init</span>
+  <span class="p">(</span><span class="nb">dolist</span> <span class="p">(</span><span class="nv">hook</span> <span class="o">'</span><span class="p">(</span><span class="nv">prog-mode-hook</span> <span class="nv">text-mode-hook</span><span class="p">))</span>
+    <span class="p">(</span><span class="nv">add-hook</span> <span class="nv">hook</span> <span class="nf">#'</span><span class="nv">whitespace-mode</span><span class="p">))</span>
+  <span class="p">(</span><span class="nv">add-hook</span> <span class="ss">'before-save-hook</span> <span class="nf">#'</span><span class="nv">whitespace-cleanup</span><span class="p">)</span>
+  <span class="ss">:config</span>
+  <span class="p">(</span><span class="k">setq</span> <span class="nv">whitespace-line-column</span> <span class="mi">120</span><span class="p">)</span>
+  <span class="p">(</span><span class="k">setq</span> <span class="nv">whitespace-style</span> <span class="o">'</span><span class="p">(</span><span class="nv">face</span> <span class="nv">trailing</span> <span class="nv">empty</span><span class="p">)))</span>
+</code></pre></div></div>
+
+<p>Antes solia configurar este paquete para resaltar cuando una tab era
+introducida, pero desde que programo en Go, he preferido dejar las
+tabs en paz.</p>
+
+<h3 id="paren">Paren</h3>
+
+<p>Paren nos permite identificar de manera sencilla el paréntesis que se
+está cerrando.</p>
+
+<div class="language-elisp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="nb">use-package</span> <span class="nv">paren</span>
+  <span class="ss">:config</span>
+  <span class="p">(</span><span class="nv">show-paren-mode</span> <span class="mi">+1</span><span class="p">))</span>
+</code></pre></div></div>
+
+<p><strong>Sin modo paren:</strong></p>
+
+<p><img src="../../../assets/emacs-002-a.gif" alt="Sin el paquete paren" /></p>
+
+<p><strong>Con modo paren:</strong></p>
+
+<p><img src="../../../assets/emacs-002-b.gif" alt="Con el paquete paren" /></p>
+
+<h3 id="uniquify">Uniquify</h3>
+
+<p>Este paquete nos permite configurar cómo se muestran dos archivos que
+tienen el mismo nombre.</p>
+
+<div class="language-elisp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="nb">use-package</span> <span class="nv">uniquify</span>
+  <span class="ss">:config</span>
+  <span class="p">(</span><span class="k">setq</span> <span class="nv">uniquify-buffer-name-style</span> <span class="ss">'forward</span><span class="p">)</span>
+  <span class="p">(</span><span class="k">setq</span> <span class="nv">uniquify-separator</span> <span class="s">"/"</span><span class="p">)</span>
+  <span class="p">(</span><span class="k">setq</span> <span class="nv">uniquify-after-kill-buffer-p</span> <span class="no">t</span><span class="p">)</span>
+  <span class="p">(</span><span class="k">setq</span> <span class="nv">uniquify-ignore-buffers-re</span> <span class="s">"^\\*"</span><span class="p">))</span>
+</code></pre></div></div>
+
+<p>Si tenemos abiertos los archivos <code class="highlighter-rouge">/a/b/foo.txt</code> y <code class="highlighter-rouge">/a/c/foo.txt</code> se
+mostrarán en Emacs como <code class="highlighter-rouge">b/foo.txt</code> y <code class="highlighter-rouge">c/foo.txt</code> en lugar de <code class="highlighter-rouge">foo.txt
+&lt;1&gt;</code> y <code class="highlighter-rouge">foo.txt &lt;2&gt;</code>.</p>
+
+<h3 id="ansi-color">Ansi-color</h3>
+
+<p>Algunos comandos de Emacs muestran su output en buffers de compilación
+(no necesariamente lo que se esté mostrando tiene que ver con
+compilación). Un ejemplo recurrente de esto es cuando se ejecutan
+comandos de la consola/terminal. Es usual que programas de consola
+muestren su output con colores, sin embargo, emacs no los muestra por
+default en estos tipos de buffers.</p>
+
+<p>Para arreglar la situación de arriba se usa el paquete <code class="highlighter-rouge">ansi-color</code>.</p>
+
+<div class="language-elisp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="nb">use-package</span> <span class="nv">ansi-color</span>
+  <span class="ss">:config</span> <span class="p">(</span><span class="nv">add-hook</span> <span class="ss">'compilation-filter-hook</span>
+                    <span class="nf">#'</span><span class="p">(</span><span class="k">lambda</span> <span class="p">()</span>
+                        <span class="p">(</span><span class="k">let</span> <span class="p">((</span><span class="nv">inhibit-read-only</span> <span class="no">t</span><span class="p">))</span>
+                          <span class="p">(</span><span class="nv">ansi-color-apply-on-region</span>
+                           <span class="nv">compilation-filter-start</span> <span class="p">(</span><span class="nv">point</span><span class="p">))))))</span>
+</code></pre></div></div>
+
+<h1 id="instalación-y-configuración-de-paquetes-de-terceros">Instalación y configuración de paquetes de terceros</h1>
+
+<h2 id="projectile">Projectile</h2>
+
+<p>Este paquete introduce el concepto de <em>proyecto</em>, al crear un archivo
+<code class="highlighter-rouge">.projectile</code>, le informas a Emacs y a Projectile que ese subárbol en
+el sistema de archivos es un proyecto. Partiendo de aqui, hay un
+montón de comandos especializados para trabajar sobre proyectos. En lo
+personal, el que mas utilizo es el de <code class="highlighter-rouge">projectile-grep</code> con el cual
+puedes usar una expresión regular para buscar texto en el projecto
+actual.</p>
+
+<div class="language-elisp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="nb">use-package</span> <span class="nv">projectile</span>
+  <span class="ss">:ensure</span> <span class="no">t</span>
+  <span class="ss">:diminish</span> <span class="nv">projectile-mode</span>
+  <span class="ss">:commands</span> <span class="nv">projectile-global-mode</span>
+  <span class="ss">:bind</span> <span class="p">(</span><span class="ss">:map</span> <span class="nv">custom-map</span>
+              <span class="p">(</span><span class="s">"p"</span> <span class="o">.</span> <span class="nv">projectile-command-map</span><span class="p">))</span>
+  <span class="ss">:config</span>
+  <span class="p">(</span><span class="nv">projectile-mode</span> <span class="mi">+1</span><span class="p">))</span>
+</code></pre></div></div>
+
+<h2 id="expand-region">Expand-region</h2>
+
+<p>Este paquete provee una manera de seleccionar texto, especialmente
+útil para lenguajes basados en Lisp. Expandir una región te permite ir
+incrementando el área de selección de acuerdo a la estrucura
+sintáctica.</p>
+
+<div class="language-elisp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="nb">use-package</span> <span class="nv">expand-region</span>
+  <span class="ss">:ensure</span> <span class="no">t</span>
+  <span class="ss">:bind</span> <span class="p">((</span><span class="s">"C-+"</span> <span class="o">.</span> <span class="nv">er/expand-region</span><span class="p">)</span>
+         <span class="p">(</span><span class="s">"C-_"</span> <span class="o">.</span> <span class="nv">er/contract-region</span><span class="p">)))</span>
+</code></pre></div></div>
+
+<p><strong>Demostración de expand region:</strong></p>
+
+<p><img src="../../../assets/emacs-003.gif" alt="Usando expand-region para incrementar y disminuir la selección" /></p>
+
+<h2 id="paredit">Paredit</h2>
+
+<p>Paredit es un modo de Emacs que te permite navegar y editar código de Lisp como si estuvieras surfeando en un árbol. Es una herramienta poderosa y requiere su tiempo aprenderla. Hay varios recursos en linea donde puedes aprender al respecto (como <a href="http://danmidwood.com/content/2014/11/21/animated-paredit.html">aqui</a>).</p>
+
+<div class="language-elisp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="nb">use-package</span> <span class="nv">paredit</span>
+  <span class="ss">:ensure</span> <span class="no">t</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h2 id="anzu">Anzu</h2>
+
+<p>Este paquete provee una versión mas bonita de la funcionalidad por
+defecto para buscar texto en un buffer. Te muestra cuantas ocurrencias
+se encontraron y te las resalta.</p>
+
+<div class="language-elisp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="nb">use-package</span> <span class="nv">anzu</span>
+  <span class="ss">:ensure</span> <span class="no">t</span>
+  <span class="ss">:diminish</span> <span class="nv">anzu-mode</span>
+  <span class="ss">:bind</span> <span class="p">((</span><span class="s">"M-%"</span> <span class="o">.</span> <span class="nv">anzu-query-replace</span><span class="p">)</span>
+         <span class="p">(</span><span class="s">"C-M-%"</span> <span class="o">.</span> <span class="nv">anzu-query-replace-regexp</span><span class="p">))</span>
+  <span class="ss">:config</span>
+  <span class="p">(</span><span class="nv">global-anzu-mode</span> <span class="mi">+1</span><span class="p">))</span>
+</code></pre></div></div>
+
+<h2 id="magit">Magit</h2>
+
+<p>Este paquete te permite usar git desde Emacs, es muy potente y
+presenta una interfaz muy chula. Tiene tantas funcionalidades que no
+alcanza una entrada del blog para explicarlas, pero al igual que
+paredit, vale la pena aprenderlo.</p>
+
+<div class="language-elisp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="nb">use-package</span> <span class="nv">magit</span>
+  <span class="ss">:ensure</span> <span class="no">t</span>
+  <span class="ss">:bind</span> <span class="p">(</span><span class="ss">:map</span> <span class="nv">custom-map</span>
+              <span class="p">(</span><span class="s">"g"</span> <span class="o">.</span> <span class="nv">magit-status</span><span class="p">)))</span>
+</code></pre></div></div>
+
+<h2 id="rainbow-delimiters">Rainbow-delimiters</h2>
+
+<p>Este es un paquete para darle un poco de atracción visual a los
+paréntesis que escribes. Colorea de distinta forma dependiendo de la
+anidación.</p>
+
+<div class="language-elisp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="nb">use-package</span> <span class="nv">rainbow-delimiters</span>
+  <span class="ss">:ensure</span> <span class="no">t</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p><img src="../../../assets/emacs-004.gif" alt="parentesis antes y despues de rainbow-delimiters" /></p>
+
+<h2 id="crux">Crux</h2>
+
+<p>Este paquete tiene funcionalidades variadas que en general me parecen
+buenas. En particular <code class="highlighter-rouge">crux-move-beginning-of-line</code> permite adaptar el
+comando para irse al inicio de linea dependiendo de si quieres el
+inicio del renglón o el inicio de la línea de código.</p>
+
+<div class="language-elisp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="nb">use-package</span> <span class="nv">crux</span>
+  <span class="ss">:ensure</span> <span class="no">t</span>
+  <span class="ss">:demand</span>
+  <span class="ss">:bind</span> <span class="p">(</span><span class="nv">[remap</span> <span class="nv">move-beginning-of-line]</span> <span class="o">.</span> <span class="nv">crux-move-beginning-of-line</span><span class="p">)</span>
+  <span class="ss">:config</span>
+  <span class="p">(</span><span class="nv">bind-keys</span> <span class="ss">:map</span> <span class="nv">custom-map</span>
+             <span class="ss">:prefix</span> <span class="s">"c"</span>
+             <span class="ss">:prefix-map</span> <span class="nv">crux-prefix-map</span>
+             <span class="p">(</span><span class="s">"n"</span> <span class="o">.</span> <span class="nv">crux-cleanup-buffer-or-region</span><span class="p">)</span>
+             <span class="p">(</span><span class="s">"t"</span> <span class="o">.</span> <span class="nv">crux-visit-term-buffer</span><span class="p">)</span>
+             <span class="p">(</span><span class="s">"I"</span> <span class="o">.</span> <span class="nv">crux-find-user-init-file</span><span class="p">)</span>
+             <span class="p">(</span><span class="s">"S"</span> <span class="o">.</span> <span class="nv">crux-find-shell-init-file</span><span class="p">)</span>
+             <span class="p">(</span><span class="s">"s"</span> <span class="o">.</span> <span class="nv">crux-ispell-word-then-abbrev</span><span class="p">)))</span>
+</code></pre></div></div>
+
+<h2 id="diff-hl">Diff-hl</h2>
+
+<p>Este es otro paquete que hace uso de Git (entre otros sistemas de
+control de versiones). Despliega en el margen izquierdo del buffer el
+contenido no <em>commiteado</em> del código.</p>
+
+<div class="language-elisp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="nb">use-package</span> <span class="nv">diff-hl</span>
+  <span class="ss">:ensure</span> <span class="no">t</span>
+  <span class="ss">:config</span>
+  <span class="p">(</span><span class="nv">global-diff-hl-mode</span> <span class="mi">+1</span><span class="p">)</span>
+  <span class="p">(</span><span class="nv">add-hook</span> <span class="ss">'magit-post-refresh-hook</span> <span class="ss">'diff-hl-magit-post-refresh</span><span class="p">))</span>
+</code></pre></div></div>
+
+<h2 id="which-key">Which-key</h2>
+
+<p>Este paquete es de los más útiles que he utilizado. Debido a que Emacs
+tiene un montón de comandos asociados a combinaciones de teclas y
+algunas de estas pueden ser algo complicadas, cualquier tipo de ayuda
+es agradecida.</p>
+
+<div class="language-elisp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="nb">use-package</span> <span class="nv">which-key</span>
+  <span class="ss">:ensure</span> <span class="no">t</span>
+  <span class="ss">:diminish</span> <span class="nv">which-key-mode</span>
+  <span class="ss">:config</span>
+  <span class="p">(</span><span class="nv">which-key-mode</span> <span class="mi">+1</span><span class="p">))</span>
+</code></pre></div></div>
+
+<p>Al presionar una combinación de teclas parcial, se muestra una ventana
+en la parte inferior con posibles comandos a elegir.</p>
+
+<p><img src="../../../assets/emacs-005.png" alt="uso de which-key" /></p>
+
+<h2 id="auto-package-update">Auto-package-update</h2>
+
+<p>Si te gusta mantener los paquetes actualizados constantemente, puedes
+usar el comando <code class="highlighter-rouge">M-x auto-package-update</code> para mantenerte a la moda.</p>
+
+<div class="language-elisp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="nb">use-package</span> <span class="nv">auto-package-update</span>
+  <span class="ss">:ensure</span> <span class="no">t</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h2 id="company">Company</h2>
+
+<p>Conozco de dos paquetes para tener la funcionalidad de autocompletado en Emacs:</p>
+<ul>
+  <li>Company</li>
+  <li>Auto-complete</li>
+</ul>
+
+<p>En lo personal utilizo el modo <code class="highlighter-rouge">company</code> (aunque mi preferencia no
+está informada con argumentos técnicos).</p>
+
+<p><img src="../../../assets/emacs-006.png" alt="company-mode en acción" /></p>
+
+<div class="language-elisp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="nb">use-package</span> <span class="nv">company</span>
+  <span class="ss">:ensure</span> <span class="no">t</span>
+  <span class="ss">:diminish</span> <span class="nv">company-mode</span>
+  <span class="ss">:config</span>
+  <span class="p">(</span><span class="nv">global-company-mode</span><span class="p">))</span>
+
+<span class="p">(</span><span class="nb">use-package</span> <span class="nv">company-quickhelp</span>
+  <span class="ss">:ensure</span> <span class="no">t</span>
+  <span class="ss">:config</span>
+  <span class="p">(</span><span class="nv">company-quickhelp-mode</span><span class="p">))</span>
+</code></pre></div></div>
+
+<p>El paquete <code class="highlighter-rouge">company-quickhelp</code> permite desplegar documentación de los
+símbolos autocompletados.</p>
+
+<p><img src="../../../assets/emacs-007.png" alt="company-mode con quickhelp" /></p>
+
+<h2 id="dashboard">Dashboard</h2>
+
+<p>Previamente se desactivó la pantalla de inicio de Emacs, ahora usando
+el paquete <code class="highlighter-rouge">dashboard</code> se instalará una pantalla más útil, las cual
+nos presenta archivos que se abrieron recientemente, así como
+proyectos (de projectile).</p>
+
+<div class="language-elisp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="nb">use-package</span> <span class="nv">dashboard</span>
+  <span class="ss">:ensure</span> <span class="no">t</span>
+  <span class="ss">:config</span>
+  <span class="p">(</span><span class="k">setq</span> <span class="nv">dashboard-items</span> <span class="o">'</span><span class="p">((</span><span class="nv">recents</span> <span class="o">.</span> <span class="mi">5</span><span class="p">)</span> <span class="p">(</span><span class="nv">projects</span> <span class="o">.</span> <span class="mi">5</span><span class="p">)))</span>
+  <span class="p">(</span><span class="nv">dashboard-setup-startup-hook</span><span class="p">))</span>
+</code></pre></div></div>
+
+<p>Puedes cambiar la cantidad de archivos y proyectos recientes en la
+lista <code class="highlighter-rouge">dashboard-items</code>.</p>
+
+<p><img src="../../../assets/emacs-008.png" alt="dashboard como pantalla inicial" /></p>
+
+<h2 id="helm">Helm</h2>
+
+<p>El concepto detras de los paquetes relacionados con <code class="highlighter-rouge">helm</code> es hacer
+uso de un motor de completado, búsqueda y precision de información
+en común.</p>
+
+<p>Desde navegar el sistema de archivos, hasta completar el comando que
+deseas ejecutar. Helm te provee una guía para realizar diversas
+actividades de forma consistente.</p>
+
+<p>Esta configuración es algo dificil de entender por completo, puedes
+referirte a la documentación de cada paquete para más detalles.</p>
+
+<div class="language-elisp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="nb">use-package</span> <span class="nv">helm-config</span>
+  <span class="ss">:ensure</span> <span class="nv">helm</span>
+  <span class="ss">:demand</span> <span class="no">t</span>
+  <span class="ss">:bind</span> <span class="p">((</span><span class="s">"C-h a"</span>   <span class="o">.</span> <span class="nv">helm-apropos</span><span class="p">)</span>
+         <span class="p">(</span><span class="s">"C-x f"</span>   <span class="o">.</span> <span class="nv">helm-multi-files</span><span class="p">)</span>
+         <span class="p">(</span><span class="s">"C-x C-f"</span> <span class="o">.</span> <span class="nv">helm-find-files</span><span class="p">)</span>
+         <span class="p">(</span><span class="s">"C-x b"</span>   <span class="o">.</span> <span class="nv">helm-mini</span><span class="p">)</span>
+         <span class="p">(</span><span class="s">"M-x"</span>     <span class="o">.</span> <span class="nv">helm-M-x</span><span class="p">)</span>
+         <span class="ss">:map</span> <span class="nv">custom-map</span>
+         <span class="p">(</span><span class="s">"h"</span> <span class="o">.</span> <span class="nv">helm-command-prefix</span><span class="p">)</span>
+         <span class="p">(</span><span class="s">"h o"</span> <span class="o">.</span> <span class="nv">helm-occur</span><span class="p">)</span>
+         <span class="p">(</span><span class="s">"h y"</span> <span class="o">.</span> <span class="nv">helm-show-kill-ring</span><span class="p">))</span>
+  <span class="ss">:config</span>
+  <span class="p">(</span><span class="nb">use-package</span> <span class="nv">helm-command</span><span class="p">)</span>
+  <span class="p">(</span><span class="nb">use-package</span> <span class="nv">helm-files</span><span class="p">)</span>
+  <span class="p">(</span><span class="nb">use-package</span> <span class="nv">helm-buffers</span><span class="p">)</span>
+  <span class="p">(</span><span class="nb">use-package</span> <span class="nv">helm-mode</span>
+    <span class="ss">:diminish</span> <span class="nv">helm-mode</span><span class="p">)</span>
+  <span class="p">(</span><span class="nb">use-package</span> <span class="nv">helm-multi-match</span><span class="p">)</span>
+  <span class="p">(</span><span class="k">setq</span> <span class="nv">helm-ff-skip-boring-files</span> <span class="no">t</span>
+        <span class="nv">helm-M-x-requires-pattern</span> <span class="no">nil</span>
+        <span class="nv">helm-candidate-number-limit</span> <span class="mi">100</span>
+        <span class="nv">helm-input-idle-delay</span> <span class="mf">0.01</span>
+        <span class="nv">helm-split-window-inside-p</span> <span class="no">t</span><span class="p">)</span>
+  <span class="p">(</span><span class="nv">helm-autoresize-mode</span> <span class="mi">1</span><span class="p">)</span>
+  <span class="p">(</span><span class="nv">bind-key</span> <span class="s">"&lt;tab&gt;"</span> <span class="nf">#'</span><span class="nv">helm-execute-persistent-action</span> <span class="nv">helm-map</span><span class="p">)</span>
+  <span class="p">(</span><span class="nv">bind-key</span> <span class="s">"C-z"</span> <span class="nf">#'</span><span class="nv">helm-select-action</span> <span class="nv">helm-map</span><span class="p">)</span>
+  <span class="p">(</span><span class="nv">define-key</span> <span class="nv">minibuffer-local-map</span> <span class="p">(</span><span class="nv">kbd</span> <span class="s">"C-c C-l"</span><span class="p">)</span> <span class="ss">'helm-minibuffer-history</span><span class="p">)</span>
+  <span class="p">(</span><span class="nv">substitute-key-definition</span> <span class="ss">'find-tag</span> <span class="ss">'helm-etags-select</span> <span class="nv">global-map</span><span class="p">)</span>
+  <span class="p">(</span><span class="nv">helm-mode</span><span class="p">))</span>
+
+<span class="p">(</span><span class="nb">use-package</span> <span class="nv">helm-projectile</span>
+  <span class="ss">:ensure</span> <span class="no">t</span>
+  <span class="ss">:config</span>
+  <span class="p">(</span><span class="k">setq</span> <span class="nv">projectile-completion-system</span> <span class="ss">'helm</span><span class="p">)</span>
+  <span class="p">(</span><span class="nv">helm-projectile-on</span><span class="p">))</span>
+
+<span class="p">(</span><span class="nb">use-package</span> <span class="nv">helm-descbinds</span>
+  <span class="ss">:ensure</span> <span class="no">t</span>
+  <span class="ss">:bind</span> <span class="p">(</span><span class="s">"C-h b"</span> <span class="o">.</span> <span class="nv">helm-descbinds</span><span class="p">)</span>
+  <span class="ss">:init</span>
+  <span class="p">(</span><span class="nv">fset</span> <span class="ss">'describe-bindings</span> <span class="ss">'helm-descbinds</span><span class="p">)</span>
+  <span class="ss">:config</span>
+  <span class="p">(</span><span class="nb">require</span> <span class="ss">'helm-config</span><span class="p">))</span>
+
+<span class="p">(</span><span class="nb">use-package</span> <span class="nv">helm-grep</span>
+  <span class="ss">:commands</span> <span class="nv">helm-do-grep-1</span>
+  <span class="ss">:bind</span> <span class="p">(</span><span class="ss">:map</span> <span class="nv">custom-map</span>
+              <span class="p">(</span><span class="s">"h g"</span> <span class="o">.</span> <span class="nv">my-helm-do-grep-r</span><span class="p">))</span>
+  <span class="ss">:preface</span>
+  <span class="p">(</span><span class="nb">defun</span> <span class="nv">my-helm-do-grep-r</span> <span class="p">()</span>
+    <span class="p">(</span><span class="nv">interactive</span><span class="p">)</span>
+    <span class="p">(</span><span class="nv">helm-do-grep-1</span> <span class="p">(</span><span class="nb">list</span> <span class="nv">default-directory</span><span class="p">)</span> <span class="no">t</span><span class="p">)))</span>
+
+<span class="p">(</span><span class="nb">use-package</span> <span class="nv">helm-ag</span>
+  <span class="ss">:ensure</span> <span class="no">t</span><span class="p">)</span>
+
+<span class="p">(</span><span class="nb">use-package</span> <span class="nv">helm-make</span>
+  <span class="ss">:ensure</span> <span class="no">t</span>
+  <span class="ss">:commands</span> <span class="p">(</span><span class="nv">helm-make</span> <span class="nv">helm-make-projectile</span><span class="p">)</span>
+  <span class="ss">:bind</span> <span class="p">(</span><span class="ss">:map</span> <span class="nv">custom-map</span>
+              <span class="p">(</span><span class="s">"h m"</span> <span class="o">.</span> <span class="nv">helm-make-projectile</span><span class="p">)))</span>
+
+<span class="p">(</span><span class="nb">use-package</span> <span class="nv">helm-themes</span>
+  <span class="ss">:ensure</span> <span class="no">t</span>
+  <span class="ss">:bind</span> <span class="p">(</span><span class="ss">:map</span> <span class="nv">custom-map</span>
+              <span class="p">(</span><span class="s">"h t"</span> <span class="o">.</span> <span class="nv">helm-themes</span><span class="p">)))</span>
+</code></pre></div></div>
+
+<h2 id="docker">Docker</h2>
+
+<p>Estos tres paquetes te permitirán:</p>
+<ul>
+  <li>Comunicarte con el servicio de docker instalado en tu computadora</li>
+  <li>Conectarte desde Emacs a un contenedor de docker</li>
+  <li>Editar Dockerfiles <em>con colorsitos™</em></li>
+</ul>
+
+<div class="language-elisp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="nb">use-package</span> <span class="nv">docker</span>
+  <span class="ss">:ensure</span> <span class="no">t</span><span class="p">)</span>
+
+<span class="p">(</span><span class="nb">use-package</span> <span class="nv">docker-tramp</span>
+  <span class="ss">:ensure</span> <span class="no">t</span><span class="p">)</span>
+
+<span class="p">(</span><span class="nb">use-package</span> <span class="nv">dockerfile-mode</span>
+  <span class="ss">:ensure</span> <span class="no">t</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h2 id="markdown-mode">Markdown-mode</h2>
+
+<p>Modo de Emacs para archivos Markdown, con la configuración
+<code class="highlighter-rouge">markdown-fontify-code-blocks-natively</code> obtienes syntax-highlighting
+para bloques de código.</p>
+
+<div class="language-elisp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="nb">use-package</span> <span class="nv">markdown-mode</span>
+  <span class="ss">:ensure</span> <span class="no">t</span>
+  <span class="ss">:config</span>
+  <span class="p">(</span><span class="k">setq</span> <span class="nv">markdown-fontify-code-blocks-natively</span> <span class="no">t</span><span class="p">))</span>
+</code></pre></div></div>
+
+<p><img src="../../../assets/emacs-009.png" alt="ejemplo del modo markdown" /></p>
+
+<h2 id="yaml-mode">Yaml-mode</h2>
+
+<p>Este paquete es para editar archivos de configuración de YAML.</p>
+
+<div class="language-elisp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="nb">use-package</span> <span class="nv">yaml-mode</span>
+  <span class="ss">:ensure</span> <span class="no">t</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>Emacs tiene varios modos incluidos para distintas sintaxis, y otros
+más se pueden obtener en los repositorios de paquetes como MELPA.</p>
+
+<h1 id="configuración-específica-para-common-lisp">Configuración específica para Common Lisp</h1>
+
+<h2 id="hook-personalizado-para-lisps">Hook personalizado para Lisps</h2>
+
+<p>La función <code class="highlighter-rouge">custom-lisp-hook</code> es usada para activar algunos modos que
+son útiles para todos los lenguajes basados en lisp. Esta función será
+ejecutada cuando se active algun modo de lisp, puedes agregar más
+modos en la lista usada en el <code class="highlighter-rouge">dolist</code> de abajo.</p>
+
+<div class="language-elisp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="nb">defun</span> <span class="nv">custom-lisp-hook</span> <span class="p">()</span>
+  <span class="p">(</span><span class="nv">rainbow-delimiters-mode</span> <span class="mi">+1</span><span class="p">)</span>
+  <span class="p">(</span><span class="nv">paredit-mode</span><span class="p">))</span>
+
+<span class="p">(</span><span class="nb">dolist</span> <span class="p">(</span><span class="nv">mode-hook</span> <span class="o">'</span><span class="p">(</span><span class="nv">lisp-mode-hook</span>
+                     <span class="nv">emacs-lisp-mode-hook</span><span class="p">))</span>
+  <span class="p">(</span><span class="nv">add-hook</span> <span class="nv">mode-hook</span> <span class="ss">'custom-lisp-hook</span><span class="p">))</span>
+</code></pre></div></div>
+
+<h2 id="slime">Slime</h2>
+
+<p>Este paquete permite una interacción avanzada entre Emacs y una
+instancia de Lisp.</p>
+
+<div class="language-elisp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="nb">use-package</span> <span class="nv">slime</span>
+  <span class="ss">:ensure</span> <span class="no">t</span>
+  <span class="ss">:config</span>
+  <span class="p">(</span><span class="k">setq</span> <span class="nv">inferior-lisp-program</span> <span class="s">"sbcl"</span>
+        <span class="nv">slime-net-coding-system</span> <span class="ss">'utf-8-unix</span>
+        <span class="nv">slime-complete-symbol-function</span> <span class="ss">'slime-fuzzy-complete-symbol</span><span class="p">)</span>
+  <span class="p">(</span><span class="nv">slime-setup</span> <span class="o">'</span><span class="p">(</span><span class="nv">slime-fancy</span>
+                 <span class="nv">slime-tramp</span>
+                 <span class="nv">slime-asdf</span>
+                 <span class="nv">slime-quicklisp</span>
+                 <span class="nv">slime-xref-browser</span>
+                 <span class="nv">slime-media</span>
+                 <span class="nv">slime-sprof</span>
+                 <span class="nv">slime-company</span>
+                 <span class="nv">helm-slime</span><span class="p">))</span>
+  <span class="p">(</span><span class="nv">defadvice</span> <span class="nv">slime-repl-emit</span> <span class="p">(</span><span class="nv">around</span> <span class="nv">slime-repl-ansi-colorize</span> <span class="nv">activate</span> <span class="nb">compile</span><span class="p">)</span>
+    <span class="p">(</span><span class="nv">with-current-buffer</span> <span class="p">(</span><span class="nv">slime-output-buffer</span><span class="p">)</span>
+      <span class="p">(</span><span class="k">let</span> <span class="p">((</span><span class="nv">start</span> <span class="nv">slime-output-start</span><span class="p">))</span>
+        <span class="p">(</span><span class="k">setq</span> <span class="nv">ad-return-value</span> <span class="nv">ad-do-it</span><span class="p">)</span>
+        <span class="p">(</span><span class="nv">ansi-color-apply-on-region</span> <span class="nv">start</span> <span class="nv">slime-output-end</span><span class="p">)))))</span>
+</code></pre></div></div>
+
+<h2 id="opciones-de-autocompletado">Opciones de autocompletado</h2>
+
+<p>Hay dos paquetes que, en mi opinión, presentan una mejora a la
+funcionalidad de autocompletado de Slime. Uno es <code class="highlighter-rouge">slime-company</code> y el
+otro es <code class="highlighter-rouge">helm-slime</code>, en lo personal, yo me inclino a utilizar
+<code class="highlighter-rouge">helm-slime</code> unicamente, pero ambos paquetes pueden estar activados al
+mismo tiempo.</p>
+
+<h3 id="con-company">Con company</h3>
+
+<p>Para usar este paquete también debes tener <code class="highlighter-rouge">slime-company</code> en la lista
+usada como argumento de <code class="highlighter-rouge">slime-setup</code>.</p>
+
+<div class="language-elisp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="nb">use-package</span> <span class="nv">slime-company</span>
+  <span class="ss">:ensure</span> <span class="no">t</span>
+  <span class="ss">:after</span> <span class="p">(</span><span class="nv">slime</span> <span class="nv">company</span><span class="p">)</span>
+  <span class="ss">:config</span>
+  <span class="p">(</span><span class="k">setq</span> <span class="nv">slime-company-completion</span> <span class="ss">'fuzzy</span>
+        <span class="nv">slime-company-major-modes</span> <span class="o">'</span><span class="p">(</span><span class="nv">lisp-mode</span> <span class="nv">slime-repl-mode</span><span class="p">)))</span>
+</code></pre></div></div>
+
+<h3 id="con-helm">Con helm</h3>
+
+<p>Para usar este paquete también deber tener <code class="highlighter-rouge">helm-slime</code> en la lista
+usada como argumento de <code class="highlighter-rouge">slime-setup</code>.</p>
+
+<div class="language-elisp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="nb">use-package</span> <span class="nv">helm-slime</span>
+  <span class="ss">:ensure</span> <span class="no">t</span>
+  <span class="ss">:after</span> <span class="p">(</span><span class="nv">slime</span> <span class="nv">helm</span><span class="p">)</span>
+  <span class="ss">:config</span>
+  <span class="p">(</span><span class="k">setq</span> <span class="nv">slime-complete-symbol-function</span> <span class="ss">'helm-slime-complete</span>
+        <span class="nv">helm-slime-complete-sources</span> <span class="o">'</span><span class="p">(</span> <span class="nv">helm-slime-fuzzy-complete-source</span><span class="p">)))</span>
+</code></pre></div></div>
+
+<h1 id="para-concluir">Para concluir</h1>
+
+<p>Es probable que después de la instalación de esta configuración,
+necesites reiniciar Emacs.</p>
+
+<p>Una configuración que es común modificar en este editor es el tema
+visual. Hay muchas opciones en internet, entre las mas populares se
+encuentran <a href="https://github.com/bbatsov/zenburn-emacs">zenburn</a> y
+<a href="https://github.com/bbatsov/solarized-emacs">solarized</a>.</p>
+
+<p>Personalmente, he utilizado distintos temas visuales en Emacs, pero
+siempre termino regresando al tema por defecto.</p>
+
+<h1 id="apéndice">Apéndice</h1>
+
+<p>Aqui está el código completo:</p>
+
+<div class="language-elisp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="nb">require</span> <span class="ss">'package</span><span class="p">)</span>
+
+<span class="p">(</span><span class="nv">add-to-list</span> <span class="ss">'package-archives</span>
+             <span class="o">'</span><span class="p">(</span><span class="s">"melpa"</span> <span class="o">.</span> <span class="s">"https://melpa.org/packages/"</span><span class="p">)</span> <span class="no">t</span><span class="p">)</span>
+
+<span class="p">(</span><span class="nv">package-initialize</span><span class="p">)</span>
+
+<span class="p">(</span><span class="nb">unless</span> <span class="nv">package-archive-contents</span>
+  <span class="p">(</span><span class="nv">package-refresh-contents</span><span class="p">))</span>
+
+<span class="p">(</span><span class="k">setq</span> <span class="nv">load-prefer-newer</span> <span class="no">t</span><span class="p">)</span>
+<span class="p">(</span><span class="k">setq</span> <span class="nv">gc-cons-threshold</span> <span class="p">(</span><span class="nb">*</span> <span class="nv">gc-cons-threshold</span> <span class="mi">2</span><span class="p">))</span>
+<span class="p">(</span><span class="k">setq</span> <span class="nv">large-file-warning-threshold</span> <span class="p">(</span><span class="nb">*</span> <span class="nv">large-file-warning-threshold</span> <span class="mi">2</span><span class="p">))</span>
+
+<span class="p">(</span><span class="nv">global-auto-revert-mode</span> <span class="no">t</span><span class="p">)</span>
+<span class="p">(</span><span class="nv">tool-bar-mode</span> <span class="mi">-1</span><span class="p">)</span>
+<span class="p">(</span><span class="nv">menu-bar-mode</span> <span class="mi">-1</span><span class="p">)</span>
+<span class="p">(</span><span class="nv">blink-cursor-mode</span> <span class="mi">-1</span><span class="p">)</span>
+<span class="p">(</span><span class="nv">scroll-bar-mode</span> <span class="mi">-1</span><span class="p">)</span>
+<span class="p">(</span><span class="nv">column-number-mode</span> <span class="mi">+1</span><span class="p">)</span>
+<span class="p">(</span><span class="k">setq</span> <span class="nv">ring-bell-function</span> <span class="ss">'ignore</span><span class="p">)</span>
+<span class="p">(</span><span class="k">setq</span> <span class="nv">inhibit-startup-screen</span> <span class="no">t</span><span class="p">)</span>
+
+<span class="p">(</span><span class="nv">pixel-scroll-mode</span><span class="p">)</span>
+<span class="p">(</span><span class="k">setq</span> <span class="nv">pixel-dead-time</span> <span class="mi">0</span><span class="p">)</span>
+<span class="p">(</span><span class="k">setq</span> <span class="nv">pixel-resolution-fine-flag</span> <span class="no">t</span><span class="p">)</span>
+<span class="p">(</span><span class="k">setq</span> <span class="nv">mouse-wheel-scroll-amount</span> <span class="o">'</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+<span class="p">(</span><span class="k">setq</span> <span class="nv">mouse-wheel-progressive-speed</span> <span class="no">nil</span><span class="p">)</span>
+
+<span class="p">(</span><span class="nv">fset</span> <span class="ss">'yes-or-no-p</span> <span class="ss">'y-or-n-p</span><span class="p">)</span>
+<span class="p">(</span><span class="nv">setq-default</span> <span class="nv">indent-tabs-mode</span> <span class="no">nil</span><span class="p">)</span>
+<span class="p">(</span><span class="k">setq</span> <span class="nv">tab-always-indent</span> <span class="ss">'complete</span><span class="p">)</span>
+<span class="p">(</span><span class="nv">delete-selection-mode</span> <span class="no">t</span><span class="p">)</span>
+<span class="p">(</span><span class="nv">prefer-coding-system</span> <span class="ss">'utf-8</span><span class="p">)</span>
+<span class="p">(</span><span class="nv">set-default-coding-systems</span> <span class="ss">'utf-8</span><span class="p">)</span>
+<span class="p">(</span><span class="nv">set-terminal-coding-system</span> <span class="ss">'utf-8</span><span class="p">)</span>
+<span class="p">(</span><span class="nv">set-keyboard-coding-system</span> <span class="ss">'utf-8</span><span class="p">)</span>
+
+<span class="p">(</span><span class="nv">defconst</span> <span class="nv">%saves-dir</span> <span class="p">(</span><span class="nv">expand-file-name</span> <span class="s">"saves"</span> <span class="nv">user-emacs-directory</span><span class="p">))</span>
+
+<span class="p">(</span><span class="nb">unless</span> <span class="p">(</span><span class="nv">file-exists-p</span> <span class="nv">%saves-dir</span><span class="p">)</span>
+  <span class="p">(</span><span class="nv">make-directory</span> <span class="nv">%saves-dir</span><span class="p">))</span>
+
+<span class="p">(</span><span class="k">setq</span> <span class="nv">backup-directory-alist</span>
+      <span class="o">`</span><span class="p">((</span><span class="s">".*"</span> <span class="o">.</span> <span class="o">,</span><span class="nv">%saves-dir</span><span class="p">)))</span>
+
+<span class="p">(</span><span class="k">setq</span> <span class="nv">auto-save-file-name-transforms</span>
+      <span class="o">`</span><span class="p">((</span><span class="s">".*"</span> <span class="o">,</span><span class="nv">%saves-dir</span> <span class="no">t</span><span class="p">)))</span>
+
+<span class="p">(</span><span class="nb">unless</span> <span class="p">(</span><span class="nv">package-installed-p</span> <span class="ss">'use-package</span><span class="p">)</span>
+  <span class="p">(</span><span class="nv">package-install</span> <span class="ss">'use-package</span><span class="p">))</span>
+
+<span class="p">(</span><span class="nb">require</span> <span class="ss">'use-package</span><span class="p">)</span>
+
+<span class="p">(</span><span class="nv">define-prefix-command</span> <span class="ss">'custom-map</span><span class="p">)</span>
+<span class="p">(</span><span class="nv">global-set-key</span> <span class="p">(</span><span class="nv">kbd</span> <span class="s">"C-."</span><span class="p">)</span> <span class="ss">'custom-map</span><span class="p">)</span>
+<span class="p">(</span><span class="nv">global-set-key</span> <span class="p">(</span><span class="nv">kbd</span> <span class="s">"C-c ."</span><span class="p">)</span> <span class="ss">'custom-map</span><span class="p">)</span>
+
+<span class="p">(</span><span class="nb">use-package</span> <span class="nv">saveplace</span>
+  <span class="ss">:config</span>
+  <span class="p">(</span><span class="k">setq</span> <span class="nv">save-place-file</span> <span class="p">(</span><span class="nv">expand-file-name</span> <span class="s">"saveplace"</span> <span class="nv">%saves-dir</span><span class="p">))</span>
+  <span class="p">(</span><span class="nv">setq-default</span> <span class="nv">save-place</span> <span class="no">t</span><span class="p">))</span>
+
+<span class="p">(</span><span class="nb">use-package</span> <span class="nv">savehist</span>
+  <span class="ss">:config</span>
+  <span class="p">(</span><span class="k">setq</span> <span class="nv">savehist-additional-variables</span> <span class="o">'</span><span class="p">(</span><span class="nv">search-ring</span> <span class="nv">regexp-search-ring</span><span class="p">)</span>
+        <span class="nv">savehist-autosave-interval</span> <span class="mi">60</span>
+        <span class="nv">savehist-file</span> <span class="p">(</span><span class="nv">expand-file-name</span> <span class="s">"savehist"</span> <span class="nv">%saves-dir</span><span class="p">))</span>
+  <span class="p">(</span><span class="nv">savehist-mode</span> <span class="mi">+1</span><span class="p">))</span>
+
+<span class="p">(</span><span class="nb">use-package</span> <span class="nv">recentf</span>
+  <span class="ss">:config</span>
+  <span class="p">(</span><span class="k">setq</span> <span class="nv">recentf-save-file</span> <span class="p">(</span><span class="nv">expand-file-name</span> <span class="s">"recentf"</span> <span class="nv">%saves-dir</span><span class="p">)</span>
+        <span class="nv">recentf-max-saved-items</span> <span class="mi">500</span>
+        <span class="nv">recentf-max-menu-items</span> <span class="mi">15</span>
+        <span class="nv">recentf-auto-cleanup</span> <span class="ss">'never</span><span class="p">)</span>
+  <span class="p">(</span><span class="nv">recentf-mode</span> <span class="mi">+1</span><span class="p">))</span>
+
+<span class="p">(</span><span class="nb">use-package</span> <span class="nv">whitespace</span>
+  <span class="ss">:init</span>
+  <span class="p">(</span><span class="nb">dolist</span> <span class="p">(</span><span class="nv">hook</span> <span class="o">'</span><span class="p">(</span><span class="nv">prog-mode-hook</span> <span class="nv">text-mode-hook</span><span class="p">))</span>
+    <span class="p">(</span><span class="nv">add-hook</span> <span class="nv">hook</span> <span class="nf">#'</span><span class="nv">whitespace-mode</span><span class="p">))</span>
+  <span class="p">(</span><span class="nv">add-hook</span> <span class="ss">'before-save-hook</span> <span class="nf">#'</span><span class="nv">whitespace-cleanup</span><span class="p">)</span>
+  <span class="ss">:config</span>
+  <span class="p">(</span><span class="k">setq</span> <span class="nv">whitespace-line-column</span> <span class="mi">120</span><span class="p">)</span>
+  <span class="p">(</span><span class="k">setq</span> <span class="nv">whitespace-style</span> <span class="o">'</span><span class="p">(</span><span class="nv">face</span> <span class="nv">trailing</span> <span class="nv">empty</span><span class="p">)))</span>
+
+<span class="p">(</span><span class="nb">use-package</span> <span class="nv">paren</span>
+  <span class="ss">:config</span>
+  <span class="p">(</span><span class="nv">show-paren-mode</span> <span class="mi">+1</span><span class="p">))</span>
+
+<span class="p">(</span><span class="nb">use-package</span> <span class="nv">uniquify</span>
+  <span class="ss">:config</span>
+  <span class="p">(</span><span class="k">setq</span> <span class="nv">uniquify-buffer-name-style</span> <span class="ss">'forward</span><span class="p">)</span>
+  <span class="p">(</span><span class="k">setq</span> <span class="nv">uniquify-separator</span> <span class="s">"/"</span><span class="p">)</span>
+  <span class="p">(</span><span class="k">setq</span> <span class="nv">uniquify-after-kill-buffer-p</span> <span class="no">t</span><span class="p">)</span>
+  <span class="p">(</span><span class="k">setq</span> <span class="nv">uniquify-ignore-buffers-re</span> <span class="s">"^\\*"</span><span class="p">))</span>
+
+<span class="p">(</span><span class="nb">use-package</span> <span class="nv">ansi-color</span>
+  <span class="ss">:config</span> <span class="p">(</span><span class="nv">add-hook</span> <span class="ss">'compilation-filter-hook</span>
+                    <span class="nf">#'</span><span class="p">(</span><span class="k">lambda</span> <span class="p">()</span>
+                        <span class="p">(</span><span class="k">let</span> <span class="p">((</span><span class="nv">inhibit-read-only</span> <span class="no">t</span><span class="p">))</span>
+                          <span class="p">(</span><span class="nv">ansi-color-apply-on-region</span>
+                           <span class="nv">compilation-filter-start</span> <span class="p">(</span><span class="nv">point</span><span class="p">))))))</span>
+
+<span class="p">(</span><span class="nb">use-package</span> <span class="nv">projectile</span>
+  <span class="ss">:ensure</span> <span class="no">t</span>
+  <span class="ss">:diminish</span> <span class="nv">projectile-mode</span>
+  <span class="ss">:commands</span> <span class="nv">projectile-global-mode</span>
+  <span class="ss">:bind</span> <span class="p">(</span><span class="ss">:map</span> <span class="nv">custom-map</span>
+              <span class="p">(</span><span class="s">"p"</span> <span class="o">.</span> <span class="nv">projectile-command-map</span><span class="p">))</span>
+  <span class="ss">:config</span>
+  <span class="p">(</span><span class="nv">projectile-mode</span> <span class="mi">+1</span><span class="p">))</span>
+
+<span class="p">(</span><span class="nb">use-package</span> <span class="nv">expand-region</span>
+  <span class="ss">:ensure</span> <span class="no">t</span>
+  <span class="ss">:bind</span> <span class="p">((</span><span class="s">"C-+"</span> <span class="o">.</span> <span class="nv">er/expand-region</span><span class="p">)</span>
+         <span class="p">(</span><span class="s">"C-_"</span> <span class="o">.</span> <span class="nv">er/contract-region</span><span class="p">)))</span>
+
+<span class="p">(</span><span class="nb">use-package</span> <span class="nv">paredit</span>
+  <span class="ss">:ensure</span> <span class="no">t</span><span class="p">)</span>
+
+<span class="p">(</span><span class="nb">use-package</span> <span class="nv">anzu</span>
+  <span class="ss">:ensure</span> <span class="no">t</span>
+  <span class="ss">:diminish</span> <span class="nv">anzu-mode</span>
+  <span class="ss">:bind</span> <span class="p">((</span><span class="s">"M-%"</span> <span class="o">.</span> <span class="nv">anzu-query-replace</span><span class="p">)</span>
+         <span class="p">(</span><span class="s">"C-M-%"</span> <span class="o">.</span> <span class="nv">anzu-query-replace-regexp</span><span class="p">))</span>
+  <span class="ss">:config</span>
+  <span class="p">(</span><span class="nv">global-anzu-mode</span> <span class="mi">+1</span><span class="p">))</span>
+
+<span class="p">(</span><span class="nb">use-package</span> <span class="nv">magit</span>
+  <span class="ss">:ensure</span> <span class="no">t</span>
+  <span class="ss">:bind</span> <span class="p">(</span><span class="ss">:map</span> <span class="nv">custom-map</span>
+              <span class="p">(</span><span class="s">"g"</span> <span class="o">.</span> <span class="nv">magit-status</span><span class="p">)))</span>
+
+<span class="p">(</span><span class="nb">use-package</span> <span class="nv">rainbow-delimiters</span>
+  <span class="ss">:ensure</span> <span class="no">t</span><span class="p">)</span>
+
+<span class="p">(</span><span class="nb">use-package</span> <span class="nv">crux</span>
+  <span class="ss">:ensure</span> <span class="no">t</span>
+  <span class="ss">:demand</span>
+  <span class="ss">:bind</span> <span class="p">(</span><span class="nv">[remap</span> <span class="nv">move-beginning-of-line]</span> <span class="o">.</span> <span class="nv">crux-move-beginning-of-line</span><span class="p">)</span>
+  <span class="ss">:config</span>
+  <span class="p">(</span><span class="nv">bind-keys</span> <span class="ss">:map</span> <span class="nv">custom-map</span>
+             <span class="ss">:prefix</span> <span class="s">"c"</span>
+             <span class="ss">:prefix-map</span> <span class="nv">crux-prefix-map</span>
+             <span class="p">(</span><span class="s">"n"</span> <span class="o">.</span> <span class="nv">crux-cleanup-buffer-or-region</span><span class="p">)</span>
+             <span class="p">(</span><span class="s">"t"</span> <span class="o">.</span> <span class="nv">crux-visit-term-buffer</span><span class="p">)</span>
+             <span class="p">(</span><span class="s">"I"</span> <span class="o">.</span> <span class="nv">crux-find-user-init-file</span><span class="p">)</span>
+             <span class="p">(</span><span class="s">"S"</span> <span class="o">.</span> <span class="nv">crux-find-shell-init-file</span><span class="p">)</span>
+             <span class="p">(</span><span class="s">"s"</span> <span class="o">.</span> <span class="nv">crux-ispell-word-then-abbrev</span><span class="p">)))</span>
+
+<span class="p">(</span><span class="nb">use-package</span> <span class="nv">diff-hl</span>
+  <span class="ss">:ensure</span> <span class="no">t</span>
+  <span class="ss">:config</span>
+  <span class="p">(</span><span class="nv">global-diff-hl-mode</span> <span class="mi">+1</span><span class="p">)</span>
+  <span class="p">(</span><span class="nv">add-hook</span> <span class="ss">'magit-post-refresh-hook</span> <span class="ss">'diff-hl-magit-post-refresh</span><span class="p">))</span>
+
+<span class="p">(</span><span class="nb">use-package</span> <span class="nv">which-key</span>
+  <span class="ss">:ensure</span> <span class="no">t</span>
+  <span class="ss">:diminish</span> <span class="nv">which-key-mode</span>
+  <span class="ss">:config</span>
+  <span class="p">(</span><span class="nv">which-key-mode</span> <span class="mi">+1</span><span class="p">))</span>
+
+<span class="p">(</span><span class="nb">use-package</span> <span class="nv">auto-package-update</span>
+  <span class="ss">:ensure</span> <span class="no">t</span><span class="p">)</span>
+
+<span class="p">(</span><span class="nb">use-package</span> <span class="nv">company</span>
+  <span class="ss">:ensure</span> <span class="no">t</span>
+  <span class="ss">:diminish</span> <span class="nv">company-mode</span>
+  <span class="ss">:config</span>
+  <span class="p">(</span><span class="nv">global-company-mode</span><span class="p">))</span>
+
+<span class="p">(</span><span class="nb">use-package</span> <span class="nv">company-quickhelp</span>
+  <span class="ss">:ensure</span> <span class="no">t</span>
+  <span class="ss">:config</span>
+  <span class="p">(</span><span class="nv">company-quickhelp-mode</span><span class="p">))</span>
+
+<span class="p">(</span><span class="nb">use-package</span> <span class="nv">dashboard</span>
+  <span class="ss">:ensure</span> <span class="no">t</span>
+  <span class="ss">:config</span>
+  <span class="p">(</span><span class="k">setq</span> <span class="nv">dashboard-items</span> <span class="o">'</span><span class="p">((</span><span class="nv">recents</span> <span class="o">.</span> <span class="mi">5</span><span class="p">)</span> <span class="p">(</span><span class="nv">projects</span> <span class="o">.</span> <span class="mi">5</span><span class="p">)))</span>
+  <span class="p">(</span><span class="nv">dashboard-setup-startup-hook</span><span class="p">))</span>
+
+<span class="p">(</span><span class="nb">use-package</span> <span class="nv">helm-config</span>
+  <span class="ss">:ensure</span> <span class="nv">helm</span>
+  <span class="ss">:demand</span> <span class="no">t</span>
+  <span class="ss">:bind</span> <span class="p">((</span><span class="s">"C-h a"</span>   <span class="o">.</span> <span class="nv">helm-apropos</span><span class="p">)</span>
+         <span class="p">(</span><span class="s">"C-x f"</span>   <span class="o">.</span> <span class="nv">helm-multi-files</span><span class="p">)</span>
+         <span class="p">(</span><span class="s">"C-x C-f"</span> <span class="o">.</span> <span class="nv">helm-find-files</span><span class="p">)</span>
+         <span class="p">(</span><span class="s">"C-x b"</span>   <span class="o">.</span> <span class="nv">helm-mini</span><span class="p">)</span>
+         <span class="p">(</span><span class="s">"M-x"</span>     <span class="o">.</span> <span class="nv">helm-M-x</span><span class="p">)</span>
+         <span class="ss">:map</span> <span class="nv">custom-map</span>
+         <span class="p">(</span><span class="s">"h"</span> <span class="o">.</span> <span class="nv">helm-command-prefix</span><span class="p">)</span>
+         <span class="p">(</span><span class="s">"h o"</span> <span class="o">.</span> <span class="nv">helm-occur</span><span class="p">)</span>
+         <span class="p">(</span><span class="s">"h y"</span> <span class="o">.</span> <span class="nv">helm-show-kill-ring</span><span class="p">))</span>
+  <span class="ss">:config</span>
+  <span class="p">(</span><span class="nb">use-package</span> <span class="nv">helm-command</span><span class="p">)</span>
+  <span class="p">(</span><span class="nb">use-package</span> <span class="nv">helm-files</span><span class="p">)</span>
+  <span class="p">(</span><span class="nb">use-package</span> <span class="nv">helm-buffers</span><span class="p">)</span>
+  <span class="p">(</span><span class="nb">use-package</span> <span class="nv">helm-mode</span>
+    <span class="ss">:diminish</span> <span class="nv">helm-mode</span><span class="p">)</span>
+  <span class="p">(</span><span class="nb">use-package</span> <span class="nv">helm-multi-match</span><span class="p">)</span>
+  <span class="p">(</span><span class="k">setq</span> <span class="nv">helm-ff-skip-boring-files</span> <span class="no">t</span>
+        <span class="nv">helm-M-x-requires-pattern</span> <span class="no">nil</span>
+        <span class="nv">helm-candidate-number-limit</span> <span class="mi">100</span>
+        <span class="nv">helm-input-idle-delay</span> <span class="mf">0.01</span>
+        <span class="nv">helm-split-window-inside-p</span> <span class="no">t</span><span class="p">)</span>
+  <span class="p">(</span><span class="nv">helm-autoresize-mode</span> <span class="mi">1</span><span class="p">)</span>
+  <span class="p">(</span><span class="nv">bind-key</span> <span class="s">"&lt;tab&gt;"</span> <span class="nf">#'</span><span class="nv">helm-execute-persistent-action</span> <span class="nv">helm-map</span><span class="p">)</span>
+  <span class="p">(</span><span class="nv">bind-key</span> <span class="s">"C-z"</span> <span class="nf">#'</span><span class="nv">helm-select-action</span> <span class="nv">helm-map</span><span class="p">)</span>
+  <span class="p">(</span><span class="nv">define-key</span> <span class="nv">minibuffer-local-map</span> <span class="p">(</span><span class="nv">kbd</span> <span class="s">"C-c C-l"</span><span class="p">)</span> <span class="ss">'helm-minibuffer-history</span><span class="p">)</span>
+  <span class="p">(</span><span class="nv">substitute-key-definition</span> <span class="ss">'find-tag</span> <span class="ss">'helm-etags-select</span> <span class="nv">global-map</span><span class="p">)</span>
+  <span class="p">(</span><span class="nv">helm-mode</span><span class="p">))</span>
+
+<span class="p">(</span><span class="nb">use-package</span> <span class="nv">helm-projectile</span>
+  <span class="ss">:ensure</span> <span class="no">t</span>
+  <span class="ss">:config</span>
+  <span class="p">(</span><span class="k">setq</span> <span class="nv">projectile-completion-system</span> <span class="ss">'helm</span><span class="p">)</span>
+  <span class="p">(</span><span class="nv">helm-projectile-on</span><span class="p">))</span>
+
+<span class="p">(</span><span class="nb">use-package</span> <span class="nv">helm-descbinds</span>
+  <span class="ss">:ensure</span> <span class="no">t</span>
+  <span class="ss">:bind</span> <span class="p">(</span><span class="s">"C-h b"</span> <span class="o">.</span> <span class="nv">helm-descbinds</span><span class="p">)</span>
+  <span class="ss">:init</span>
+  <span class="p">(</span><span class="nv">fset</span> <span class="ss">'describe-bindings</span> <span class="ss">'helm-descbinds</span><span class="p">)</span>
+  <span class="ss">:config</span>
+  <span class="p">(</span><span class="nb">require</span> <span class="ss">'helm-config</span><span class="p">))</span>
+
+<span class="p">(</span><span class="nb">use-package</span> <span class="nv">helm-grep</span>
+  <span class="ss">:commands</span> <span class="nv">helm-do-grep-1</span>
+  <span class="ss">:bind</span> <span class="p">(</span><span class="ss">:map</span> <span class="nv">custom-map</span>
+              <span class="p">(</span><span class="s">"h g"</span> <span class="o">.</span> <span class="nv">my-helm-do-grep-r</span><span class="p">))</span>
+  <span class="ss">:preface</span>
+  <span class="p">(</span><span class="nb">defun</span> <span class="nv">my-helm-do-grep-r</span> <span class="p">()</span>
+    <span class="p">(</span><span class="nv">interactive</span><span class="p">)</span>
+    <span class="p">(</span><span class="nv">helm-do-grep-1</span> <span class="p">(</span><span class="nb">list</span> <span class="nv">default-directory</span><span class="p">)</span> <span class="no">t</span><span class="p">)))</span>
+
+<span class="p">(</span><span class="nb">use-package</span> <span class="nv">helm-ag</span>
+  <span class="ss">:ensure</span> <span class="no">t</span><span class="p">)</span>
+
+<span class="p">(</span><span class="nb">use-package</span> <span class="nv">helm-make</span>
+  <span class="ss">:ensure</span> <span class="no">t</span>
+  <span class="ss">:commands</span> <span class="p">(</span><span class="nv">helm-make</span> <span class="nv">helm-make-projectile</span><span class="p">)</span>
+  <span class="ss">:bind</span> <span class="p">(</span><span class="ss">:map</span> <span class="nv">custom-map</span>
+              <span class="p">(</span><span class="s">"h m"</span> <span class="o">.</span> <span class="nv">helm-make-projectile</span><span class="p">)))</span>
+
+<span class="p">(</span><span class="nb">use-package</span> <span class="nv">helm-themes</span>
+  <span class="ss">:ensure</span> <span class="no">t</span>
+  <span class="ss">:bind</span> <span class="p">(</span><span class="ss">:map</span> <span class="nv">custom-map</span>
+              <span class="p">(</span><span class="s">"h t"</span> <span class="o">.</span> <span class="nv">helm-themes</span><span class="p">)))</span>
+
+<span class="p">(</span><span class="nb">use-package</span> <span class="nv">docker</span>
+  <span class="ss">:ensure</span> <span class="no">t</span><span class="p">)</span>
+
+<span class="p">(</span><span class="nb">use-package</span> <span class="nv">docker-tramp</span>
+  <span class="ss">:ensure</span> <span class="no">t</span><span class="p">)</span>
+
+<span class="p">(</span><span class="nb">use-package</span> <span class="nv">dockerfile-mode</span>
+  <span class="ss">:ensure</span> <span class="no">t</span><span class="p">)</span>
+
+<span class="p">(</span><span class="nb">use-package</span> <span class="nv">markdown-mode</span>
+  <span class="ss">:ensure</span> <span class="no">t</span>
+  <span class="ss">:config</span>
+  <span class="p">(</span><span class="k">setq</span> <span class="nv">markdown-fontify-code-blocks-natively</span> <span class="no">t</span><span class="p">))</span>
+
+<span class="p">(</span><span class="nb">use-package</span> <span class="nv">yaml-mode</span>
+  <span class="ss">:ensure</span> <span class="no">t</span><span class="p">)</span>
+
+<span class="p">(</span><span class="nb">defun</span> <span class="nv">custom-lisp-hook</span> <span class="p">()</span>
+  <span class="p">(</span><span class="nv">rainbow-delimiters-mode</span> <span class="mi">+1</span><span class="p">)</span>
+  <span class="p">(</span><span class="nv">paredit-mode</span><span class="p">))</span>
+
+<span class="p">(</span><span class="nb">dolist</span> <span class="p">(</span><span class="nv">mode-hook</span> <span class="o">'</span><span class="p">(</span><span class="nv">lisp-mode-hook</span>
+                     <span class="nv">emacs-lisp-mode-hook</span><span class="p">))</span>
+  <span class="p">(</span><span class="nv">add-hook</span> <span class="nv">mode-hook</span> <span class="ss">'custom-lisp-hook</span><span class="p">))</span>
+
+<span class="p">(</span><span class="nb">use-package</span> <span class="nv">slime</span>
+  <span class="ss">:ensure</span> <span class="no">t</span>
+  <span class="ss">:config</span>
+  <span class="p">(</span><span class="k">setq</span> <span class="nv">inferior-lisp-program</span> <span class="s">"sbcl"</span>
+        <span class="nv">slime-net-coding-system</span> <span class="ss">'utf-8-unix</span>
+        <span class="nv">slime-complete-symbol-function</span> <span class="ss">'slime-fuzzy-complete-symbol</span><span class="p">)</span>
+  <span class="p">(</span><span class="nv">slime-setup</span> <span class="o">'</span><span class="p">(</span><span class="nv">slime-fancy</span>
+                 <span class="nv">slime-tramp</span>
+                 <span class="nv">slime-asdf</span>
+                 <span class="nv">slime-quicklisp</span>
+                 <span class="nv">slime-xref-browser</span>
+                 <span class="nv">slime-media</span>
+                 <span class="nv">slime-sprof</span>
+                 <span class="nv">slime-company</span>
+                 <span class="nv">helm-slime</span><span class="p">))</span>
+  <span class="p">(</span><span class="nv">defadvice</span> <span class="nv">slime-repl-emit</span> <span class="p">(</span><span class="nv">around</span> <span class="nv">slime-repl-ansi-colorize</span> <span class="nv">activate</span> <span class="nb">compile</span><span class="p">)</span>
+    <span class="p">(</span><span class="nv">with-current-buffer</span> <span class="p">(</span><span class="nv">slime-output-buffer</span><span class="p">)</span>
+      <span class="p">(</span><span class="k">let</span> <span class="p">((</span><span class="nv">start</span> <span class="nv">slime-output-start</span><span class="p">))</span>
+        <span class="p">(</span><span class="k">setq</span> <span class="nv">ad-return-value</span> <span class="nv">ad-do-it</span><span class="p">)</span>
+        <span class="p">(</span><span class="nv">ansi-color-apply-on-region</span> <span class="nv">start</span> <span class="nv">slime-output-end</span><span class="p">)))))</span>
+
+<span class="p">(</span><span class="nb">use-package</span> <span class="nv">slime-company</span>
+  <span class="ss">:ensure</span> <span class="no">t</span>
+  <span class="ss">:after</span> <span class="p">(</span><span class="nv">slime</span> <span class="nv">company</span><span class="p">)</span>
+  <span class="ss">:config</span>
+  <span class="p">(</span><span class="k">setq</span> <span class="nv">slime-company-completion</span> <span class="ss">'fuzzy</span>
+        <span class="nv">slime-company-major-modes</span> <span class="o">'</span><span class="p">(</span><span class="nv">lisp-mode</span> <span class="nv">slime-repl-mode</span><span class="p">)))</span>
+
+<span class="p">(</span><span class="nb">use-package</span> <span class="nv">helm-slime</span>
+  <span class="ss">:ensure</span> <span class="no">t</span>
+  <span class="ss">:after</span> <span class="p">(</span><span class="nv">slime</span> <span class="nv">helm</span><span class="p">)</span>
+  <span class="ss">:config</span>
+  <span class="p">(</span><span class="k">setq</span> <span class="nv">slime-complete-symbol-function</span> <span class="ss">'helm-slime-complete</span>
+        <span class="nv">helm-slime-complete-sources</span> <span class="o">'</span><span class="p">(</span> <span class="nv">helm-slime-fuzzy-complete-source</span><span class="p">)))</span>
+</code></pre></div></div>
+<div class="footnotes">
+  <ol>
+    <li id="fn:1">
+      <p>Personalmente, no me considero una persona con mucha experiencia en Emacs, constantemente me encuentro buscando en internet maneras de resolver problemas y mi experiencia escribiendo elisp es casi nula. <a href="#fnref:1" class="reversefootnote">&#8617;</a></p>
+    </li>
+  </ol>
+</div>
+
+  </div>
+
+  <footer class="post-footer">
+    <div class="post-meta">
+       <time datetime="2019-01-08T23:00:00-07:00" itemprop="datePublished">Jan 8, 2019</time> 
+      
+    </div>
+
+    
+    <ul class="post-tags" aria-label="TagList">
+      
+      <li><a class="tag-link" href="/tags/Emacs">Emacs</a></li>
+      
+      <li><a class="tag-link" href="/tags/Lisp">Lisp</a></li>
+      
+    </ul>
+    
+  </footer>
+
+  
+</article>
+
+    </div>
+    <script type="text/javascript">
+  (function () {
+    var resize = function () {
+      this.width = 0.5 * (this.naturalWidth || this.width);
+    }
+    Array.prototype.forEach.call(document.querySelectorAll(".half-size, .retina2x"), function(el) {
+      if (el.naturalWidth) {
+        resize.call(el);
+      } else {
+        el.onload = resize;
+      }
+    });
+  })();
+</script>
+
+  </main>
+
+  <footer class="site-footer">
+
+  <div class="wrapper">
+    <div class="social-links">
+      <a class="social-link social-github" href="https://github.com/eduardoacye">
+        <i class="icon-github"></i>
+      </a>
+    </div>
+    <div class="credits">
+      Eduardo Acuña Yeomans - 2018
+    </div>
+  </div>
+
+</footer>
+
+
+</body>
+
+</html>
