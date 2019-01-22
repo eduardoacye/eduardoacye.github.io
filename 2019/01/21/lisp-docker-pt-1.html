@@ -9,9 +9,9 @@
   <meta name="description" content="TL;DR: Esta es una guía para usar Lisp en un ambiente de desarrollo basado en Docker, este repositorio incluye todo el código presentado aqui.">
 
   
-  <link rel="stylesheet" href="/assets/styles/core.css?v=20190121210046">
-  <link rel="stylesheet" href="/assets/styles/fontello.css?v=20190121210046">
-  <link rel="stylesheet" href="/assets/styles/highlighting/github.css?v=20190121210046">
+  <link rel="stylesheet" href="/assets/styles/core.css?v=20190121211914">
+  <link rel="stylesheet" href="/assets/styles/fontello.css?v=20190121211914">
+  <link rel="stylesheet" href="/assets/styles/highlighting/github.css?v=20190121211914">
 
   <link rel="canonical" href="/2019/01/21/lisp-docker-pt-1.html">
   <link rel="alternate" type="application/rss+xml" title="Solo un blog" href="/feed.xml">
@@ -23,7 +23,7 @@
 
   
 
-  <link rel="stylesheet" href="/assets/styles/custom.css?v=20190121210046">
+  <link rel="stylesheet" href="/assets/styles/custom.css?v=20190121211914">
   <link rel="shortcut icon" type="image/png" href="/favicon.png">
 </head>
 
@@ -967,6 +967,18 @@ implica menearle al registro de ASDF.</p>
 repositorio</a>, cualquier
 duda, queja o sugerencia al respecto, me puedes mandar un correo
 electrónico a <code class="highlighter-rouge">eduardo.acye</code> arroba <code class="highlighter-rouge">gmail.com</code>.</p>
+
+<h1 id="piensos-para-el-futuro">Piensos para el futuro</h1>
+
+<p>Para hacer mas robusta la configuración pienso utilizar algo como:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>(json-read-from-string (docker-run "inspect" "app-majestuosa"))
+</code></pre></div></div>
+
+<p>Para obtener la lista de volúmenes montados para <code class="highlighter-rouge">app-majesuosa</code> y
+poder así establecer correctamente la traducción de archivos. Habiendo
+hecho esto, tampoco tendría la limitación de usar monorepos para mis
+proyectos (aunque en realidad tampoco me prende usar submódulos).</p>
 
   </div>
 
