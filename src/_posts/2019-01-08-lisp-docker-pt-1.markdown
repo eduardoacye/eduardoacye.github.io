@@ -954,3 +954,16 @@ El código de esta guía se puede consultar en [este
 repositorio](https://github.com/eduardoacye/lisp-docker), cualquier
 duda, queja o sugerencia al respecto, me puedes mandar un correo
 electrónico a `eduardo.acye` arroba `gmail.com`.
+
+# Piensos para el futuro
+
+Para hacer mas robusta la configuración pienso utilizar algo como:
+
+```
+(json-read-from-string (docker-run "inspect" "app-majestuosa"))
+```
+
+Para obtener la lista de volúmenes montados para `app-majesuosa` y
+poder así establecer correctamente la traducción de archivos. Habiendo
+hecho esto, tampoco tendría la limitación de usar monorepos para mis
+proyectos (aunque en realidad tampoco me prende usar submódulos).
