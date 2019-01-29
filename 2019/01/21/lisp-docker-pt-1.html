@@ -9,9 +9,9 @@
   <meta name="description" content="TL;DR: Esta es una guía para usar Lisp en un ambiente de desarrollo basado en Docker, este repositorio incluye todo el código presentado aqui.">
 
   
-  <link rel="stylesheet" href="/assets/styles/core.css?v=20190129085431">
-  <link rel="stylesheet" href="/assets/styles/fontello.css?v=20190129085431">
-  <link rel="stylesheet" href="/assets/styles/highlighting/github.css?v=20190129085431">
+  <link rel="stylesheet" href="/assets/styles/core.css?v=20190129085808">
+  <link rel="stylesheet" href="/assets/styles/fontello.css?v=20190129085808">
+  <link rel="stylesheet" href="/assets/styles/highlighting/github.css?v=20190129085808">
 
   <link rel="canonical" href="/2019/01/21/lisp-docker-pt-1.html">
   <link rel="alternate" type="application/rss+xml" title="Solo un blog" href="/feed.xml">
@@ -23,7 +23,7 @@
 
   
 
-  <link rel="stylesheet" href="/assets/styles/custom.css?v=20190129085431">
+  <link rel="stylesheet" href="/assets/styles/custom.css?v=20190129085808">
   <link rel="shortcut icon" type="image/png" href="/favicon.png">
 </head>
 
@@ -1059,13 +1059,13 @@ volumenes montados como prefijos de traducción:</p>
 <code class="highlighter-rouge">emacs</code> está en el <code class="highlighter-rouge">PATH</code>, podemos ejecutarlo en un subshell para
 determinar en donde está instalado Slime:</p>
 
-<pre><code class="language-Makefile">SLIME_DIR = $(shell emacs --batch \
-                          --eval "(require 'find-func)" \
-                          --eval "(require 'package)" \
-                          --eval "(package-initialize)" \
-                          --eval "(princ (file-name-directory (find-library-name \"slime\")))" \
-                          --eval "(kill-emacs)")
-</code></pre>
+<div class="language-make highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">SLIME_DIR</span> <span class="o">=</span> <span class="nf">$(</span><span class="nb">shell</span> emacs <span class="nt">--batch</span> <span class="se">\</span>
+                          <span class="nt">--eval</span> <span class="s2">"(require 'find-func</span><span class="nv">)</span><span class="s2">"</span> <span class="se">\</span>
+                          <span class="nt">--eval</span> <span class="s2">"(require 'package</span><span class="nv">)</span><span class="s2">"</span> <span class="se">\</span>
+                          <span class="nt">--eval</span> <span class="s2">"(package-initialize</span><span class="nv">)</span><span class="s2">"</span> <span class="se">\</span>
+                          <span class="nt">--eval</span> <span class="s2">"(princ (file-name-directory (find-library-name </span><span class="se">\"</span><span class="s2">slime</span><span class="se">\"</span><span class="nv">)))</span><span class="s2">"</span> <span class="se">\</span>
+                          <span class="nt">--eval</span> <span class="s2">"(kill-emacs</span><span class="nv">)</span><span class="s2">"</span><span class="nv">)</span>
+</code></pre></div></div>
 
   </div>
 

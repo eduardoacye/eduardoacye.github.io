@@ -1051,7 +1051,7 @@ _hardcodeado_ para `SLIME_DIR` en el `Makefile`. Si el binario de
 `emacs` está en el `PATH`, podemos ejecutarlo en un subshell para
 determinar en donde está instalado Slime:
 
-```Makefile
+```make
 SLIME_DIR = $(shell emacs --batch \
                           --eval "(require 'find-func)" \
                           --eval "(require 'package)" \
