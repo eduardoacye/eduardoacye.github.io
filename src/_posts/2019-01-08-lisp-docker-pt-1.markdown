@@ -967,3 +967,95 @@ Para obtener la lista de volúmenes montados para `app-majesuosa` y
 poder así establecer correctamente la traducción de archivos. Habiendo
 hecho esto, tampoco tendría la limitación de usar monorepos para mis
 proyectos (aunque en realidad tampoco me prende usar submódulos).
+
+# Actualización 29/01/2019
+
+Escribí un par de funciones para hacer mas amena la interacción de
+Slime con Docker.
+
+La función `docker-container-mounts` inspecciona los volúmenes
+montados de un contenedor y obtiene una lista de asociación con el
+mapeo _source_/_destination_:
+
+{% raw %}
+```elisp
+(defun docker-container-mounts (name)
+  (read (docker-run "inspect"
+                    name
+                    "--format='({{range $m := .Mounts}}(\"{{$m.Source}}\" . \"{{$m.Destination}}\"){{end}})'")))
+```
+{% endraw %}
+
+El argumento `format` hace uso del lenguaje de templates de Go (que el
+comando `docker inspect` expone) para evitar parsear el objeto
+JSON. De tal manera que si montamos la version local de Slime y un
+sistema de lisp en los contenedores, obtenemos:
+
+```elisp
+(docker-container-mounts "app-majestuosa")
+=> (("/home/eduardo/quicklisp/dists/quicklisp/software/slime-v2.22" . "/root/common-lisp/slime")
+    ("/home/eduardo/Repos/proyecto-magnifico/app-majestuosa" . "/root/common-lisp/app-majestuosa"))
+```
+
+Esto nos permite hacer más robusta la funcionalidad de traducción de
+archivos entre el contenedor de Docker y local. El archivo
+`.dir-locals` ahora contiene:
+
+```elisp
+((nil . ((eval . (add-docker-slime-translation "app-majestuosa")))))
+```
+
+Y la función `add-docker-slime-translation` se encarga de lo siguiente:
+
+- Si ya hay una traducción definida para `"app-majestuosa"` se va a
+  eliminar y se creará una nueva versión.
+- Al crear una nueva versión de la traducción se inspeccionan los
+  volúmenes montados del contenedor `"app-majestuosa"` utilizando
+  `docker-container-mounts` (definida arriba).
+
+Los cambios mas importantes en el código es que en lugar de basarnos
+en los prefijos `"/root/common-lisp/"` y en la raíz del proyecto de
+projectile. Utilizamos el mapeo _source_/_destination_ de los
+volumenes montados como prefijos de traducción:
+
+```elisp
+(defun add-docker-slime-translation (name)
+  (lexical-let ((regexp (concat "^" name "$")))
+    (when (assoc regexp slime-filename-translations)
+      (setq slime-filename-translations (delete* regexp slime-filename-translations
+                                                 :test 'equal :key 'car)))
+    (push (lexical-let ((docker-tramp-prefix (concat "/docker:" name ":"))
+                        (mount-prefixes (docker-container-mounts name)))
+            (list regexp
+                  `(lambda (emacs-filename)
+                     (if (string-prefix-p ,docker-tramp-prefix emacs-filename)
+                         (string-remove-prefix ,docker-tramp-prefix emacs-filename)
+                       (let ((mapping (find emacs-filename ',mount-prefixes
+                                            :test (lambda (a b) (string-prefix-p b a))
+                                            :key 'car)))
+                         (if mapping
+                             (concat (cdr mapping) (string-remove-prefix (car mapping) emacs-filename))
+                           emacs-filename))))
+                  `(lambda (lisp-filename)
+                     (let ((mapping (find lisp-filename ',mount-prefixes
+                                          :test (lambda (a b) (string-prefix-p b a))
+                                          :key 'cdr)))
+                       (if mapping
+                           (concat (car mapping) (string-remove-prefix (cdr mapping) lisp-filename))
+                         (concat ,docker-tramp-prefix lisp-filename))))))
+          slime-filename-translations)))
+```
+
+Otro cambio que consideré una mejora es evitar tener un valor default
+_hardcodeado_ para `SLIME_DIR` en el `Makefile`. Si el binario de
+`emacs` está en el `PATH`, podemos ejecutarlo en un subshell para
+determinar en donde está instalado Slime:
+
+```Makefile
+SLIME_DIR = $(shell emacs --batch \
+                          --eval "(require 'find-func)" \
+                          --eval "(require 'package)" \
+                          --eval "(package-initialize)" \
+                          --eval "(princ (file-name-directory (find-library-name \"slime\")))" \
+                          --eval "(kill-emacs)")
+```

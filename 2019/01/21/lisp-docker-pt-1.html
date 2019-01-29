@@ -9,9 +9,9 @@
   <meta name="description" content="TL;DR: Esta es una guía para usar Lisp en un ambiente de desarrollo basado en Docker, este repositorio incluye todo el código presentado aqui.">
 
   
-  <link rel="stylesheet" href="/assets/styles/core.css?v=20190122230252">
-  <link rel="stylesheet" href="/assets/styles/fontello.css?v=20190122230252">
-  <link rel="stylesheet" href="/assets/styles/highlighting/github.css?v=20190122230252">
+  <link rel="stylesheet" href="/assets/styles/core.css?v=20190129085431">
+  <link rel="stylesheet" href="/assets/styles/fontello.css?v=20190129085431">
+  <link rel="stylesheet" href="/assets/styles/highlighting/github.css?v=20190129085431">
 
   <link rel="canonical" href="/2019/01/21/lisp-docker-pt-1.html">
   <link rel="alternate" type="application/rss+xml" title="Solo un blog" href="/feed.xml">
@@ -23,7 +23,7 @@
 
   
 
-  <link rel="stylesheet" href="/assets/styles/custom.css?v=20190122230252">
+  <link rel="stylesheet" href="/assets/styles/custom.css?v=20190129085431">
   <link rel="shortcut icon" type="image/png" href="/favicon.png">
 </head>
 
@@ -979,6 +979,93 @@ electrónico a <code class="highlighter-rouge">eduardo.acye</code> arroba <code 
 poder así establecer correctamente la traducción de archivos. Habiendo
 hecho esto, tampoco tendría la limitación de usar monorepos para mis
 proyectos (aunque en realidad tampoco me prende usar submódulos).</p>
+
+<h1 id="actualización-29012019">Actualización 29/01/2019</h1>
+
+<p>Escribí un par de funciones para hacer mas amena la interacción de
+Slime con Docker.</p>
+
+<p>La función <code class="highlighter-rouge">docker-container-mounts</code> inspecciona los volúmenes
+montados de un contenedor y obtiene una lista de asociación con el
+mapeo <em>source</em>/<em>destination</em>:</p>
+
+<div class="language-elisp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="nb">defun</span> <span class="nv">docker-container-mounts</span> <span class="p">(</span><span class="nv">name</span><span class="p">)</span>
+  <span class="p">(</span><span class="nb">read</span> <span class="p">(</span><span class="nv">docker-run</span> <span class="s">"inspect"</span>
+                    <span class="nv">name</span>
+                    <span class="s">"--format='({{range $m := .Mounts}}(\"{{$m.Source}}\" . \"{{$m.Destination}}\"){{end}})'"</span><span class="p">)))</span>
+</code></pre></div></div>
+
+<p>El argumento <code class="highlighter-rouge">format</code> hace uso del lenguaje de templates de Go (que el
+comando <code class="highlighter-rouge">docker inspect</code> expone) para evitar parsear el objeto
+JSON. De tal manera que si montamos la version local de Slime y un
+sistema de lisp en los contenedores, obtenemos:</p>
+
+<div class="language-elisp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="nv">docker-container-mounts</span> <span class="s">"app-majestuosa"</span><span class="p">)</span>
+<span class="nv">=&gt;</span> <span class="p">((</span><span class="s">"/home/eduardo/quicklisp/dists/quicklisp/software/slime-v2.22"</span> <span class="o">.</span> <span class="s">"/root/common-lisp/slime"</span><span class="p">)</span>
+    <span class="p">(</span><span class="s">"/home/eduardo/Repos/proyecto-magnifico/app-majestuosa"</span> <span class="o">.</span> <span class="s">"/root/common-lisp/app-majestuosa"</span><span class="p">))</span>
+</code></pre></div></div>
+
+<p>Esto nos permite hacer más robusta la funcionalidad de traducción de
+archivos entre el contenedor de Docker y local. El archivo
+<code class="highlighter-rouge">.dir-locals</code> ahora contiene:</p>
+
+<div class="language-elisp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">((</span><span class="no">nil</span> <span class="o">.</span> <span class="p">((</span><span class="nb">eval</span> <span class="o">.</span> <span class="p">(</span><span class="nv">add-docker-slime-translation</span> <span class="s">"app-majestuosa"</span><span class="p">)))))</span>
+</code></pre></div></div>
+
+<p>Y la función <code class="highlighter-rouge">add-docker-slime-translation</code> se encarga de lo siguiente:</p>
+
+<ul>
+  <li>Si ya hay una traducción definida para <code class="highlighter-rouge">"app-majestuosa"</code> se va a
+eliminar y se creará una nueva versión.</li>
+  <li>Al crear una nueva versión de la traducción se inspeccionan los
+volúmenes montados del contenedor <code class="highlighter-rouge">"app-majestuosa"</code> utilizando
+<code class="highlighter-rouge">docker-container-mounts</code> (definida arriba).</li>
+</ul>
+
+<p>Los cambios mas importantes en el código es que en lugar de basarnos
+en los prefijos <code class="highlighter-rouge">"/root/common-lisp/"</code> y en la raíz del proyecto de
+projectile. Utilizamos el mapeo <em>source</em>/<em>destination</em> de los
+volumenes montados como prefijos de traducción:</p>
+
+<div class="language-elisp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="nb">defun</span> <span class="nv">add-docker-slime-translation</span> <span class="p">(</span><span class="nv">name</span><span class="p">)</span>
+  <span class="p">(</span><span class="nv">lexical-let</span> <span class="p">((</span><span class="nv">regexp</span> <span class="p">(</span><span class="nv">concat</span> <span class="s">"^"</span> <span class="nv">name</span> <span class="s">"$"</span><span class="p">)))</span>
+    <span class="p">(</span><span class="nb">when</span> <span class="p">(</span><span class="nb">assoc</span> <span class="nv">regexp</span> <span class="nv">slime-filename-translations</span><span class="p">)</span>
+      <span class="p">(</span><span class="k">setq</span> <span class="nv">slime-filename-translations</span> <span class="p">(</span><span class="nv">delete*</span> <span class="nv">regexp</span> <span class="nv">slime-filename-translations</span>
+                                                 <span class="ss">:test</span> <span class="ss">'equal</span> <span class="ss">:key</span> <span class="ss">'car</span><span class="p">)))</span>
+    <span class="p">(</span><span class="nb">push</span> <span class="p">(</span><span class="nv">lexical-let</span> <span class="p">((</span><span class="nv">docker-tramp-prefix</span> <span class="p">(</span><span class="nv">concat</span> <span class="s">"/docker:"</span> <span class="nv">name</span> <span class="s">":"</span><span class="p">))</span>
+                        <span class="p">(</span><span class="nv">mount-prefixes</span> <span class="p">(</span><span class="nv">docker-container-mounts</span> <span class="nv">name</span><span class="p">)))</span>
+            <span class="p">(</span><span class="nb">list</span> <span class="nv">regexp</span>
+                  <span class="o">`</span><span class="p">(</span><span class="k">lambda</span> <span class="p">(</span><span class="nv">emacs-filename</span><span class="p">)</span>
+                     <span class="p">(</span><span class="k">if</span> <span class="p">(</span><span class="nv">string-prefix-p</span> <span class="o">,</span><span class="nv">docker-tramp-prefix</span> <span class="nv">emacs-filename</span><span class="p">)</span>
+                         <span class="p">(</span><span class="nv">string-remove-prefix</span> <span class="o">,</span><span class="nv">docker-tramp-prefix</span> <span class="nv">emacs-filename</span><span class="p">)</span>
+                       <span class="p">(</span><span class="k">let</span> <span class="p">((</span><span class="nv">mapping</span> <span class="p">(</span><span class="nb">find</span> <span class="nv">emacs-filename</span> <span class="ss">',mount-prefixes</span>
+                                            <span class="ss">:test</span> <span class="p">(</span><span class="k">lambda</span> <span class="p">(</span><span class="nv">a</span> <span class="nv">b</span><span class="p">)</span> <span class="p">(</span><span class="nv">string-prefix-p</span> <span class="nv">b</span> <span class="nv">a</span><span class="p">))</span>
+                                            <span class="ss">:key</span> <span class="ss">'car</span><span class="p">)))</span>
+                         <span class="p">(</span><span class="k">if</span> <span class="nv">mapping</span>
+                             <span class="p">(</span><span class="nv">concat</span> <span class="p">(</span><span class="nb">cdr</span> <span class="nv">mapping</span><span class="p">)</span> <span class="p">(</span><span class="nv">string-remove-prefix</span> <span class="p">(</span><span class="nb">car</span> <span class="nv">mapping</span><span class="p">)</span> <span class="nv">emacs-filename</span><span class="p">))</span>
+                           <span class="nv">emacs-filename</span><span class="p">))))</span>
+                  <span class="o">`</span><span class="p">(</span><span class="k">lambda</span> <span class="p">(</span><span class="nv">lisp-filename</span><span class="p">)</span>
+                     <span class="p">(</span><span class="k">let</span> <span class="p">((</span><span class="nv">mapping</span> <span class="p">(</span><span class="nb">find</span> <span class="nv">lisp-filename</span> <span class="ss">',mount-prefixes</span>
+                                          <span class="ss">:test</span> <span class="p">(</span><span class="k">lambda</span> <span class="p">(</span><span class="nv">a</span> <span class="nv">b</span><span class="p">)</span> <span class="p">(</span><span class="nv">string-prefix-p</span> <span class="nv">b</span> <span class="nv">a</span><span class="p">))</span>
+                                          <span class="ss">:key</span> <span class="ss">'cdr</span><span class="p">)))</span>
+                       <span class="p">(</span><span class="k">if</span> <span class="nv">mapping</span>
+                           <span class="p">(</span><span class="nv">concat</span> <span class="p">(</span><span class="nb">car</span> <span class="nv">mapping</span><span class="p">)</span> <span class="p">(</span><span class="nv">string-remove-prefix</span> <span class="p">(</span><span class="nb">cdr</span> <span class="nv">mapping</span><span class="p">)</span> <span class="nv">lisp-filename</span><span class="p">))</span>
+                         <span class="p">(</span><span class="nv">concat</span> <span class="o">,</span><span class="nv">docker-tramp-prefix</span> <span class="nv">lisp-filename</span><span class="p">))))))</span>
+          <span class="nv">slime-filename-translations</span><span class="p">)))</span>
+</code></pre></div></div>
+
+<p>Otro cambio que consideré una mejora es evitar tener un valor default
+<em>hardcodeado</em> para <code class="highlighter-rouge">SLIME_DIR</code> en el <code class="highlighter-rouge">Makefile</code>. Si el binario de
+<code class="highlighter-rouge">emacs</code> está en el <code class="highlighter-rouge">PATH</code>, podemos ejecutarlo en un subshell para
+determinar en donde está instalado Slime:</p>
+
+<pre><code class="language-Makefile">SLIME_DIR = $(shell emacs --batch \
+                          --eval "(require 'find-func)" \
+                          --eval "(require 'package)" \
+                          --eval "(package-initialize)" \
+                          --eval "(princ (file-name-directory (find-library-name \"slime\")))" \
+                          --eval "(kill-emacs)")
+</code></pre>
 
   </div>
 

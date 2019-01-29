@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.8.5">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2019-01-22T23:02:52-07:00</updated><id>/feed.xml</id><title type="html">Solo un blog</title><subtitle>Este es solo un blog.</subtitle><entry><title type="html">Common Lisp y Docker Parte 1</title><link href="/2019/01/21/lisp-docker-pt-1.html" rel="alternate" type="text/html" title="Common Lisp y Docker Parte 1" /><published>2019-01-21T21:00:38-07:00</published><updated>2019-01-21T21:00:38-07:00</updated><id>/2019/01/21/lisp-docker-pt-1</id><content type="html" xml:base="/2019/01/21/lisp-docker-pt-1.html">&lt;blockquote&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.8.5">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2019-01-29T08:54:31-07:00</updated><id>/feed.xml</id><title type="html">Solo un blog</title><subtitle>Este es solo un blog.</subtitle><entry><title type="html">Common Lisp y Docker Parte 1</title><link href="/2019/01/21/lisp-docker-pt-1.html" rel="alternate" type="text/html" title="Common Lisp y Docker Parte 1" /><published>2019-01-21T21:00:38-07:00</published><updated>2019-01-21T21:00:38-07:00</updated><id>/2019/01/21/lisp-docker-pt-1</id><content type="html" xml:base="/2019/01/21/lisp-docker-pt-1.html">&lt;blockquote&gt;
   &lt;p&gt;TL;DR: Esta es una guía para usar Lisp en un ambiente de desarrollo
 basado en Docker, &lt;a href=&quot;https://github.com/eduardoacye/lisp-docker&quot;&gt;este
 repositorio&lt;/a&gt; incluye
@@ -926,7 +926,94 @@ electrónico a &lt;code class=&quot;highlighter-rouge&quot;&gt;eduardo.acye&lt;/
 &lt;p&gt;Para obtener la lista de volúmenes montados para &lt;code class=&quot;highlighter-rouge&quot;&gt;app-majesuosa&lt;/code&gt; y
 poder así establecer correctamente la traducción de archivos. Habiendo
 hecho esto, tampoco tendría la limitación de usar monorepos para mis
-proyectos (aunque en realidad tampoco me prende usar submódulos).&lt;/p&gt;</content><author><name></name></author><category term="Lisp" /><summary type="html">TL;DR: Esta es una guía para usar Lisp en un ambiente de desarrollo basado en Docker, este repositorio incluye todo el código presentado aqui.</summary></entry><entry><title type="html">¡Configura Emacs sin hacer dieta ni dejar de comer!</title><link href="/2019/01/08/configuracion-de-emacs.html" rel="alternate" type="text/html" title="¡Configura Emacs sin hacer dieta ni dejar de comer!" /><published>2019-01-08T23:00:00-07:00</published><updated>2019-01-08T23:00:00-07:00</updated><id>/2019/01/08/configuracion-de-emacs</id><content type="html" xml:base="/2019/01/08/configuracion-de-emacs.html">&lt;p&gt;Configurar emacs puede ser un broncón para una persona sin experiencia
+proyectos (aunque en realidad tampoco me prende usar submódulos).&lt;/p&gt;
+
+&lt;h1 id=&quot;actualización-29012019&quot;&gt;Actualización 29/01/2019&lt;/h1&gt;
+
+&lt;p&gt;Escribí un par de funciones para hacer mas amena la interacción de
+Slime con Docker.&lt;/p&gt;
+
+&lt;p&gt;La función &lt;code class=&quot;highlighter-rouge&quot;&gt;docker-container-mounts&lt;/code&gt; inspecciona los volúmenes
+montados de un contenedor y obtiene una lista de asociación con el
+mapeo &lt;em&gt;source&lt;/em&gt;/&lt;em&gt;destination&lt;/em&gt;:&lt;/p&gt;
+
+&lt;div class=&quot;language-elisp highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;defun&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;docker-container-mounts&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;read&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;docker-run&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;inspect&quot;&lt;/span&gt;
+                    &lt;span class=&quot;nv&quot;&gt;name&lt;/span&gt;
+                    &lt;span class=&quot;s&quot;&gt;&quot;--format='({{range $m := .Mounts}}(\&quot;{{$m.Source}}\&quot; . \&quot;{{$m.Destination}}\&quot;){{end}})'&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)))&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;El argumento &lt;code class=&quot;highlighter-rouge&quot;&gt;format&lt;/code&gt; hace uso del lenguaje de templates de Go (que el
+comando &lt;code class=&quot;highlighter-rouge&quot;&gt;docker inspect&lt;/code&gt; expone) para evitar parsear el objeto
+JSON. De tal manera que si montamos la version local de Slime y un
+sistema de lisp en los contenedores, obtenemos:&lt;/p&gt;
+
+&lt;div class=&quot;language-elisp highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;docker-container-mounts&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;app-majestuosa&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;nv&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;((&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;/home/eduardo/quicklisp/dists/quicklisp/software/slime-v2.22&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;.&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;/root/common-lisp/slime&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;/home/eduardo/Repos/proyecto-magnifico/app-majestuosa&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;.&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;/root/common-lisp/app-majestuosa&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Esto nos permite hacer más robusta la funcionalidad de traducción de
+archivos entre el contenedor de Docker y local. El archivo
+&lt;code class=&quot;highlighter-rouge&quot;&gt;.dir-locals&lt;/code&gt; ahora contiene:&lt;/p&gt;
+
+&lt;div class=&quot;language-elisp highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;p&quot;&gt;((&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;nil&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;.&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;((&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;eval&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;.&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;add-docker-slime-translation&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;app-majestuosa&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)))))&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Y la función &lt;code class=&quot;highlighter-rouge&quot;&gt;add-docker-slime-translation&lt;/code&gt; se encarga de lo siguiente:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Si ya hay una traducción definida para &lt;code class=&quot;highlighter-rouge&quot;&gt;&quot;app-majestuosa&quot;&lt;/code&gt; se va a
+eliminar y se creará una nueva versión.&lt;/li&gt;
+  &lt;li&gt;Al crear una nueva versión de la traducción se inspeccionan los
+volúmenes montados del contenedor &lt;code class=&quot;highlighter-rouge&quot;&gt;&quot;app-majestuosa&quot;&lt;/code&gt; utilizando
+&lt;code class=&quot;highlighter-rouge&quot;&gt;docker-container-mounts&lt;/code&gt; (definida arriba).&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Los cambios mas importantes en el código es que en lugar de basarnos
+en los prefijos &lt;code class=&quot;highlighter-rouge&quot;&gt;&quot;/root/common-lisp/&quot;&lt;/code&gt; y en la raíz del proyecto de
+projectile. Utilizamos el mapeo &lt;em&gt;source&lt;/em&gt;/&lt;em&gt;destination&lt;/em&gt; de los
+volumenes montados como prefijos de traducción:&lt;/p&gt;
+
+&lt;div class=&quot;language-elisp highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;defun&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;add-docker-slime-translation&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;lexical-let&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;((&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;regexp&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;concat&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;^&quot;&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;name&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;$&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)))&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;when&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;assoc&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;regexp&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;slime-filename-translations&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+      &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;setq&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;slime-filename-translations&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;delete*&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;regexp&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;slime-filename-translations&lt;/span&gt;
+                                                 &lt;span class=&quot;ss&quot;&gt;:test&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;'equal&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;:key&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;'car&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)))&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;push&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;lexical-let&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;((&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;docker-tramp-prefix&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;concat&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;/docker:&quot;&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;name&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;:&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+                        &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;mount-prefixes&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;docker-container-mounts&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)))&lt;/span&gt;
+            &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;list&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;regexp&lt;/span&gt;
+                  &lt;span class=&quot;o&quot;&gt;`&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;lambda&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;emacs-filename&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+                     &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;string-prefix-p&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;docker-tramp-prefix&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;emacs-filename&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+                         &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;string-remove-prefix&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;docker-tramp-prefix&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;emacs-filename&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+                       &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;((&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;mapping&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;find&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;emacs-filename&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;',mount-prefixes&lt;/span&gt;
+                                            &lt;span class=&quot;ss&quot;&gt;:test&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;lambda&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;a&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;b&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;string-prefix-p&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;b&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+                                            &lt;span class=&quot;ss&quot;&gt;:key&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;'car&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)))&lt;/span&gt;
+                         &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;mapping&lt;/span&gt;
+                             &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;concat&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;cdr&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;mapping&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;string-remove-prefix&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;car&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;mapping&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;emacs-filename&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+                           &lt;span class=&quot;nv&quot;&gt;emacs-filename&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))))&lt;/span&gt;
+                  &lt;span class=&quot;o&quot;&gt;`&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;lambda&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;lisp-filename&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+                     &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;((&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;mapping&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;find&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;lisp-filename&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;',mount-prefixes&lt;/span&gt;
+                                          &lt;span class=&quot;ss&quot;&gt;:test&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;lambda&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;a&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;b&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;string-prefix-p&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;b&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+                                          &lt;span class=&quot;ss&quot;&gt;:key&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;'cdr&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)))&lt;/span&gt;
+                       &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;mapping&lt;/span&gt;
+                           &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;concat&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;car&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;mapping&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;string-remove-prefix&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;cdr&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;mapping&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;lisp-filename&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+                         &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;concat&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;docker-tramp-prefix&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;lisp-filename&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))))))&lt;/span&gt;
+          &lt;span class=&quot;nv&quot;&gt;slime-filename-translations&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)))&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Otro cambio que consideré una mejora es evitar tener un valor default
+&lt;em&gt;hardcodeado&lt;/em&gt; para &lt;code class=&quot;highlighter-rouge&quot;&gt;SLIME_DIR&lt;/code&gt; en el &lt;code class=&quot;highlighter-rouge&quot;&gt;Makefile&lt;/code&gt;. Si el binario de
+&lt;code class=&quot;highlighter-rouge&quot;&gt;emacs&lt;/code&gt; está en el &lt;code class=&quot;highlighter-rouge&quot;&gt;PATH&lt;/code&gt;, podemos ejecutarlo en un subshell para
+determinar en donde está instalado Slime:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&quot;language-Makefile&quot;&gt;SLIME_DIR = $(shell emacs --batch \
+                          --eval &quot;(require 'find-func)&quot; \
+                          --eval &quot;(require 'package)&quot; \
+                          --eval &quot;(package-initialize)&quot; \
+                          --eval &quot;(princ (file-name-directory (find-library-name \&quot;slime\&quot;)))&quot; \
+                          --eval &quot;(kill-emacs)&quot;)
+&lt;/code&gt;&lt;/pre&gt;</content><author><name></name></author><category term="Lisp" /><summary type="html">TL;DR: Esta es una guía para usar Lisp en un ambiente de desarrollo basado en Docker, este repositorio incluye todo el código presentado aqui.</summary></entry><entry><title type="html">¡Configura Emacs sin hacer dieta ni dejar de comer!</title><link href="/2019/01/08/configuracion-de-emacs.html" rel="alternate" type="text/html" title="¡Configura Emacs sin hacer dieta ni dejar de comer!" /><published>2019-01-08T23:00:00-07:00</published><updated>2019-01-08T23:00:00-07:00</updated><id>/2019/01/08/configuracion-de-emacs</id><content type="html" xml:base="/2019/01/08/configuracion-de-emacs.html">&lt;p&gt;Configurar emacs puede ser un broncón para una persona sin experiencia
 en Emacs &lt;sup id=&quot;fnref:1&quot;&gt;&lt;a href=&quot;#fn:1&quot; class=&quot;footnote&quot;&gt;1&lt;/a&gt;&lt;/sup&gt; . A pesar de esto, en internet se pueden encontrar
 configuraciones prefabricadas que tienen sus propias idiosincrasias e
 incluso algunas que vienen con &lt;em&gt;“baterías incluidas”&lt;/em&gt; (todo lo que
